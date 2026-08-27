@@ -737,7 +737,10 @@
                             Sizes: 22, 24, 26, 28, 30
 
                         </p>
-
+<button type="button" class="view-details-btn">
+    <i class="fa-solid fa-eye"></i>
+    VIEW DETAILS
+</button>
                         <a href="https://wa.me/918218403183?text=Hello%20Gupta%20Garments,%20I%20am%20interested%20in%20Kids%20Denim%20Jeans%20%E2%82%B9599."
 
                             target="_blank"
@@ -799,7 +802,10 @@
                             Sizes: 20, 22, 24, 26
 
                         </p>
-
+<button type="button" class="view-details-btn">
+    <i class="fa-solid fa-eye"></i>
+    VIEW DETAILS
+</button>
                         <a href="https://wa.me/918218403183?text=Hello%20Gupta%20Garments,%20I%20am%20interested%20in%20Boys%20Printed%20T-Shirt%20%E2%82%B9299."
 
                             target="_blank"
@@ -861,7 +867,10 @@
                             Sizes: 22, 24, 26, 28, 30
 
                         </p>
-
+<button type="button" class="view-details-btn">
+    <i class="fa-solid fa-eye"></i>
+    VIEW DETAILS
+</button>
                         <a href="https://wa.me/918218403183?text=Hello%20Gupta%20Garments,%20I%20am%20interested%20in%20Boys%20Check%20Shirt%20%E2%82%B9499."
 
                             target="_blank"
@@ -923,7 +932,10 @@
                             Sizes: 22, 24, 26, 28, 30
 
                         </p>
-
+<button type="button" class="view-details-btn">
+    <i class="fa-solid fa-eye"></i>
+    VIEW DETAILS
+</button>
                         <a href="https://wa.me/918218403183?text=Hello%20Gupta%20Garments,%20I%20am%20interested%20in%20Girls%20Western%20Dress%20%E2%82%B9699."
 
                             target="_blank"
@@ -985,7 +997,10 @@
                             Sizes: 22, 24, 26, 28, 30
 
                         </p>
-
+<button type="button" class="view-details-btn">
+    <i class="fa-solid fa-eye"></i>
+    VIEW DETAILS
+</button>
                         <a href="https://wa.me/918218403183?text=Hello%20Gupta%20Garments,%20I%20am%20interested%20in%20Kids%20Jacket%20%E2%82%B9799."
 
                             target="_blank"
@@ -1047,7 +1062,10 @@
                             Sizes: 20, 22, 24, 26, 28
 
                         </p>
-
+<button type="button" class="view-details-btn">
+    <i class="fa-solid fa-eye"></i>
+    VIEW DETAILS
+</button>
                         <a href="https://wa.me/918218403183?text=Hello%20Gupta%20Garments,%20I%20am%20interested%20in%20Girls%20Cardigan%20%E2%82%B9549."
 
                             target="_blank"
@@ -1109,7 +1127,10 @@
                             Sizes: 20, 22, 24, 26, 28
 
                         </p>
-
+<button type="button" class="view-details-btn">
+    <i class="fa-solid fa-eye"></i>
+    VIEW DETAILS
+</button>
                         <a href="https://wa.me/918218403183?text=Hello%20Gupta%20Garments,%20I%20am%20interested%20in%20Boys%20Casual%20Lower%20%E2%82%B9399."
 
                             target="_blank"
@@ -1171,7 +1192,10 @@
                             Sizes: 22, 24, 26, 28, 30
 
                         </p>
-
+<button type="button" class="view-details-btn">
+    <i class="fa-solid fa-eye"></i>
+    VIEW DETAILS
+</button>
                         <a href="https://wa.me/918218403183?text=Hello%20Gupta%20Garments,%20I%20am%20interested%20in%20Girls%20Nighty%20Gown%20%E2%82%B9649."
 
                             target="_blank"
@@ -1233,7 +1257,10 @@
                             Sizes: 22, 24, 26, 28, 30
 
                         </p>
-
+<button type="button" class="view-details-btn">
+    <i class="fa-solid fa-eye"></i>
+    VIEW DETAILS
+</button>
                         <a href="https://wa.me/918218403183?text=Hello%20Gupta%20Garments,%20I%20am%20interested%20in%20Boys%20Stylish%20Divider%20%E2%82%B9449."
 
                             target="_blank"
@@ -1295,7 +1322,10 @@
                             Sizes: 22, 24, 26, 28
 
                         </p>
-
+<button type="button" class="view-details-btn">
+    <i class="fa-solid fa-eye"></i>
+    VIEW DETAILS
+</button>
                         <a href="https://wa.me/918218403183?text=Hello%20Gupta%20Garments,%20I%20am%20interested%20in%20Girls%20Jeans%20Top%20%E2%82%B9499."
 
                             target="_blank"
@@ -1971,7 +2001,240 @@
     <!-- ================= JAVASCRIPT ================= -->
 
     <script src="script.js"></script>
+<!-- =========================================================
+     PRODUCT DETAILS MODAL
+     ========================================================= -->
 
+<div class="product-modal" id="productModal">
+
+    <div class="product-modal-overlay" id="productModalOverlay"></div>
+
+    <div class="product-modal-content">
+
+        <!-- Close Button -->
+
+        <button type="button"
+            class="product-modal-close"
+            id="productModalClose"
+            aria-label="Close product details">
+
+            <i class="fa-solid fa-xmark"></i>
+
+        </button>
+
+
+        <!-- Product Image -->
+
+        <div class="modal-product-image">
+
+            <div id="modalProductImage"
+                class="modal-dummy-product">
+
+                👕
+            </div>
+
+        </div>
+
+
+        <!-- Product Details -->
+
+        <div class="modal-product-details">
+
+            <span class="modal-product-badge">
+                PRODUCT DETAILS
+            </span>
+
+            <h2 id="modalProductName">
+                Product Name
+            </h2>
+
+            <div class="modal-product-price"
+                id="modalProductPrice">
+
+                ₹0
+            </div>
+
+            <div class="modal-product-sizes">
+
+                <strong>
+                    Available Sizes
+                </strong>
+
+                <p id="modalProductSizes">
+                    -
+                </p>
+
+            </div>
+
+
+            <!-- Description -->
+
+            <div class="modal-product-description">
+
+                <strong>
+                    Description
+                </strong>
+
+                <p id="modalProductDescription">
+                    Stylish and comfortable kids wear
+                    from Gupta Garments.
+                </p>
+
+            </div>
+<!-- ================= CUSTOMER REVIEWS ================= -->
+
+<div class="product-reviews">
+
+    <div class="reviews-heading">
+
+        <div>
+            <span class="small-label">
+                CUSTOMER REVIEWS
+            </span>
+
+            <h3>
+                What Customers Say
+            </h3>
+        </div>
+
+        <div class="reviews-summary">
+
+            <strong id="reviewAverage">
+                0.0
+            </strong>
+
+            <div id="reviewAverageStars">
+                ☆☆☆☆☆
+            </div>
+
+            <span id="reviewCount">
+                0 Reviews
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- Existing Reviews -->
+
+    <div class="reviews-list"
+         id="reviewsList">
+
+        <div class="no-reviews"
+             id="noReviews">
+
+            <i class="fa-regular fa-star"></i>
+
+            <p>
+                No reviews yet.
+            </p>
+
+            <span>
+                Be the first to review this product.
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- Write Review -->
+
+    <div class="write-review">
+
+        <h4>
+            Write a Review
+        </h4>
+
+
+        <div class="rating-selector">
+
+            <span>Your Rating</span>
+
+            <div id="reviewRating">
+
+                <button type="button"
+                        data-rating="1">
+                    ★
+                </button>
+
+                <button type="button"
+                        data-rating="2">
+                    ★
+                </button>
+
+                <button type="button"
+                        data-rating="3">
+                    ★
+                </button>
+
+                <button type="button"
+                        data-rating="4">
+                    ★
+                </button>
+
+                <button type="button"
+                        data-rating="5">
+                    ★
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <input
+            type="text"
+            id="reviewName"
+            placeholder="Your Name"
+            maxlength="50"
+        >
+
+
+        <textarea
+            id="reviewMessage"
+            placeholder="Write your review..."
+            maxlength="500"
+            rows="3"
+        ></textarea>
+
+
+        <button
+            type="button"
+            id="submitProductReview"
+            class="submit-review-btn"
+        >
+
+            <i class="fa-solid fa-paper-plane"></i>
+
+            SUBMIT REVIEW
+
+        </button>
+
+    </div>
+
+</div>
+
+            <!-- WhatsApp -->
+
+            <a href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="modal-whatsapp"
+                id="modalWhatsapp">
+
+                <i class="fa-brands fa-whatsapp"></i>
+
+                ORDER ON WHATSAPP
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
 </body>
 
 </html>

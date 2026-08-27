@@ -902,5 +902,286 @@ document.addEventListener("DOMContentLoaded", function () {
     console.log(
         "Gupta Garments website JavaScript loaded successfully."
     );
+    /* =====================================================
+       STEP 2.2 — PRODUCT DETAILS MODAL
+       ===================================================== */
 
+    const productModal =
+        document.querySelector("#productModal");
+
+    const productModalClose =
+        document.querySelector("#productModalClose");
+
+    const productModalOverlay =
+        document.querySelector("#productModalOverlay");
+
+    const viewDetailsButtons =
+        document.querySelectorAll(".view-details-btn");
+
+
+    /* =====================================================
+       PRODUCT DESCRIPTIONS
+       ===================================================== */
+
+    const productDescriptions = {
+
+        "Kids Denim Jeans":
+            "Stylish and comfortable denim jeans designed for kids. Perfect for casual everyday wear.",
+
+        "Boys Printed T-Shirt":
+            "Comfortable printed T-shirt with a trendy look. Perfect for everyday wear and casual outings.",
+
+        "Boys Check Shirt":
+            "Smart and stylish check shirt for boys. A comfortable choice for casual and special occasions.",
+
+        "Girls Western Dress":
+            "Beautiful western dress designed for girls with a stylish and comfortable look.",
+
+        "Kids Jacket":
+            "Trendy kids jacket that adds a stylish layer to any outfit while keeping kids comfortable.",
+
+        "Girls Cardigan":
+            "Cute and comfortable cardigan for girls. Perfect for adding a stylish layer to everyday outfits.",
+
+        "Boys Casual Lower":
+            "Comfortable casual lower for boys, perfect for everyday activities, playtime and relaxed wear.",
+
+        "Girls Nighty / Gown":
+            "Comfortable and stylish nighty/gown designed for girls with a soft and easy-to-wear feel.",
+
+        "Boys Stylish Divider":
+            "Trendy and comfortable divider designed for boys who love a stylish casual look.",
+
+        "Girls Jeans Top":
+            "Stylish jeans top for girls that can be paired easily with jeans, skirts or other casual outfits."
+
+    };
+
+
+    /* =====================================================
+       OPEN PRODUCT MODAL
+       ===================================================== */
+
+    viewDetailsButtons.forEach(function (button) {
+
+        button.addEventListener(
+            "click",
+            function () {
+
+                const productCard =
+                    button.closest(".product-card");
+
+                if (!productCard || !productModal) {
+                    return;
+                }
+
+
+                /* Product Name */
+
+                const productName =
+                    productCard
+                        .querySelector("h3")
+                        ?.textContent
+                        .trim();
+
+
+                /* Product Price */
+
+                const productPrice =
+                    productCard
+                        .querySelector(".price")
+                        ?.textContent
+                        .trim();
+
+
+                /* Product Sizes */
+
+                const productSizes =
+                    productCard
+                        .querySelector(".product-info p")
+                        ?.textContent
+                        .trim();
+
+
+                /* Product Image */
+
+                const productImage =
+                    productCard
+                        .querySelector(".dummy-product");
+
+
+                /* Modal Elements */
+
+                const modalName =
+                    document.querySelector(
+                        "#modalProductName"
+                    );
+
+                const modalPrice =
+                    document.querySelector(
+                        "#modalProductPrice"
+                    );
+
+                const modalSizes =
+                    document.querySelector(
+                        "#modalProductSizes"
+                    );
+
+                const modalDescription =
+                    document.querySelector(
+                        "#modalProductDescription"
+                    );
+
+                const modalImage =
+                    document.querySelector(
+                        "#modalProductImage"
+                    );
+
+                const modalWhatsapp =
+                    document.querySelector(
+                        "#modalWhatsapp"
+                    );
+
+
+                /* Fill Modal */
+
+                if (modalName) {
+                    modalName.textContent =
+                        productName || "Product";
+                }
+
+
+                if (modalPrice) {
+                    modalPrice.textContent =
+                        productPrice || "Please confirm";
+                }
+
+
+                if (modalSizes) {
+                    modalSizes.textContent =
+                        productSizes || "Please confirm availability";
+                }
+
+
+                if (modalDescription) {
+                    modalDescription.textContent =
+                        productDescriptions[productName] ||
+                        "Stylish and comfortable kids wear from Gupta Garments.";
+                }
+
+
+                /* Copy Product Visual */
+
+                if (modalImage && productImage) {
+
+                    modalImage.textContent =
+                        productImage.textContent.trim();
+
+                    modalImage.className =
+                        "modal-dummy-product " +
+                        productImage.className
+                            .replace("dummy-product", "")
+                            .trim();
+
+                }
+
+
+                /* WhatsApp Message */
+
+                if (modalWhatsapp && productName) {
+
+                    const message =
+                        "Hello Gupta Garments,\n\n" +
+                        "I am interested in:\n" +
+                        productName +
+                        "\n\n" +
+                        "Price: " +
+                        (productPrice || "Please confirm") +
+                        "\n\n" +
+                        (productSizes || "") +
+                        "\n\n" +
+                        "Please share availability and details.";
+
+                    modalWhatsapp.href =
+                        "https://wa.me/918218403183?text=" +
+                        encodeURIComponent(message);
+
+                }
+
+
+                /* Open */
+
+                productModal.classList.add("active");
+
+                document.body.classList.add(
+                    "modal-open"
+                );
+
+            }
+        );
+
+    });
+
+
+    /* =====================================================
+       CLOSE PRODUCT MODAL
+       ===================================================== */
+
+    function closeProductModal() {
+
+        if (!productModal) {
+            return;
+        }
+
+        productModal.classList.remove(
+            "active"
+        );
+
+        document.body.classList.remove(
+            "modal-open"
+        );
+
+    }
+
+
+    if (productModalClose) {
+
+        productModalClose.addEventListener(
+            "click",
+            closeProductModal
+        );
+
+    }
+
+
+    if (productModalOverlay) {
+
+        productModalOverlay.addEventListener(
+            "click",
+            closeProductModal
+        );
+
+    }
+
+
+    /* =====================================================
+       CLOSE WITH ESC KEY
+       ===================================================== */
+
+    document.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (
+                event.key === "Escape" &&
+                productModal &&
+                productModal.classList.contains("active")
+            ) {
+
+                closeProductModal();
+
+            }
+
+        }
+    );
 });

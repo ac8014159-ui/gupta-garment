@@ -2934,3 +2934,1416 @@ footer * {
         scroll-behavior: auto !important;
     }
 }
+/* =========================================================
+   PREMIUM HERO LOAD ANIMATION
+   ========================================================= */
+
+.hero-content {
+    opacity: 0;
+    transform: translateY(35px);
+    animation: heroContentReveal 0.9s ease-out 0.15s forwards;
+}
+
+.hero-kids {
+    opacity: 0;
+    transform: translateX(35px);
+    animation: heroKidsReveal 1s ease-out 0.3s forwards;
+}
+
+
+/* Hero Content Animation */
+
+@keyframes heroContentReveal {
+
+    from {
+        opacity: 0;
+        transform: translateY(35px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+
+/* Hero Kids Animation */
+
+@keyframes heroKidsReveal {
+
+    from {
+        opacity: 0;
+        transform: translateX(35px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+}
+
+
+/* =========================================================
+   HERO ELEMENT STAGGER EFFECT
+   ========================================================= */
+
+.hero-badge {
+    animation-delay: 0.2s;
+}
+
+.hero-content h1 {
+    animation: heroTextReveal 0.8s ease-out 0.25s both;
+}
+
+.hero-content p {
+    animation: heroTextReveal 0.8s ease-out 0.4s both;
+}
+
+.hero-buttons {
+    animation: heroTextReveal 0.8s ease-out 0.55s both;
+}
+
+
+@keyframes heroTextReveal {
+
+    from {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+
+/* =========================================================
+   ACCESSIBILITY
+   Respect users who prefer reduced motion.
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .hero-content,
+    .hero-kids,
+    .hero-content h1,
+    .hero-content p,
+    .hero-buttons {
+
+        animation: none;
+        opacity: 1;
+        transform: none;
+
+    }
+}
+/* =========================================================
+   PREMIUM PRODUCT SCROLL ANIMATION
+   ========================================================= */
+
+.product-card {
+    opacity: 0;
+    transform: translateY(35px);
+    transition:
+        opacity 0.7s ease,
+        transform 0.7s ease;
+}
+
+
+/* JavaScript already adds this class
+   when the product becomes visible */
+
+.product-card.product-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+/* =========================================================
+   PRODUCT STAGGER EFFECT
+   ========================================================= */
+
+.product-card:nth-child(1) {
+    transition-delay: 0.05s;
+}
+
+.product-card:nth-child(2) {
+    transition-delay: 0.10s;
+}
+
+.product-card:nth-child(3) {
+    transition-delay: 0.15s;
+}
+
+.product-card:nth-child(4) {
+    transition-delay: 0.20s;
+}
+
+.product-card:nth-child(5) {
+    transition-delay: 0.25s;
+}
+
+.product-card:nth-child(6) {
+    transition-delay: 0.30s;
+}
+
+.product-card:nth-child(7) {
+    transition-delay: 0.35s;
+}
+
+.product-card:nth-child(8) {
+    transition-delay: 0.40s;
+}
+
+.product-card:nth-child(9) {
+    transition-delay: 0.45s;
+}
+
+.product-card:nth-child(10) {
+    transition-delay: 0.50s;
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .product-card {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+
+}
+/* =========================================================
+   PREMIUM PRODUCT CARD HOVER
+   ========================================================= */
+
+.product-card {
+    transition:
+        transform 0.35s ease,
+        box-shadow 0.35s ease,
+        border-color 0.35s ease;
+}
+
+
+/* Card Lift */
+
+.product-card:hover,
+.product-card.product-hover {
+    transform: translateY(-8px);
+    box-shadow: 0 18px 35px rgba(0, 0, 0, 0.12);
+}
+
+
+/* =========================================================
+   PRODUCT IMAGE ZOOM
+   ========================================================= */
+
+.product-image {
+    overflow: hidden;
+}
+
+
+/* Dummy product / actual image */
+
+.product-image img,
+.product-image .dummy-product {
+    transition:
+        transform 0.45s ease;
+}
+
+
+/* Zoom on card hover */
+
+.product-card:hover .product-image img,
+.product-card:hover .product-image .dummy-product,
+.product-card.product-hover .product-image img,
+.product-card.product-hover .product-image .dummy-product {
+    transform: scale(1.08);
+}
+
+
+/* =========================================================
+   PRODUCT BADGE ANIMATION
+   ========================================================= */
+
+.product-badge {
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+
+.product-card:hover .product-badge,
+.product-card.product-hover .product-badge {
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.10);
+}
+
+
+/* =========================================================
+   WHATSAPP BUTTON HOVER
+   ========================================================= */
+
+.product-whatsapp {
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease,
+        letter-spacing 0.3s ease;
+}
+
+
+.product-whatsapp:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+    letter-spacing: 0.2px;
+}
+
+
+/* =========================================================
+   GENERAL BUTTON HOVER
+   ========================================================= */
+
+.btn-primary,
+.btn-whatsapp,
+.collection-btn,
+.nav-whatsapp,
+.footer-whatsapp {
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease,
+        opacity 0.3s ease;
+}
+
+
+.btn-primary:hover,
+.btn-whatsapp:hover,
+.collection-btn:hover,
+.nav-whatsapp:hover,
+.footer-whatsapp:hover {
+    transform: translateY(-2px);
+}
+
+
+/* =========================================================
+   MOBILE
+   Don't apply large hover movement on touch devices.
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    .product-card:hover,
+    .product-card.product-hover {
+        transform: none;
+        box-shadow: inherit;
+    }
+
+}
+/* =========================================================
+   STEP 1.4 — PREMIUM MICRO INTERACTIONS
+   ========================================================= */
+
+
+/* =========================================================
+   CATEGORY CARDS
+   ========================================================= */
+
+.category-card {
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease,
+        border-color 0.3s ease;
+}
+
+.category-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.10);
+}
+
+
+/* Category Icon / Image */
+
+.category-image {
+    transition:
+        transform 0.35s ease;
+}
+
+.category-card:hover .category-image {
+    transform: scale(1.08);
+}
+
+
+/* =========================================================
+   VIEW ALL LINK
+   ========================================================= */
+
+.view-all {
+    transition:
+        transform 0.3s ease,
+        opacity 0.3s ease;
+}
+
+.view-all:hover {
+    transform: translateX(5px);
+}
+
+
+/* Arrow movement */
+
+.view-all i {
+    transition:
+        transform 0.3s ease;
+}
+
+.view-all:hover i {
+    transform: translateX(4px);
+}
+
+
+/* =========================================================
+   COLLECTION BUTTON ARROW
+   ========================================================= */
+
+.collection-btn i {
+    transition:
+        transform 0.3s ease;
+}
+
+.collection-btn:hover i {
+    transform: translateX(5px);
+}
+
+
+/* =========================================================
+   NAVIGATION LINKS
+   ========================================================= */
+
+.nav-menu > a {
+    transition:
+        color 0.25s ease,
+        transform 0.25s ease;
+}
+
+.nav-menu > a:hover {
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   SOCIAL ICONS
+   ========================================================= */
+
+.footer-social a,
+.top-right a {
+    transition:
+        transform 0.3s ease,
+        opacity 0.3s ease;
+}
+
+.footer-social a:hover,
+.top-right a:hover {
+    transform: translateY(-3px) scale(1.08);
+    opacity: 0.85;
+}
+
+
+/* =========================================================
+   FILTER STATUS
+   ========================================================= */
+
+#clearFilter {
+    transition:
+        transform 0.25s ease,
+        opacity 0.25s ease;
+}
+
+#clearFilter:hover {
+    transform: translateX(3px);
+}
+
+
+/* =========================================================
+   MOBILE MENU BUTTON
+   ========================================================= */
+
+.mobile-menu-btn {
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.mobile-menu-btn:hover {
+    transform: scale(1.05);
+}
+
+
+/* =========================================================
+   FLOATING WHATSAPP
+   ========================================================= */
+
+.floating-whatsapp {
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+.floating-whatsapp:hover {
+    transform: scale(1.08);
+}
+
+
+/* =========================================================
+   PRODUCT TITLE
+   ========================================================= */
+
+.product-info h3 {
+    transition:
+        transform 0.25s ease;
+}
+
+.product-card:hover .product-info h3 {
+    transform: translateX(2px);
+}
+
+
+/* =========================================================
+   IMAGE / CONTENT SMOOTHNESS
+   ========================================================= */
+
+img {
+    transition:
+        opacity 0.3s ease;
+}
+
+
+/* =========================================================
+   BUTTON PRESS FEEDBACK
+   ========================================================= */
+
+button:active,
+a.btn-primary:active,
+a.btn-whatsapp:active,
+a.collection-btn:active,
+a.product-whatsapp:active {
+    transform: scale(0.97);
+}
+
+
+/* =========================================================
+   TOUCH DEVICES
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    .category-card:hover {
+        transform: none;
+        box-shadow: inherit;
+    }
+
+    .view-all:hover,
+    .collection-btn:hover,
+    .footer-social a:hover,
+    .top-right a:hover {
+        transform: none;
+    }
+
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+    }
+}
+/* =========================================================
+   STEP 2.1 — VIEW DETAILS BUTTON
+   ========================================================= */
+
+.view-details-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    padding: 11px 16px;
+    margin-bottom: 10px;
+
+    border: 1px solid currentColor;
+    background: transparent;
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.3s ease,
+        background 0.3s ease,
+        color 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+
+/* Hover */
+
+.view-details-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 16px rgba(0, 0, 0, 0.10);
+}
+
+
+/* Eye icon */
+
+.view-details-btn i {
+    transition:
+        transform 0.3s ease;
+}
+
+.view-details-btn:hover i {
+    transform: scale(1.12);
+}
+
+
+/* Click feedback */
+
+.view-details-btn:active {
+    transform: scale(0.97);
+}
+
+
+/* Mobile */
+
+@media (max-width: 768px) {
+
+    .view-details-btn:hover {
+        transform: none;
+    }
+}
+/* =========================================================
+   STEP 2.2 — PRODUCT DETAILS MODAL
+   ========================================================= */
+
+
+/* =========================================================
+   MODAL BACKGROUND
+   ========================================================= */
+
+.product-modal {
+    position: fixed;
+    inset: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    z-index: 9999;
+
+    opacity: 0;
+    visibility: hidden;
+
+    transition:
+        opacity 0.3s ease,
+        visibility 0.3s ease;
+}
+
+
+/* Active Modal */
+
+.product-modal.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+
+/* =========================================================
+   OVERLAY
+   ========================================================= */
+
+.product-modal-overlay {
+    position: absolute;
+    inset: 0;
+
+    background: rgba(0, 0, 0, 0.55);
+
+    backdrop-filter: blur(5px);
+}
+
+
+/* =========================================================
+   MODAL BOX
+   ========================================================= */
+
+.product-modal-content {
+    position: relative;
+
+    width: min(900px, 100%);
+
+    max-height: 90vh;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    background: #ffffff;
+
+    overflow: auto;
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 25px 70px rgba(0, 0, 0, 0.25);
+
+    transform: translateY(30px) scale(0.97);
+
+    transition:
+        transform 0.35s ease;
+}
+
+
+/* Modal Open Animation */
+
+.product-modal.active .product-modal-content {
+    transform: translateY(0) scale(1);
+}
+
+
+/* =========================================================
+   CLOSE BUTTON
+   ========================================================= */
+
+.product-modal-close {
+    position: absolute;
+
+    top: 15px;
+    right: 15px;
+
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.92);
+
+    font-size: 18px;
+
+    cursor: pointer;
+
+    z-index: 5;
+
+    box-shadow:
+        0 4px 12px rgba(0, 0, 0, 0.10);
+
+    transition:
+        transform 0.25s ease,
+        background 0.25s ease;
+}
+
+
+.product-modal-close:hover {
+    transform: rotate(90deg);
+    background: #f5f5f5;
+}
+
+
+/* =========================================================
+   MODAL PRODUCT IMAGE
+   ========================================================= */
+
+.modal-product-image {
+    min-height: 450px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 40px;
+
+    background: #f8f8f8;
+
+    overflow: hidden;
+}
+
+
+/* Dummy Product */
+
+.modal-dummy-product {
+    font-size: 180px;
+
+    transition:
+        transform 0.45s ease;
+}
+
+
+.product-modal.active .modal-dummy-product {
+    transform: scale(1.05);
+}
+
+
+/* =========================================================
+   MODAL DETAILS
+   ========================================================= */
+
+.modal-product-details {
+    padding: 55px 45px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+
+/* Small Label */
+
+.modal-product-badge {
+    display: inline-block;
+
+    width: fit-content;
+
+    margin-bottom: 15px;
+
+    padding: 6px 12px;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    letter-spacing: 1px;
+
+    border-radius: 20px;
+
+    background: #f2f2f2;
+}
+
+
+/* Product Name */
+
+.modal-product-details h2 {
+    margin: 0 0 12px;
+
+    font-size: 32px;
+    line-height: 1.2;
+}
+
+
+/* Price */
+
+.modal-product-price {
+    margin-bottom: 25px;
+
+    font-size: 25px;
+    font-weight: 800;
+}
+
+
+/* Sizes */
+
+.modal-product-sizes {
+    margin-bottom: 22px;
+}
+
+
+.modal-product-sizes strong,
+.modal-product-description strong {
+    display: block;
+
+    margin-bottom: 8px;
+
+    font-size: 14px;
+}
+
+
+.modal-product-sizes p {
+    margin: 0;
+
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+
+/* Description */
+
+.modal-product-description {
+    margin-bottom: 30px;
+}
+
+
+.modal-product-description p {
+    margin: 0;
+
+    font-size: 14px;
+
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   MODAL WHATSAPP BUTTON
+   ========================================================= */
+
+.modal-whatsapp {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 9px;
+
+    padding: 14px 20px;
+
+    border-radius: 8px;
+
+    text-decoration: none;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+
+.modal-whatsapp:hover {
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 10px 22px rgba(0, 0, 0, 0.12);
+}
+
+
+/* =========================================================
+   MOBILE MODAL
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    .product-modal {
+        padding: 12px;
+    }
+
+
+    .product-modal-content {
+        grid-template-columns: 1fr;
+
+        max-height: 94vh;
+
+        border-radius: 15px;
+    }
+
+
+    .modal-product-image {
+        min-height: 250px;
+
+        padding: 25px;
+    }
+
+
+    .modal-dummy-product {
+        font-size: 110px;
+    }
+
+
+    .modal-product-details {
+        padding: 30px 25px 35px;
+    }
+
+
+    .modal-product-details h2 {
+        font-size: 25px;
+    }
+
+
+    .modal-product-price {
+        font-size: 22px;
+    }
+
+}
+
+
+/* =========================================================
+   MODAL ACCESSIBILITY
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .product-modal,
+    .product-modal-content,
+    .modal-dummy-product,
+    .product-modal-close,
+    .modal-whatsapp {
+        transition: none;
+    }
+}
+/* Prevent background scrolling when modal is open */
+
+body.modal-open {
+    overflow: hidden;
+}
+/* =====================================================
+   PRODUCT IMAGE HOVER ZOOM
+   ===================================================== */
+
+.product-image {
+    overflow: hidden;
+    position: relative;
+}
+
+.product-image .dummy-product {
+    transition: transform 0.5s ease;
+}
+
+.product-card:hover .product-image .dummy-product {
+    transform: scale(1.08);
+}
+/* =====================================================
+   PRODUCT CUSTOMER REVIEWS
+   STEP 2.3-B
+   ===================================================== */
+
+.product-reviews {
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 1px solid #eeeeee;
+}
+
+
+/* ================= REVIEW HEADING ================= */
+
+.reviews-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.reviews-heading .small-label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    color: #888;
+}
+
+.reviews-heading h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: #222;
+}
+
+
+/* ================= REVIEW SUMMARY ================= */
+
+.reviews-summary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.reviews-summary strong {
+    font-size: 22px;
+    font-weight: 800;
+    color: #222;
+}
+
+#reviewAverageStars {
+    color: #f5b301;
+    font-size: 15px;
+    letter-spacing: 1px;
+}
+
+#reviewCount {
+    font-size: 12px;
+    color: #888;
+}
+
+
+/* ================= REVIEWS LIST ================= */
+
+#reviewsList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    max-height: 220px;
+    overflow-y: auto;
+
+    padding-right: 5px;
+}
+
+
+/* Custom scrollbar */
+
+#reviewsList::-webkit-scrollbar {
+    width: 5px;
+}
+
+#reviewsList::-webkit-scrollbar-track {
+    background: #f5f5f5;
+    border-radius: 10px;
+}
+
+#reviewsList::-webkit-scrollbar-thumb {
+    background: #cccccc;
+    border-radius: 10px;
+}
+
+
+/* ================= SINGLE REVIEW ================= */
+
+#reviewsList .review-item {
+    padding: 14px 15px;
+
+    background: #fafafa;
+
+    border: 1px solid #eeeeee;
+    border-radius: 10px;
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        border-color 0.25s ease;
+}
+
+#reviewsList .review-item:hover {
+    transform: translateY(-2px);
+
+    border-color: #e2e2e2;
+
+    box-shadow:
+        0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+
+/* Review top */
+
+.review-item-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 10px;
+
+    margin-bottom: 6px;
+}
+
+.reviewer-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: #222;
+}
+
+.review-item-stars {
+    color: #f5b301;
+    font-size: 13px;
+    letter-spacing: 1px;
+}
+
+
+/* Review text */
+
+.review-item-text {
+    margin: 0;
+
+    font-size: 12px;
+    line-height: 1.6;
+
+    color: #555;
+}
+
+
+/* Review date */
+
+.review-date {
+    display: block;
+
+    margin-top: 7px;
+
+    font-size: 10px;
+    color: #999;
+}
+
+
+/* ================= NO REVIEWS ================= */
+
+.no-reviews {
+    text-align: center;
+
+    padding: 20px 15px;
+
+    border: 1px dashed #dddddd;
+    border-radius: 10px;
+
+    background: #fcfcfc;
+
+    color: #888;
+}
+
+.no-reviews i {
+    display: block;
+
+    margin-bottom: 8px;
+
+    font-size: 24px;
+
+    color: #c7c7c7;
+}
+
+.no-reviews p {
+    margin: 0 0 4px;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    color: #555;
+}
+
+.no-reviews span {
+    font-size: 11px;
+}
+
+
+/* ================= WRITE REVIEW ================= */
+
+.write-review {
+    margin-top: 20px;
+
+    padding-top: 20px;
+
+    border-top: 1px solid #eeeeee;
+}
+
+.write-review h4 {
+    margin: 0 0 14px;
+
+    font-size: 15px;
+    font-weight: 700;
+
+    color: #222;
+}
+
+
+/* ================= RATING SELECTOR ================= */
+
+.rating-selector {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    margin-bottom: 12px;
+}
+
+.rating-selector > span {
+    font-size: 12px;
+    font-weight: 600;
+    color: #555;
+}
+
+#reviewRating {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+#reviewRating button {
+    padding: 0;
+
+    border: none;
+    background: transparent;
+
+    cursor: pointer;
+
+    color: #d4d4d4;
+
+    font-size: 22px;
+    line-height: 1;
+
+    transition:
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+#reviewRating button:hover {
+    color: #f5b301;
+
+    transform: scale(1.15);
+}
+
+#reviewRating button.active {
+    color: #f5b301;
+}
+
+
+/* ================= INPUTS ================= */
+
+#reviewName,
+#reviewMessage {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    border: 1px solid #e1e1e1;
+
+    border-radius: 8px;
+
+    background: #fff;
+
+    color: #222;
+
+    font-family: inherit;
+    font-size: 12px;
+
+    outline: none;
+
+    transition:
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+#reviewName {
+    height: 42px;
+
+    padding: 0 13px;
+
+    margin-bottom: 10px;
+}
+
+#reviewMessage {
+    min-height: 80px;
+
+    padding: 11px 13px;
+
+    resize: vertical;
+
+    margin-bottom: 12px;
+}
+
+#reviewName::placeholder,
+#reviewMessage::placeholder {
+    color: #aaa;
+}
+
+#reviewName:focus,
+#reviewMessage:focus {
+    border-color: #999;
+
+    box-shadow:
+        0 0 0 3px rgba(0, 0, 0, 0.04);
+}
+
+
+/* ================= SUBMIT BUTTON ================= */
+
+.submit-review-btn {
+    width: 100%;
+
+    min-height: 42px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: #222;
+    color: #fff;
+
+    cursor: pointer;
+
+    font-family: inherit;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    letter-spacing: 0.6px;
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        background 0.25s ease;
+}
+
+.submit-review-btn:hover {
+    background: #111;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 7px 18px rgba(0, 0, 0, 0.16);
+}
+
+.submit-review-btn:active {
+    transform: translateY(0);
+}
+
+.submit-review-btn i {
+    margin-right: 6px;
+}
+
+
+/* =====================================================
+   MOBILE REVIEW UI
+   ===================================================== */
+
+@media (max-width: 600px) {
+
+    .product-reviews {
+        margin-top: 22px;
+        padding-top: 20px;
+    }
+
+    .reviews-heading {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .reviews-heading h3 {
+        font-size: 18px;
+    }
+
+    .reviews-summary {
+        width: 100%;
+    }
+
+    #reviewsList {
+        max-height: 200px;
+    }
+
+    .rating-selector {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 7px;
+    }
+
+    #reviewRating button {
+        font-size: 24px;
+    }
+
+}
