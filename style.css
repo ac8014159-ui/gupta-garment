@@ -4697,7 +4697,6 @@ body.modal-open {
 
 }
 
-
 /* =========================================================
    VERY SMALL PHONES
    ========================================================= */
@@ -4819,6 +4818,60 @@ body.modal-open {
     .hero-kids {
         margin-top: 10px !important;
         margin-bottom: 0 !important;
+        transform: scale(0.58) !important;
+        transform-origin: center top !important;
+    }
+
+}
+/* =========================================================
+   MOBILE — CENTER 4 KIDS BETWEEN WHATSAPP & PRODUCTS
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .hero-kids {
+        position: relative !important;
+
+        /* Exact horizontal center */
+        width: 100% !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: flex-start !important;
+
+        /* Order button ke just neeche */
+        margin-top: 10px !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+
+        /* Products se unnecessary gap nahi */
+        margin-bottom: 0 !important;
+
+        padding: 0 !important;
+
+        transform: scale(0.68) !important;
+        transform-origin: center top !important;
+
+        height: auto !important;
+        min-height: 0 !important;
+    }
+
+}
+
+
+/* =========================================================
+   VERY SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 380px) {
+
+    .hero-kids {
+        width: 100% !important;
+
+        margin-top: 10px !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        margin-bottom: 0 !important;
+
         transform: scale(0.58) !important;
         transform-origin: center top !important;
     }
