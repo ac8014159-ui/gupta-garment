@@ -4734,7 +4734,7 @@ body.modal-open {
 @media (max-width: 600px) {
 
     .hero-kids {
-        margin-top: 5px !important;
+        margin-top: 0px !important;
         transform: scale(0.68) !important;
         transform-origin: center top !important;
     }
