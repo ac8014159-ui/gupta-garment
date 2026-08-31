@@ -4347,3 +4347,51 @@ body.modal-open {
     }
 
 }
+/* =========================================================
+   FLOATING WHATSAPP TOOLTIP - FIX
+   ========================================================= */
+
+.floating-whatsapp {
+    position: fixed;
+}
+
+.floating-whatsapp .whatsapp-tooltip {
+    position: absolute;
+    right: 65px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    font-size: 13px;
+    line-height: 1;
+    font-weight: 600;
+
+    white-space: nowrap;
+    width: auto;
+    max-width: none;
+
+    padding: 8px 12px;
+
+    background: #ffffff;
+    color: #222222;
+
+    border-radius: 6px;
+
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
+
+    z-index: 9999;
+}
+
+/* Small arrow */
+.floating-whatsapp .whatsapp-tooltip::after {
+    content: "";
+    position: absolute;
+
+    right: -6px;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    border-width: 6px 0 6px 6px;
+    border-style: solid;
+    border-color: transparent transparent transparent #ffffff;
+}
