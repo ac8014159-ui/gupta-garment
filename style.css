@@ -4348,50 +4348,100 @@ body.modal-open {
 
 }
 /* =========================================================
-   FLOATING WHATSAPP TOOLTIP - FIX
+   FLOATING WHATSAPP TOOLTIP - FINAL
    ========================================================= */
 
 .floating-whatsapp {
     position: fixed;
 }
 
+
+/* ================= CHAT WITH US TOOLTIP ================= */
+
 .floating-whatsapp .whatsapp-tooltip {
-    position: absolute;
-    right: 65px;
-    top: 50%;
-    transform: translateY(-50%);
 
-    font-size: 13px;
-    line-height: 1;
-    font-weight: 600;
+    position: absolute !important;
 
-    white-space: nowrap;
-    width: auto;
-    max-width: none;
+    /* Circle ke left side */
+    top: 50% !important;
+    right: calc(100% + 10px) !important;
 
-    padding: 8px 12px;
+    /* Vertical center */
+    transform: translateY(-50%) !important;
 
-    background: #ffffff;
-    color: #222222;
+    /* Size */
+    width: max-content !important;
+    max-width: none !important;
+    min-width: 0 !important;
 
-    border-radius: 6px;
+    height: auto !important;
+    min-height: 0 !important;
 
-    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
+    /* Spacing */
+    padding: 7px 12px !important;
+    margin: 0 !important;
 
-    z-index: 9999;
+    box-sizing: border-box !important;
+
+    /* Text */
+    font-family: Arial, sans-serif !important;
+    font-size: 12px !important;
+    line-height: 1.2 !important;
+    font-weight: 600 !important;
+    letter-spacing: 0 !important;
+
+    white-space: nowrap !important;
+    text-align: center !important;
+
+    /* Appearance */
+    background: #ffffff !important;
+    color: #222222 !important;
+
+    border-radius: 6px !important;
+
+    box-shadow:
+        0 3px 12px rgba(0, 0, 0, 0.15);
+
+    z-index: 99999 !important;
+
+    pointer-events: none !important;
 }
 
-/* Small arrow */
+
+/* ================= SMALL ARROW ================= */
+
 .floating-whatsapp .whatsapp-tooltip::after {
+
     content: "";
-    position: absolute;
 
-    right: -6px;
-    top: 50%;
+    position: absolute !important;
 
-    transform: translateY(-50%);
+    /* Arrow tooltip ke right side par */
+    right: -6px !important;
+    top: 50% !important;
 
-    border-width: 6px 0 6px 6px;
-    border-style: solid;
-    border-color: transparent transparent transparent #ffffff;
+    transform: translateY(-50%) !important;
+
+    width: 0 !important;
+    height: 0 !important;
+
+    border-top: 6px solid transparent !important;
+    border-bottom: 6px solid transparent !important;
+    border-left: 6px solid #ffffff !important;
+}
+
+
+/* ================= MOBILE ================= */
+
+@media (max-width: 768px) {
+
+    .floating-whatsapp .whatsapp-tooltip {
+
+        right: calc(100% + 8px) !important;
+
+        font-size: 11px !important;
+
+        padding: 6px 10px !important;
+    }
+
 }
