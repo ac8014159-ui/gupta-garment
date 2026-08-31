@@ -4778,7 +4778,7 @@ body.modal-open {
 
 }
 /* =========================================================
-   FINAL MOBILE HERO KIDS POSITION FIX
+   FINAL MOBILE HERO — KIDS JUST BELOW WHATSAPP BUTTON
    ========================================================= */
 
 @media (max-width: 600px) {
@@ -4789,20 +4789,38 @@ body.modal-open {
         height: auto !important;
     }
 
+    .hero-content {
+        margin-bottom: 0 !important;
+    }
+
+    .hero-buttons {
+        margin-bottom: 0 !important;
+    }
+
     .hero-kids {
         position: relative !important;
 
-        /* Kids ko buttons ke closer lao */
-        margin-top: -70px !important;
-        margin-bottom: -40px !important;
+        /* WhatsApp button ke just neeche */
+        margin-top: 12px !important;
+        margin-bottom: 0 !important;
 
-        /* Size + center */
+        /* Kids size */
         transform: scale(0.68) !important;
         transform-origin: center top !important;
 
         height: auto !important;
         min-height: 0 !important;
         padding: 0 !important;
+    }
+
+}
+@media (max-width: 380px) {
+
+    .hero-kids {
+        margin-top: 10px !important;
+        margin-bottom: 0 !important;
+        transform: scale(0.58) !important;
+        transform-origin: center top !important;
     }
 
 }
