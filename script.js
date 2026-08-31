@@ -495,27 +495,28 @@ document.addEventListener("DOMContentLoaded", function () {
                    SMART WHATSAPP MESSAGE
                    ========================================= */
 
-                const message =
-                    `Hello Gupta Garments,
+const message =
+    "Hello Gupta Garments \uD83D\uDC4B\n\n" +
+    "I am interested in the following product:\n\n" +
+    "\uD83D\uDED2 Product: " +
+    productName +
+    "\n" +
+    "\uD83D\uDCB0 Price: " +
+    (productPrice || "Please confirm") +
+    "\n" +
+    "\uD83D\uDCCF " +
+    (productSizes || "Size details not available") +
+    "\n\n" +
+    "Please confirm:\n" +
+    "\u2705 Availability\n" +
+    "\u2705 Available sizes\n" +
+    "\u2705 Any other details\n\n" +
+    "Thank you!";
 
-` +
-                    `I am interested in:
-` +
-                    `${productName}
 
-` +
-                    `Price: ${productPrice || "Please confirm"}
-
-` +
-                    `${productSizes || ""}
-
-` +
-                    `Please share availability and details.`;
-
-
-                const whatsappURL =
-                    "https://wa.me/918218403183?text=" +
-                    encodeURIComponent(message);
+const whatsappURL =
+    "https://wa.me/918218403183?text=" +
+    encodeURIComponent(message);
 
 
                 /*
@@ -549,10 +550,14 @@ document.addEventListener("DOMContentLoaded", function () {
             "click",
             function () {
 
-                const message =
-                    "Hello Gupta Garments,\n\n" +
-                    "I want to know more about your Kids Wear collection.\n\n" +
-                    "Please share availability and details.";
+     const message =
+    "Hello Gupta Garments \uD83D\uDC4B\n\n" +
+    "I would like to know more about your Kids Wear collection.\n\n" +
+    "\uD83D\uDED2 Please share:\n" +
+    "\u2705 Available products\n" +
+    "\u2705 Prices\n" +
+    "\u2705 Available sizes\n\n" +
+    "Thank you!";
 
 
                 const whatsappURL =
@@ -917,7 +922,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const viewDetailsButtons =
         document.querySelectorAll(".view-details-btn");
+/* =====================================================
+   STEP 2.3-C — CURRENT REVIEW PRODUCT
+   ===================================================== */
 
+let currentReviewProduct = "";
 
     /* =====================================================
        PRODUCT DESCRIPTIONS
@@ -1091,16 +1100,22 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (modalWhatsapp && productName) {
 
                     const message =
-                        "Hello Gupta Garments,\n\n" +
-                        "I am interested in:\n" +
-                        productName +
-                        "\n\n" +
-                        "Price: " +
-                        (productPrice || "Please confirm") +
-                        "\n\n" +
-                        (productSizes || "") +
-                        "\n\n" +
-                        "Please share availability and details.";
+    "Hello Gupta Garments 👋\n\n" +
+    "I am interested in the following product:\n\n" +
+    "🛍️ Product: " +
+    productName +
+    "\n" +
+    "💰 Price: " +
+    (productPrice || "Please confirm") +
+    "\n" +
+    "📏 " +
+    (productSizes || "Size details not available") +
+    "\n\n" +
+    "Please confirm:\n" +
+    "✅ Availability\n" +
+    "✅ Available sizes\n" +
+    "✅ Any other details\n\n" +
+    "Thank you!";
 
                     modalWhatsapp.href =
                         "https://wa.me/918218403183?text=" +
@@ -1184,4 +1199,783 @@ document.addEventListener("DOMContentLoaded", function () {
 
         }
     );
+    /* =====================================================
+   STEP 2.3-C — CUSTOMER REVIEW ENGINE
+   ===================================================== */
+
+/* ================= REVIEW STORAGE ================= */
+
+const REVIEW_STORAGE_KEY = "guptaGarmentsReviews";
+
+
+/* ================= GET ALL REVIEWS ================= */
+
+function getAllReviews() {
+    try {
+        const storedReviews =
+            localStorage.getItem(REVIEW_STORAGE_KEY);
+
+        if (!storedReviews) {
+            return {};
+        }
+
+        return JSON.parse(storedReviews);
+
+    } catch (error) {
+
+        console.error(
+            "Unable to load reviews:",
+            error
+        );
+
+        return {};
+    }
+}
+
+
+/* ================= SAVE ALL REVIEWS ================= */
+
+function saveAllReviews(reviews) {
+    try {
+
+        localStorage.setItem(
+            REVIEW_STORAGE_KEY,
+            JSON.stringify(reviews)
+        );
+
+        return true;
+
+    } catch (error) {
+
+        console.error(
+            "Unable to save reviews:",
+            error
+        );
+
+        return false;
+    }
+}
+
+
+/* ================= GET PRODUCT REVIEWS ================= */
+
+function getProductReviews(productName) {
+
+    if (!productName) {
+        return [];
+    }
+
+    const allReviews =
+        getAllReviews();
+
+    return allReviews[productName] || [];
+}
+
+
+/* ================= SAVE PRODUCT REVIEW ================= */
+
+function saveProductReview(productName, review) {
+
+    if (!productName) {
+        return false;
+    }
+
+    const allReviews =
+        getAllReviews();
+
+    if (!allReviews[productName]) {
+        allReviews[productName] = [];
+    }
+
+    allReviews[productName].push(review);
+
+    return saveAllReviews(allReviews);
+}
+
+
+/* ================= CREATE STARS ================= */
+
+function createStars(rating) {
+
+    let stars = "";
+
+    for (let i = 1; i <= 5; i++) {
+
+        if (i <= rating) {
+            stars += "★";
+        } else {
+            stars += "☆";
+        }
+    }
+
+    return stars;
+}
+
+
+/* ================= UPDATE RATING SUMMARY ================= */
+
+function updateReviewSummary(productName) {
+
+    const reviews =
+        getProductReviews(productName);
+
+    const averageElement =
+        document.querySelector("#reviewAverage");
+
+    const averageStarsElement =
+        document.querySelector("#reviewAverageStars");
+
+    const countElement =
+        document.querySelector("#reviewCount");
+
+
+    /* No reviews */
+
+    if (reviews.length === 0) {
+
+        if (averageElement) {
+            averageElement.textContent = "0.0";
+        }
+
+        if (averageStarsElement) {
+            averageStarsElement.textContent =
+                "☆☆☆☆☆";
+        }
+
+        if (countElement) {
+            countElement.textContent =
+                "(0 reviews)";
+        }
+
+        return;
+    }
+
+
+    /* Calculate average */
+
+    const totalRating =
+        reviews.reduce(
+            function (total, review) {
+                return total + Number(review.rating);
+            },
+            0
+        );
+
+    const average =
+        totalRating / reviews.length;
+
+
+    const roundedAverage =
+        Math.round(average * 10) / 10;
+
+
+    if (averageElement) {
+        averageElement.textContent =
+            roundedAverage.toFixed(1);
+    }
+
+
+    if (averageStarsElement) {
+
+        averageStarsElement.textContent =
+            createStars(
+                Math.round(average)
+            );
+    }
+
+
+    if (countElement) {
+
+        countElement.textContent =
+            "(" +
+            reviews.length +
+            (reviews.length === 1
+                ? " review)"
+                : " reviews)");
+    }
+}
+
+
+/* ================= RENDER REVIEWS ================= */
+
+function renderReviews(productName) {
+
+    const reviewsList =
+        document.querySelector("#reviewsList");
+
+    if (!reviewsList) {
+        return;
+    }
+
+
+    const reviews =
+        getProductReviews(productName);
+
+
+    /* Clear existing reviews */
+
+    reviewsList.innerHTML = "";
+
+
+    /* No reviews */
+
+    if (reviews.length === 0) {
+
+        const emptyState =
+            document.createElement("div");
+
+        emptyState.className =
+            "no-reviews";
+
+
+        const icon =
+            document.createElement("i");
+
+        icon.className =
+            "fa-regular fa-comment-dots";
+
+
+        const paragraph =
+            document.createElement("p");
+
+        paragraph.textContent =
+            "No reviews yet";
+
+
+        const span =
+            document.createElement("span");
+
+        span.textContent =
+            "Be the first to share your experience.";
+
+
+        emptyState.appendChild(icon);
+        emptyState.appendChild(paragraph);
+        emptyState.appendChild(span);
+
+        reviewsList.appendChild(
+            emptyState
+        );
+
+        updateReviewSummary(
+            productName
+        );
+
+        return;
+    }
+
+
+    /* Newest reviews first */
+
+    const sortedReviews =
+        [...reviews].reverse();
+
+
+    sortedReviews.forEach(
+        function (review) {
+
+            const reviewItem =
+                document.createElement("div");
+
+            reviewItem.className =
+                "review-item";
+
+
+            /* ---------- TOP ---------- */
+
+            const top =
+                document.createElement("div");
+
+            top.className =
+                "review-item-top";
+
+
+            const reviewerName =
+                document.createElement("span");
+
+            reviewerName.className =
+                "reviewer-name";
+
+            reviewerName.textContent =
+                review.name;
+
+
+            const stars =
+                document.createElement("span");
+
+            stars.className =
+                "review-item-stars";
+
+            stars.textContent =
+                createStars(
+                    Number(review.rating)
+                );
+
+
+            top.appendChild(
+                reviewerName
+            );
+
+            top.appendChild(
+                stars
+            );
+
+
+            /* ---------- REVIEW TEXT ---------- */
+
+            const text =
+                document.createElement("p");
+
+            text.className =
+                "review-item-text";
+
+            text.textContent =
+                review.message;
+
+
+            /* ---------- DATE ---------- */
+
+            const date =
+                document.createElement("span");
+
+            date.className =
+                "review-date";
+
+
+            if (review.date) {
+
+                date.textContent =
+                    review.date;
+            }
+
+
+            /* ---------- APPEND ---------- */
+
+            reviewItem.appendChild(top);
+
+            reviewItem.appendChild(text);
+
+            if (review.date) {
+                reviewItem.appendChild(date);
+            }
+
+
+            reviewsList.appendChild(
+                reviewItem
+            );
+        }
+    );
+
+
+    updateReviewSummary(
+        productName
+    );
+}
+
+
+/* ================= RESET RATING ================= */
+
+function resetReviewRating() {
+
+    const ratingButtons =
+        document.querySelectorAll(
+            "#reviewRating button"
+        );
+
+    ratingButtons.forEach(
+        function (button) {
+
+            button.classList.remove(
+                "active"
+            );
+        }
+    );
+}
+
+
+/* ================= SET RATING ================= */
+
+function setReviewRating(rating) {
+
+    const ratingButtons =
+        document.querySelectorAll(
+            "#reviewRating button"
+        );
+
+    ratingButtons.forEach(
+        function (button) {
+
+            const buttonRating =
+                Number(
+                    button.getAttribute(
+                        "data-rating"
+                    )
+                );
+
+
+            if (buttonRating <= rating) {
+
+                button.classList.add(
+                    "active"
+                );
+
+            } else {
+
+                button.classList.remove(
+                    "active"
+                );
+            }
+        }
+    );
+}
+
+
+/* ================= RATING BUTTONS ================= */
+
+const reviewRatingButtons =
+    document.querySelectorAll(
+        "#reviewRating button"
+    );
+
+
+reviewRatingButtons.forEach(
+    function (button) {
+
+        button.addEventListener(
+            "click",
+            function () {
+
+                const rating =
+                    Number(
+                        button.getAttribute(
+                            "data-rating"
+                        )
+                    );
+
+                if (
+                    !rating ||
+                    rating < 1 ||
+                    rating > 5
+                ) {
+                    return;
+                }
+
+                setReviewRating(
+                    rating
+                );
+
+                button.parentElement.setAttribute(
+                    "data-selected-rating",
+                    rating
+                );
+            }
+        );
+    }
+);
+
+
+/* ================= GET SELECTED RATING ================= */
+
+function getSelectedReviewRating() {
+
+    const ratingContainer =
+        document.querySelector(
+            "#reviewRating"
+        );
+
+    if (!ratingContainer) {
+        return 0;
+    }
+
+    return Number(
+        ratingContainer.getAttribute(
+            "data-selected-rating"
+        )
+    ) || 0;
+}
+
+
+/* ================= SUBMIT REVIEW ================= */
+
+const submitReviewButton =
+    document.querySelector(
+        ".submit-review-btn"
+    );
+
+
+if (submitReviewButton) {
+
+    submitReviewButton.addEventListener(
+        "click",
+        function () {
+
+            /* Current product check */
+
+            if (!currentReviewProduct) {
+
+                alert(
+                    "Please open a product first."
+                );
+
+                return;
+            }
+
+
+            /* Get fields */
+
+            const nameInput =
+                document.querySelector(
+                    "#reviewName"
+                );
+
+            const messageInput =
+                document.querySelector(
+                    "#reviewMessage"
+                );
+
+
+            const name =
+                nameInput
+                    ? nameInput.value.trim()
+                    : "";
+
+
+            const message =
+                messageInput
+                    ? messageInput.value.trim()
+                    : "";
+
+
+            const rating =
+                getSelectedReviewRating();
+
+
+            /* ================= VALIDATION ================= */
+
+            if (!rating) {
+
+                alert(
+                    "Please select a rating."
+                );
+
+                return;
+            }
+
+
+            if (!name) {
+
+                alert(
+                    "Please enter your name."
+                );
+
+                if (nameInput) {
+                    nameInput.focus();
+                }
+
+                return;
+            }
+
+
+            if (!message) {
+
+                alert(
+                    "Please write your review."
+                );
+
+                if (messageInput) {
+                    messageInput.focus();
+                }
+
+                return;
+            }
+
+
+            /* ================= CREATE REVIEW ================= */
+
+            const review = {
+
+                id:
+                    Date.now(),
+
+                name:
+                    name,
+
+                rating:
+                    rating,
+
+                message:
+                    message,
+
+                date:
+                    new Date().toLocaleDateString(
+                        "en-IN",
+                        {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric"
+                        }
+                    )
+            };
+
+
+            /* ================= SAVE ================= */
+
+            const saved =
+                saveProductReview(
+                    currentReviewProduct,
+                    review
+                );
+
+
+            if (!saved) {
+
+                alert(
+                    "Unable to save review. Please try again."
+                );
+
+                return;
+            }
+
+
+            /* ================= REFRESH UI ================= */
+
+            renderReviews(
+                currentReviewProduct
+            );
+
+
+            /* ================= RESET FORM ================= */
+
+            if (nameInput) {
+                nameInput.value = "";
+            }
+
+            if (messageInput) {
+                messageInput.value = "";
+            }
+
+
+            resetReviewRating();
+
+
+            const ratingContainer =
+                document.querySelector(
+                    "#reviewRating"
+                );
+
+            if (ratingContainer) {
+
+                ratingContainer.removeAttribute(
+                    "data-selected-rating"
+                );
+            }
+
+
+            /* ================= SUCCESS ================= */
+
+            alert(
+                "Thank you! Your review has been submitted."
+            );
+        }
+    );
+}
+
+
+/* =====================================================
+   CONNECT REVIEWS WITH PRODUCT MODAL
+   ===================================================== */
+
+viewDetailsButtons.forEach(
+    function (button) {
+
+        button.addEventListener(
+            "click",
+            function () {
+
+                const productCard =
+                    button.closest(
+                        ".product-card"
+                    );
+
+                if (!productCard) {
+                    return;
+                }
+
+
+                const productName =
+                    productCard
+                        .querySelector("h3")
+                        ?.textContent
+                        .trim();
+
+
+                if (!productName) {
+                    return;
+                }
+
+
+                /* Set current product */
+
+                currentReviewProduct =
+                    productName;
+
+
+                /* Load product reviews */
+
+                renderReviews(
+                    currentReviewProduct
+                );
+
+
+                /* Reset rating */
+
+                resetReviewRating();
+
+
+                const ratingContainer =
+                    document.querySelector(
+                        "#reviewRating"
+                    );
+
+                if (ratingContainer) {
+
+                    ratingContainer.removeAttribute(
+                        "data-selected-rating"
+                    );
+                }
+
+
+                /* Clear form */
+
+                const nameInput =
+                    document.querySelector(
+                        "#reviewName"
+                    );
+
+                const messageInput =
+                    document.querySelector(
+                        "#reviewMessage"
+                    );
+
+
+                if (nameInput) {
+                    nameInput.value = "";
+                }
+
+                if (messageInput) {
+                    messageInput.value = "";
+                }
+            }
+        );
+    }
+);
+
+
+/* =====================================================
+   STEP 2.3-C COMPLETE
+   ===================================================== */
+
+console.log(
+    "Gupta Garments - Customer Review Engine loaded successfully."
+);
 });
