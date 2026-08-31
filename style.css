@@ -4777,3 +4777,32 @@ body.modal-open {
     }
 
 }
+/* =========================================================
+   FINAL MOBILE HERO KIDS POSITION FIX
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .hero {
+        position: relative !important;
+        min-height: 0 !important;
+        height: auto !important;
+    }
+
+    .hero-kids {
+        position: relative !important;
+
+        /* Kids ko buttons ke closer lao */
+        margin-top: -70px !important;
+        margin-bottom: -40px !important;
+
+        /* Size + center */
+        transform: scale(0.68) !important;
+        transform-origin: center top !important;
+
+        height: auto !important;
+        min-height: 0 !important;
+        padding: 0 !important;
+    }
+
+}
