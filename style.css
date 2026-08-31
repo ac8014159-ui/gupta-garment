@@ -4445,3 +4445,285 @@ body.modal-open {
     }
 
 }
+/* =========================================================
+   MOBILE & TABLET RESPONSIVE FIX
+   GUPTA GARMENTS
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    /* =====================================================
+       HERO SECTION
+       ===================================================== */
+
+    .hero {
+        min-height: auto !important;
+        height: auto !important;
+
+        display: flex !important;
+        flex-direction: column !important;
+
+        align-items: center !important;
+        justify-content: center !important;
+
+        text-align: center !important;
+
+        padding: 45px 20px 30px !important;
+
+        overflow: hidden !important;
+    }
+
+
+    /* =====================================================
+       HERO CONTENT
+       ===================================================== */
+
+    .hero-content {
+        width: 100% !important;
+        max-width: 600px !important;
+
+        margin: 0 auto !important;
+
+        text-align: center !important;
+
+        position: relative !important;
+        z-index: 5 !important;
+    }
+
+
+    .hero-content h1 {
+        font-size: clamp(38px, 8vw, 58px) !important;
+        line-height: 1.05 !important;
+
+        margin: 12px 0 15px !important;
+    }
+
+
+    .hero-content p {
+        max-width: 520px !important;
+
+        margin: 0 auto 22px !important;
+
+        line-height: 1.6 !important;
+    }
+
+
+    /* =====================================================
+       HERO BUTTONS
+       ===================================================== */
+
+    .hero-buttons {
+        display: flex !important;
+
+        flex-wrap: wrap !important;
+
+        justify-content: center !important;
+
+        align-items: center !important;
+
+        gap: 10px !important;
+
+        position: relative !important;
+        z-index: 10 !important;
+    }
+
+
+    .hero-buttons a {
+        position: relative !important;
+        z-index: 10 !important;
+    }
+
+
+    /* =====================================================
+       HERO KIDS / ILLUSTRATION
+       ===================================================== */
+
+    .hero-kids {
+        position: relative !important;
+
+        right: auto !important;
+        left: auto !important;
+        top: auto !important;
+        bottom: auto !important;
+
+        width: 100% !important;
+        max-width: 520px !important;
+
+        height: auto !important;
+
+        margin: 30px auto 0 !important;
+
+        display: flex !important;
+
+        justify-content: center !important;
+        align-items: flex-end !important;
+
+        gap: 8px !important;
+
+        transform: scale(0.82) !important;
+
+        transform-origin: center bottom !important;
+
+        z-index: 2 !important;
+    }
+
+
+    /* =====================================================
+       PREVENT HORIZONTAL OVERFLOW
+       ===================================================== */
+
+    body {
+        overflow-x: hidden !important;
+    }
+
+    html {
+        overflow-x: hidden !important;
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE PHONE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    /* HERO */
+
+    .hero {
+        padding: 32px 15px 20px !important;
+    }
+
+
+    /* Hero heading */
+
+    .hero-content h1 {
+        font-size: 40px !important;
+
+        line-height: 1.05 !important;
+    }
+
+
+    /* Hero paragraph */
+
+    .hero-content p {
+        font-size: 14px !important;
+
+        line-height: 1.55 !important;
+
+        padding: 0 5px !important;
+    }
+
+
+    /* Hero buttons */
+
+    .hero-buttons {
+        flex-direction: column !important;
+
+        width: 100% !important;
+
+        gap: 10px !important;
+    }
+
+
+    .hero-buttons a {
+        width: 100% !important;
+
+        max-width: 260px !important;
+
+        box-sizing: border-box !important;
+    }
+
+
+    /* Kids illustration */
+
+    .hero-kids {
+        max-width: 390px !important;
+
+        margin-top: 20px !important;
+
+        gap: 3px !important;
+
+        transform: scale(0.68) !important;
+    }
+
+
+    /* =====================================================
+       CATEGORY SECTION
+       ===================================================== */
+
+    .categories-grid {
+        display: flex !important;
+
+        overflow-x: auto !important;
+
+        flex-wrap: nowrap !important;
+
+        gap: 10px !important;
+
+        padding: 5px 15px 15px !important;
+
+        scroll-behavior: smooth !important;
+    }
+
+
+    .category-card {
+        flex: 0 0 110px !important;
+
+        min-width: 110px !important;
+    }
+
+
+    /* =====================================================
+       FLOATING WHATSAPP
+       ===================================================== */
+
+    .floating-whatsapp {
+        right: 15px !important;
+
+        bottom: 15px !important;
+    }
+
+    .floating-whatsapp .whatsapp-tooltip {
+        right: calc(100% + 8px) !important;
+
+        top: 50% !important;
+
+        transform: translateY(-50%) !important;
+
+        font-size: 11px !important;
+    }
+
+}
+
+
+/* =========================================================
+   VERY SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 380px) {
+
+    .hero-content h1 {
+        font-size: 34px !important;
+    }
+
+
+    .hero-content p {
+        font-size: 13px !important;
+    }
+
+
+    .hero-kids {
+        transform: scale(0.58) !important;
+
+        margin-top: 5px !important;
+    }
+
+
+    .hero {
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+    }
+
+}
