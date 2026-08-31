@@ -4750,3 +4750,30 @@ body.modal-open {
     }
 
 }
+/* =========================================================
+   MOBILE HERO - COMPACT LAYOUT
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .hero {
+        min-height: 0 !important;
+        height: auto !important;
+
+        justify-content: flex-start !important;
+    }
+
+    .hero-content {
+        margin-bottom: 0 !important;
+    }
+
+    .hero-buttons {
+        margin-bottom: 0 !important;
+    }
+
+    .hero-kids {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+    }
+
+}
