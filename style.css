@@ -4727,3 +4727,16 @@ body.modal-open {
     }
 
 }
+/* =========================================================
+   MOBILE - REDUCE SPACE BETWEEN HERO BUTTONS & KIDS
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .hero-kids {
+        margin-top: 5px !important;
+        transform: scale(0.68) !important;
+        transform-origin: center top !important;
+    }
+
+}
