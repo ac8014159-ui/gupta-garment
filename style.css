@@ -2,12 +2,6 @@
    GUPTA GARMENTS - KIDS WEAR WEBSITE
    COMPLETE RESPONSIVE CSS
    ========================================================= */
-
-
-/* =========================================================
-   ROOT
-   ========================================================= */
-
 :root {
     --maroon: #8b0038;
     --dark-maroon: #650027;
@@ -29,11 +23,9 @@
     --side-space: 4%;
 }
 
-
 /* =========================================================
    RESET
    ========================================================= */
-
 * {
     margin: 0;
     padding: 0;
@@ -4875,5 +4867,302 @@ body.modal-open {
         transform: scale(0.58) !important;
         transform-origin: center top !important;
     }
+}
+/* =========================================================
+   SEASONS DROPDOWN
+   ========================================================= */
 
+/* Seasons dropdown container */
+.nav-menu .dropdown {
+    position: relative;
+}
+
+/* Seasons main button */
+.nav-menu .dropdown > a {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+/* Chevron animation */
+.nav-menu .dropdown > a i {
+    font-size: 11px;
+    transition: transform 0.3s ease;
+}
+
+/* Rotate chevron on hover */
+.nav-menu .dropdown:hover > a i {
+    transform: rotate(180deg);
+}
+
+
+/* =========================================================
+   SEASONS DROPDOWN MENU
+   ========================================================= */
+
+.nav-menu .dropdown .dropdown-menu {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+
+    min-width: 210px;
+    padding: 8px;
+
+    background: #ffffff;
+    border-radius: 12px;
+
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    transition:
+        opacity 0.25s ease,
+        transform 0.25s ease,
+        visibility 0.25s ease;
+
+    z-index: 999;
+}
+
+
+/* Small arrow above dropdown */
+.nav-menu .dropdown .dropdown-menu::before {
+    content: "";
+    position: absolute;
+
+    top: -6px;
+    left: 50%;
+
+    width: 12px;
+    height: 12px;
+
+    background: #ffffff;
+
+    transform: translateX(-50%) rotate(45deg);
+}
+
+
+/* Show dropdown on desktop hover */
+.nav-menu .dropdown:hover .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+
+    transform: translateX(-50%) translateY(0);
+}
+
+
+/* =========================================================
+   SEASON OPTIONS
+   ========================================================= */
+
+.nav-menu .dropdown .dropdown-menu a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    width: 100%;
+    padding: 11px 13px;
+
+    border-radius: 8px;
+
+    color: #333333;
+    text-decoration: none;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    transition:
+        background 0.25s ease,
+        color 0.25s ease,
+        transform 0.25s ease;
+}
+
+
+/* Icons */
+.nav-menu .dropdown .dropdown-menu a i {
+    width: 20px;
+
+    font-size: 16px;
+
+    text-align: center;
+
+    transition:
+        transform 0.25s ease,
+        color 0.25s ease;
+}
+
+
+/* Hover effect */
+.nav-menu .dropdown .dropdown-menu a:hover {
+    background: #f7f1f1;
+    color: #7b1e1e;
+
+    transform: translateX(3px);
+}
+
+
+/* Icon hover animation */
+.nav-menu .dropdown .dropdown-menu a:hover i {
+    transform: scale(1.15);
+}
+
+
+/* =========================================================
+   ACTIVE SEASON
+   ========================================================= */
+
+.nav-menu .dropdown .dropdown-menu a.active-season {
+    background: #7b1e1e;
+    color: #ffffff;
+}
+
+
+/* Active icon */
+.nav-menu .dropdown .dropdown-menu a.active-season i {
+    color: #ffffff;
+}
+
+
+/* Active hover */
+.nav-menu .dropdown .dropdown-menu a.active-season:hover {
+    background: #641818;
+    color: #ffffff;
+
+    transform: translateX(3px);
+}
+
+
+/* =========================================================
+   MOBILE SEASONS DROPDOWN
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .nav-menu .dropdown .dropdown-menu {
+        position: static;
+
+        width: 100%;
+        min-width: unset;
+
+        margin-top: 5px;
+
+        padding: 5px;
+
+        transform: none;
+
+        background: rgba(255, 255, 255, 0.06);
+
+        box-shadow: none;
+        border-radius: 8px;
+
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+
+        display: none;
+    }
+
+
+    /* JS adds this class on mobile */
+    .nav-menu .dropdown.dropdown-open .dropdown-menu {
+        display: block;
+    }
+
+
+    /* Remove desktop arrow */
+    .nav-menu .dropdown .dropdown-menu::before {
+        display: none;
+    }
+
+
+    /* Mobile season links */
+    .nav-menu .dropdown .dropdown-menu a {
+        padding: 10px 14px;
+
+        color: inherit;
+
+        border-radius: 7px;
+    }
+
+
+    .nav-menu .dropdown .dropdown-menu a:hover {
+        background: rgba(255, 255, 255, 0.12);
+
+        transform: translateX(3px);
+    }
+
+
+    /* Mobile active season */
+    .nav-menu .dropdown .dropdown-menu a.active-season {
+        background: rgba(255, 255, 255, 0.18);
+        color: inherit;
+    }
+
+
+    /* Mobile chevron */
+    .nav-menu .dropdown.dropdown-open > a i {
+        transform: rotate(180deg);
+    }
+}
+
+
+/* =========================================================
+   SEASON DROPDOWN ENTRY ANIMATION
+   ========================================================= */
+
+@media (min-width: 901px) {
+
+    .nav-menu .dropdown:hover .dropdown-menu a {
+        animation: seasonMenuItem 0.25s ease both;
+    }
+
+    .nav-menu .dropdown:hover .dropdown-menu a:nth-child(1) {
+        animation-delay: 0.03s;
+    }
+
+    .nav-menu .dropdown:hover .dropdown-menu a:nth-child(2) {
+        animation-delay: 0.08s;
+    }
+}
+
+
+@keyframes seasonMenuItem {
+
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* =========================================================
+   SECTION HIGHLIGHT WHEN SEASON IS SELECTED
+   ========================================================= */
+
+.section-highlight {
+    animation: seasonSectionHighlight 0.9s ease;
+}
+
+
+@keyframes seasonSectionHighlight {
+
+    0% {
+        box-shadow: 0 0 0 rgba(123, 30, 30, 0);
+    }
+
+    35% {
+        box-shadow: 0 0 0 5px rgba(123, 30, 30, 0.12);
+    }
+
+    100% {
+        box-shadow: 0 0 0 rgba(123, 30, 30, 0);
+    }
 }

@@ -144,149 +144,350 @@ document.addEventListener("DOMContentLoaded", function () {
         return productCategories[productName] || [];
 
     }
+/* =====================================================
+   STEP 3 — SEASON FILTER
+   ===================================================== */
+
+/* Current selected season */
+let currentCategory = "all";
+let currentSeason = "all";
+/* =====================================================
+   GET PRODUCT SEASONS
+   ===================================================== */
+
+function getProductSeasons(productCard) {
+
+    if (!productCard) {
+        return [];
+    }
+
+    const seasonData =
+        productCard.getAttribute("data-season");
+
+    if (!seasonData) {
+        return [];
+    }
+
+    return seasonData
+        .toLowerCase()
+        .split(/[\s,|]+/)
+        .map(function (season) {
+            return season.trim();
+        })
+        .filter(Boolean);
+
+}
 
 
-    /* =====================================================
-       FILTER PRODUCTS
-       ===================================================== */
+/* =====================================================
+   SET SEASON FILTER
+   ===================================================== */
 
-    function filterProducts(category) {
+function setSeasonFilter(season) {
 
-        productCards.forEach(function (product, index) {
+    season = (season || "").toLowerCase().trim();
 
-            const categories =
-                getProductCategory(product);
+    if (
+        season !== "summer" &&
+        season !== "winter"
+    ) {
+        currentSeason = "all";
+    } else {
+        currentSeason = season;
+    }
 
-            let shouldShow = false;
+    /* Re-apply current category + new season */
+    filterProducts(currentCategory);
 
-            if (category === "all") {
+    /* Active season button */
+    setActiveSeasonButton(currentSeason);
 
-                shouldShow = true;
-
-            } else {
-
-                shouldShow =
-                    categories.includes(category);
-
-            }
-
-
-            if (shouldShow) {
-
-                product.style.display = "";
-
-                /*
-                   Small delay gives smooth animation
-                   when filtered products appear.
-                */
-
-                setTimeout(function () {
-
-                    product.classList.add(
-                        "product-visible"
-                    );
-
-                }, index * 60);
-
-            } else {
-
-                product.classList.remove(
-                    "product-visible"
-                );
-
-                product.style.display = "none";
-
-            }
-
-        });
+}
 
 
-        /* =================================================
-           NO PRODUCTS MESSAGE
-           ================================================= */
+/* =====================================================
+   SEASON MATCH
+   ===================================================== */
 
-        const visibleProducts =
-            Array.from(productCards).filter(function (product) {
+function productMatchesSeason(productCard) {
 
-                return product.style.display !== "none";
+    if (currentSeason === "all") {
+        return true;
+    }
 
-            });
+    const seasons =
+        getProductSeasons(productCard);
+
+    return seasons.includes(currentSeason);
+
+}
+
+/* =====================================================
+   FILTER PRODUCTS
+   CATEGORY + SEASON
+   ===================================================== */
+
+function filterProducts(category) {
+
+    /* Save current category */
+    currentCategory = category || "all";
+
+    productCards.forEach(function (product, index) {
+
+        const categories =
+            getProductCategory(product);
 
 
-        const noProducts =
-            document.querySelector("#noProducts");
+        /* ================= CATEGORY MATCH ================= */
 
+        let categoryMatch = false;
 
-        if (noProducts) {
+        if (currentCategory === "all") {
 
-            if (visibleProducts.length === 0) {
+            categoryMatch = true;
 
-                noProducts.style.display = "block";
+        } else {
 
-            } else {
-
-                noProducts.style.display = "none";
-
-            }
+            categoryMatch =
+                categories.includes(currentCategory);
 
         }
 
 
-        /* =================================================
-           FILTER STATUS
-           ================================================= */
+        /* ================= SEASON MATCH ================= */
 
-        const filterStatus =
-            document.querySelector("#filterStatus");
-
-        const filterName =
-            document.querySelector("#filterName");
+        const seasonMatch =
+            productMatchesSeason(product);
 
 
-        if (filterStatus && filterName) {
+        /* ================= FINAL MATCH ================= */
 
-            if (category === "all") {
+        const shouldShow =
+            categoryMatch && seasonMatch;
 
-                filterStatus.style.display = "none";
 
-            } else {
+        /* ================= SHOW / HIDE ================= */
 
-                filterStatus.style.display = "flex";
+        if (shouldShow) {
 
-                const readableName =
-                    category
+            product.style.display = "";
+
+            setTimeout(function () {
+
+                product.classList.add(
+                    "product-visible"
+                );
+
+            }, index * 60);
+
+        } else {
+
+            product.classList.remove(
+                "product-visible"
+            );
+
+            product.style.display = "none";
+
+        }
+
+    });
+
+
+    /* =================================================
+       NO PRODUCTS MESSAGE
+       ================================================= */
+
+    const visibleProducts =
+        Array.from(productCards).filter(function (product) {
+
+            return product.style.display !== "none";
+
+        });
+
+
+    const noProducts =
+        document.querySelector("#noProducts");
+
+
+    if (noProducts) {
+
+        noProducts.style.display =
+            visibleProducts.length === 0
+                ? "block"
+                : "none";
+
+    }
+
+
+    /* =================================================
+       FILTER STATUS
+       ================================================= */
+
+    const filterStatus =
+        document.querySelector("#filterStatus");
+
+    const filterName =
+        document.querySelector("#filterName");
+
+
+    if (filterStatus && filterName) {
+
+        if (
+            currentCategory === "all" &&
+            currentSeason === "all"
+        ) {
+
+            filterStatus.style.display = "none";
+
+        } else {
+
+            filterStatus.style.display = "flex";
+
+            let statusText = "";
+
+
+            /* Category name */
+            if (currentCategory !== "all") {
+
+                statusText =
+                    currentCategory
                         .replace("-", " ")
                         .replace(/\b\w/g, function (letter) {
                             return letter.toUpperCase();
                         });
 
-                filterName.textContent =
-                    readableName;
+            }
+
+
+            /* Season name */
+            if (currentSeason !== "all") {
+
+                const seasonName =
+                    currentSeason.charAt(0).toUpperCase() +
+                    currentSeason.slice(1);
+
+
+                if (statusText) {
+
+                    statusText +=
+                        " • " + seasonName;
+
+                } else {
+
+                    statusText =
+                        seasonName;
+
+                }
 
             }
 
-        }
 
-
-        /* =================================================
-           SCROLL TO PRODUCTS
-           ================================================= */
-
-        const productsSection =
-            document.querySelector("#new-arrivals");
-
-        if (productsSection) {
-
-            productsSection.scrollIntoView({
-                behavior: "smooth",
-                block: "start"
-            });
+            filterName.textContent =
+                statusText;
 
         }
 
     }
 
 
+    /* =================================================
+       SCROLL TO PRODUCTS
+       ================================================= */
+
+    const productsSection =
+        document.querySelector("#new-arrivals");
+
+
+    if (productsSection) {
+
+        productsSection.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+    }
+
+}
+/* =====================================================
+   SEASON FILTER BUTTONS
+   ===================================================== */
+
+const seasonFilterButtons =
+    document.querySelectorAll(
+        "[data-season-filter]"
+    );
+
+
+seasonFilterButtons.forEach(function (button) {
+
+    button.addEventListener(
+        "click",
+        function (event) {
+
+            event.preventDefault();
+
+
+            const season =
+                button.getAttribute(
+                    "data-season-filter"
+                );
+
+
+            if (!season) {
+                return;
+            }
+
+
+            setSeasonFilter(season);
+
+        }
+    );
+
+});
+
+
+/* =====================================================
+   ACTIVE SEASON BUTTON
+   ===================================================== */
+
+function setActiveSeasonButton(season) {
+
+    seasonFilterButtons.forEach(function (button) {
+
+        button.classList.remove(
+            "active-season"
+        );
+
+    });
+
+
+    if (season === "all") {
+        return;
+    }
+
+
+    seasonFilterButtons.forEach(function (button) {
+
+        const buttonSeason =
+            button.getAttribute(
+                "data-season-filter"
+            );
+
+
+        if (
+            buttonSeason &&
+            buttonSeason.toLowerCase() === season
+        ) {
+
+            button.classList.add(
+                "active-season"
+            );
+
+        }
+
+    });
+
+}
     /* =====================================================
        CATEGORY CARD CLICK
        ===================================================== */
@@ -1204,43 +1405,94 @@ let currentReviewProduct = "";
    ===================================================== */
 
 /* ================= REVIEW STORAGE ================= */
+/* =====================================================
+   STEP 2.3-C — MYSQL REVIEW API
+   ===================================================== */
 
-const REVIEW_STORAGE_KEY = "guptaGarmentsReviews";
+const REVIEW_API_URL = "http://localhost:3000/api/reviews";
 
 
-/* ================= GET ALL REVIEWS ================= */
+/* ================= GET PRODUCT REVIEWS ================= */
 
-function getAllReviews() {
+async function getProductReviews(productName) {
+
+    if (!productName) {
+        return [];
+    }
+
     try {
-        const storedReviews =
-            localStorage.getItem(REVIEW_STORAGE_KEY);
 
-        if (!storedReviews) {
-            return {};
+        const response = await fetch(
+            REVIEW_API_URL + "/" + encodeURIComponent(productName)
+        );
+
+        if (!response.ok) {
+            throw new Error("Failed to fetch reviews");
         }
 
-        return JSON.parse(storedReviews);
+        const data = await response.json();
+
+        if (!data.success) {
+            return [];
+        }
+
+        return data.reviews || [];
 
     } catch (error) {
 
         console.error(
-            "Unable to load reviews:",
+            "❌ Unable to load reviews:",
             error
         );
 
-        return {};
+        return [];
     }
 }
 
 
-/* ================= SAVE ALL REVIEWS ================= */
+/* ================= SAVE PRODUCT REVIEW ================= */
 
-function saveAllReviews(reviews) {
+async function saveProductReview(productName, review) {
+
+    if (!productName) {
+        return false;
+    }
+
     try {
 
-        localStorage.setItem(
-            REVIEW_STORAGE_KEY,
-            JSON.stringify(reviews)
+        const response = await fetch(
+            REVIEW_API_URL,
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    product_name: productName,
+                    customer_name: review.name,
+                    rating: review.rating,
+                    review_message: review.message
+                })
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+
+            console.error(
+                "❌ Review save failed:",
+                data
+            );
+
+            return false;
+        }
+
+        console.log(
+            "✅ Review saved to MySQL:",
+            data
         );
 
         return true;
@@ -1248,48 +1500,12 @@ function saveAllReviews(reviews) {
     } catch (error) {
 
         console.error(
-            "Unable to save reviews:",
+            "❌ Review API error:",
             error
         );
 
         return false;
     }
-}
-
-
-/* ================= GET PRODUCT REVIEWS ================= */
-
-function getProductReviews(productName) {
-
-    if (!productName) {
-        return [];
-    }
-
-    const allReviews =
-        getAllReviews();
-
-    return allReviews[productName] || [];
-}
-
-
-/* ================= SAVE PRODUCT REVIEW ================= */
-
-function saveProductReview(productName, review) {
-
-    if (!productName) {
-        return false;
-    }
-
-    const allReviews =
-        getAllReviews();
-
-    if (!allReviews[productName]) {
-        allReviews[productName] = [];
-    }
-
-    allReviews[productName].push(review);
-
-    return saveAllReviews(allReviews);
 }
 
 
@@ -1314,10 +1530,10 @@ function createStars(rating) {
 
 /* ================= UPDATE RATING SUMMARY ================= */
 
-function updateReviewSummary(productName) {
+async function updateReviewSummary(productName) {
 
     const reviews =
-        getProductReviews(productName);
+        await getProductReviews(productName);
 
     const averageElement =
         document.querySelector("#reviewAverage");
@@ -1398,7 +1614,7 @@ function updateReviewSummary(productName) {
 
 /* ================= RENDER REVIEWS ================= */
 
-function renderReviews(productName) {
+async function renderReviews(productName) {
 
     const reviewsList =
         document.querySelector("#reviewsList");
@@ -1406,11 +1622,8 @@ function renderReviews(productName) {
     if (!reviewsList) {
         return;
     }
-
-
     const reviews =
-        getProductReviews(productName);
-
+    await getProductReviews(productName);
 
     /* Clear existing reviews */
 
@@ -1479,17 +1692,12 @@ function renderReviews(productName) {
 
             reviewItem.className =
                 "review-item";
-
-
             /* ---------- TOP ---------- */
-
             const top =
                 document.createElement("div");
 
             top.className =
                 "review-item-top";
-
-
             const reviewerName =
                 document.createElement("span");
 
@@ -1497,8 +1705,7 @@ function renderReviews(productName) {
                 "reviewer-name";
 
             reviewerName.textContent =
-                review.name;
-
+    review.customer_name;
 
             const stars =
                 document.createElement("span");
@@ -1511,7 +1718,6 @@ function renderReviews(productName) {
                     Number(review.rating)
                 );
 
-
             top.appendChild(
                 reviewerName
             );
@@ -1519,8 +1725,6 @@ function renderReviews(productName) {
             top.appendChild(
                 stars
             );
-
-
             /* ---------- REVIEW TEXT ---------- */
 
             const text =
@@ -1529,9 +1733,8 @@ function renderReviews(productName) {
             text.className =
                 "review-item-text";
 
-            text.textContent =
-                review.message;
-
+           text.textContent =
+    review.review_message;
 
             /* ---------- DATE ---------- */
 
@@ -1541,12 +1744,18 @@ function renderReviews(productName) {
             date.className =
                 "review-date";
 
+                if (review.review_date) {
 
-            if (review.date) {
-
-                date.textContent =
-                    review.date;
+    date.textContent =
+        new Date(review.review_date).toLocaleDateString(
+            "en-IN",
+            {
+                day: "2-digit",
+                month: "short",
+                year: "numeric"
             }
+        );
+}
 
 
             /* ---------- APPEND ---------- */
@@ -1555,10 +1764,9 @@ function renderReviews(productName) {
 
             reviewItem.appendChild(text);
 
-            if (review.date) {
-                reviewItem.appendChild(date);
-            }
-
+            if (review.review_date) {
+    reviewItem.appendChild(date);
+}
 
             reviewsList.appendChild(
                 reviewItem
@@ -1707,7 +1915,7 @@ if (submitReviewButton) {
 
     submitReviewButton.addEventListener(
         "click",
-        function () {
+         async function () {
 
             /* Current product check */
 
@@ -1821,11 +2029,10 @@ if (submitReviewButton) {
             /* ================= SAVE ================= */
 
             const saved =
-                saveProductReview(
-                    currentReviewProduct,
-                    review
-                );
-
+    await saveProductReview(
+        currentReviewProduct,
+        review
+    );
 
             if (!saved) {
 
