@@ -1409,7 +1409,7 @@ let currentReviewProduct = "";
    STEP 2.3-C — MYSQL REVIEW API
    ===================================================== */
 
-const REVIEW_API_URL = "http://localhost:3000/api/reviews";
+const REVIEW_API_URL = "https://gupta-garment-production.up.railway.app/api/reviews";
 
 
 /* ================= GET PRODUCT REVIEWS ================= */
