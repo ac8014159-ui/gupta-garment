@@ -169,6 +169,187 @@ app.get("/api/products", (req, res) => {
     });
 
 });
+// ===============================
+// PRODUCT API - UPDATE PRODUCT
+// ===============================
+
+app.put("/api/products/:id", (req, res) => {
+
+    const productId = req.params.id;
+
+    const {
+        product_name,
+        category,
+        gender,
+        season,
+        price,
+        sizes,
+        description,
+        image_url,
+        stock_status,
+        is_visible
+    } = req.body;
+
+    // Basic validation
+    if (
+        !product_name ||
+        !category ||
+        !gender ||
+        !season ||
+        price === undefined
+    ) {
+        return res.status(400).json({
+            success: false,
+            message: "Product name, category, gender, season and price are required."
+        });
+    }
+
+    const sql = `
+        UPDATE products
+        SET
+            product_name = ?,
+            category = ?,
+            gender = ?,
+            season = ?,
+            price = ?,
+            sizes = ?,
+            description = ?,
+            image_url = ?,
+            stock_status = ?,
+            is_visible = ?
+        WHERE id = ?
+    `;
+
+    const values = [
+        product_name,
+        category,
+        gender,
+        season,
+        price,
+        sizes || null,
+        description || null,
+        image_url || null,
+        stock_status || "in-stock",
+        is_visible === undefined ? 1 : Number(is_visible),
+        productId
+    ];
+
+    db.query(sql, values, (err, result) => {
+
+        if (err) {
+            console.error("❌ Product update failed:", err.message);
+
+            return res.status(500).json({
+                success: false,
+                message: "Failed to update product."
+            });
+        }
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({
+                success: false,
+                message: "Product not found."
+            });
+        }
+
+        console.log("✅ Product updated successfully:", productId);
+
+        res.json({
+            success: true,
+            message: "Product updated successfully!"
+        });
+
+    });
+
+});
+// ===============================
+// PRODUCT API - ADD NEW PRODUCT
+// ===============================
+
+app.post("/api/products", (req, res) => {
+
+    const {
+        product_name,
+        category,
+        gender,
+        season,
+        price,
+        sizes,
+        description,
+        image_url,
+        stock_status,
+        is_visible
+    } = req.body;
+
+    // Basic validation
+    if (
+        !product_name ||
+        !category ||
+        !gender ||
+        !season ||
+        price === undefined
+    ) {
+        return res.status(400).json({
+            success: false,
+            message: "Product name, category, gender, season and price are required."
+        });
+    }
+
+    const sql = `
+        INSERT INTO products
+        (
+            product_name,
+            category,
+            gender,
+            season,
+            price,
+            sizes,
+            description,
+            image_url,
+            stock_status,
+            is_visible
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    const values = [
+        product_name,
+        category,
+        gender,
+        season,
+        price,
+        sizes || null,
+        description || null,
+        image_url || null,
+        stock_status || "in-stock",
+        is_visible === undefined ? 1 : Number(is_visible)
+    ];
+
+    db.query(sql, values, (err, result) => {
+
+        if (err) {
+            console.error("❌ Product add failed:", err.message);
+
+            return res.status(500).json({
+                success: false,
+                message: "Failed to add product."
+            });
+        }
+
+        console.log(
+            "✅ Product added successfully:",
+            result.insertId
+        );
+
+        res.status(201).json({
+            success: true,
+            message: "Product added successfully!",
+            product_id: result.insertId
+        });
+
+    });
+
+});
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, "0.0.0.0", () => {

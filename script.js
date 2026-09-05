@@ -65,8 +65,287 @@ document.addEventListener("DOMContentLoaded", function () {
     const categoryCards =
         document.querySelectorAll(".category-card");
 
+/* =====================================================
+   STEP 4A — LOAD PRODUCTS FROM RAILWAY API
+   ===================================================== */
 
-    /* =====================================================
+const PRODUCT_API_URL =
+    "https://gupta-garment-production.up.railway.app/api/products";
+
+let databaseProducts = [];
+
+
+/* ================= LOAD DATABASE PRODUCTS ================= */
+
+async function loadDatabaseProducts() {
+
+    try {
+
+        console.log("⏳ Loading products from Railway API...");
+
+        const response =
+            await fetch(PRODUCT_API_URL);
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Product API request failed"
+            );
+
+        }
+
+        const data =
+            await response.json();
+
+        if (!data.success) {
+
+            throw new Error(
+                "Product API returned unsuccessful response"
+            );
+
+        }
+databaseProducts = data.products || [];
+
+console.log("✅ Products loaded from MySQL:", databaseProducts);
+
+syncDatabaseProductsWithCards();
+    } catch (error) {
+
+        console.error(
+            "❌ Unable to load products from MySQL:",
+            error
+        );
+
+    }
+
+}
+loadDatabaseProducts();
+
+/* =====================================================
+   STEP 4B — DATABASE PRODUCT DATA CHECK
+   ===================================================== */
+
+if (databaseProducts.length > 0) {
+
+    databaseProducts.forEach(function (product) {
+
+        console.log(
+            "📦 Product:",
+            product.product_name,
+            "| Category:",
+            product.category,
+            "| Gender:",
+            product.gender,
+            "| Season:",
+            product.season,
+            "| Price:",
+            product.price,
+            "| Sizes:",
+            product.sizes
+        );
+
+    });
+
+}
+   /* =====================================================
+   STEP 4C — SYNC DATABASE PRODUCTS WITH EXISTING CARDS
+   ===================================================== */
+function syncDatabaseProductsWithCards() {
+
+    console.log("🧩 Total HTML product cards:", productCards.length);
+
+    if (!databaseProducts.length) {
+        console.warn("⚠️ No database products available for sync.");
+        return;
+    }
+
+    productCards.forEach(function (card) {
+
+        /* =====================================================
+           FIND PRODUCT NAME FROM HTML <h3>
+           ===================================================== */
+
+        const titleElement = card.querySelector("h3");
+
+        const htmlProductName = titleElement
+            ? titleElement.textContent.trim()
+            : "";
+
+        if (!htmlProductName) {
+
+            console.warn(
+                "⚠️ Product card has no h3 product name."
+            );
+
+            return;
+        }
+
+
+        /* =====================================================
+           FIND MATCHING PRODUCT FROM DATABASE
+           ===================================================== */
+
+        const dbProduct = databaseProducts.find(function (product) {
+
+            /* Normal product name match */
+
+            if (product.product_name === htmlProductName) {
+                return true;
+            }
+
+
+            /* Old HTML name → New database name */
+
+            if (
+                htmlProductName === "Girls Nighty / Gown" &&
+                product.product_name === "Women Nighty / Gown"
+            ) {
+                return true;
+            }
+
+
+            return false;
+
+        });
+
+
+        /* =====================================================
+           PRODUCT NOT FOUND
+           ===================================================== */
+
+        if (!dbProduct) {
+
+            console.warn(
+                "⚠️ Product not found in database:",
+                htmlProductName
+            );
+
+            console.log(
+                "📋 Available DB products:",
+                databaseProducts.map(function (product) {
+                    return product.product_name;
+                })
+            );
+
+            return;
+        }
+
+
+        /* =====================================================
+           UPDATE HTML DATA ATTRIBUTES FROM DATABASE
+           ===================================================== */
+
+        card.setAttribute(
+            "data-category",
+            dbProduct.category || ""
+        );
+
+        card.setAttribute(
+            "data-gender",
+            dbProduct.gender || ""
+        );
+
+        card.setAttribute(
+            "data-season",
+            dbProduct.season || ""
+        );
+
+        card.setAttribute(
+            "data-price",
+            dbProduct.price || ""
+        );
+
+        card.setAttribute(
+            "data-description",
+            dbProduct.description || ""
+        );
+
+        card.setAttribute(
+            "data-stock-status",
+            dbProduct.stock_status || "in-stock"
+        );
+
+
+        /* =====================================================
+           UPDATE PRODUCT NAME
+           ===================================================== */
+
+        if (titleElement) {
+
+            titleElement.textContent =
+                dbProduct.product_name;
+
+        }
+
+
+        /* =====================================================
+           UPDATE PRICE
+           ===================================================== */
+
+        const priceElement =
+            card.querySelector(".price");
+
+        if (priceElement) {
+
+            priceElement.textContent =
+                "₹" +
+                Number(dbProduct.price)
+                    .toLocaleString("en-IN");
+
+        }
+
+
+        /* =====================================================
+           UPDATE SIZES
+           ===================================================== */
+
+        const sizesElement =
+            card.querySelector(".product-info p");
+
+        if (
+            sizesElement &&
+            dbProduct.sizes
+        ) {
+
+            sizesElement.textContent =
+                "Sizes: " +
+                dbProduct.sizes;
+
+        }
+
+
+        /* =====================================================
+           UPDATE VISIBILITY
+           ===================================================== */
+
+        if (
+            Number(dbProduct.is_visible) === 0
+        ) {
+
+            card.style.display = "none";
+
+        }
+
+
+        /* =====================================================
+           SUCCESS LOG
+           ===================================================== */
+
+        console.log(
+            "✅ Product synced:",
+            dbProduct.product_name
+        );
+
+    });
+
+
+    console.log(
+        "🎯 Database product sync completed."
+    );
+
+}
+
+/* =====================================================
        PRODUCT CATEGORIES
        ===================================================== */
 
@@ -128,22 +407,32 @@ document.addEventListener("DOMContentLoaded", function () {
     /* =====================================================
        GET PRODUCT CATEGORY
        ===================================================== */
+function getProductCategory(productCard) {
 
-    function getProductCategory(productCard) {
-
-        const titleElement =
-            productCard.querySelector("h3");
-
-        if (!titleElement) {
-            return [];
-        }
-
-        const productName =
-            titleElement.textContent.trim();
-
-        return productCategories[productName] || [];
-
+    if (!productCard) {
+        return [];
     }
+
+    const category =
+        productCard.getAttribute("data-category");
+
+    const gender =
+        productCard.getAttribute("data-gender");
+
+    const categories = [];
+ /* Product Category */
+    if (category) {
+        categories.push(category.toLowerCase().trim());
+    }
+ /* Product Gender */
+    if (gender) {
+        categories.push(gender.toLowerCase().trim());
+    }
+
+    return categories;
+
+}
+   
 /* =====================================================
    STEP 3 — SEASON FILTER
    ===================================================== */
@@ -237,21 +526,61 @@ function filterProducts(category) {
         const categories =
             getProductCategory(product);
 
+/* ================= CATEGORY MATCH ================= */
 
-        /* ================= CATEGORY MATCH ================= */
+let categoryMatch = false;
 
-        let categoryMatch = false;
 
-        if (currentCategory === "all") {
+/* ALL PRODUCTS */
 
-            categoryMatch = true;
+if (currentCategory === "all") {
 
-        } else {
+    categoryMatch = true;
 
-            categoryMatch =
-                categories.includes(currentCategory);
+}
 
-        }
+
+/* KIDS = BOYS + GIRLS */
+
+else if (currentCategory === "kids") {
+
+    categoryMatch =
+        categories.includes("boys") ||
+        categories.includes("girls");
+
+}
+
+
+/* WOMEN */
+
+else if (currentCategory === "women") {
+
+    categoryMatch =
+        categories.includes("women");
+
+}
+
+
+/* MEN */
+
+else if (currentCategory === "men") {
+
+    categoryMatch =
+        categories.includes("men");
+
+}
+
+
+/* INDIVIDUAL CATEGORY */
+
+else {
+
+    categoryMatch =
+        categories.includes(
+            currentCategory
+        );
+
+}
 
 
         /* ================= SEASON MATCH ================= */
@@ -2199,34 +2528,89 @@ console.log(
    Kids / Women / Men / Winter Collection
    ========================================================= */
 
-const categorySubmenus = document.querySelectorAll(".category-submenu");
+const categorySubmenus =
+    document.querySelectorAll(".category-submenu");
 
 categorySubmenus.forEach(function (submenu) {
 
-    const submenuTitle = submenu.querySelector(".submenu-title");
+    const submenuTitle =
+        submenu.querySelector(".submenu-title");
 
     if (!submenuTitle) {
         return;
     }
 
-    submenuTitle.addEventListener("click", function (event) {
 
-        event.preventDefault();
-        event.stopPropagation();
+    submenuTitle.addEventListener(
+        "click",
+        function (event) {
 
-        /* Close other category submenus */
-        categorySubmenus.forEach(function (otherSubmenu) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
 
-            if (otherSubmenu !== submenu) {
-                otherSubmenu.classList.remove("submenu-open");
+
+            /* =========================================
+               IDENTIFY PARENT CATEGORY
+               ========================================= */
+
+            const titleText =
+                submenuTitle.textContent
+                    .trim()
+                    .toLowerCase();
+
+
+            /* =========================================
+               FILTER CATEGORY
+               ========================================= */
+
+            if (titleText.includes("kids")) {
+
+                filterProducts("kids");
+
             }
 
-        });
+            else if (titleText.includes("women")) {
 
-        /* Toggle clicked submenu */
-        submenu.classList.toggle("submenu-open");
+                filterProducts("women");
 
-    });
+            }
+
+            else if (titleText.includes("men")) {
+
+                filterProducts("men");
+
+            }
+
+
+            /* =========================================
+               CLOSE OTHER SUBMENUS
+               ========================================= */
+
+            categorySubmenus.forEach(
+                function (otherSubmenu) {
+
+                    if (otherSubmenu !== submenu) {
+
+                        otherSubmenu.classList.remove(
+                            "submenu-open"
+                        );
+
+                    }
+
+                }
+            );
+
+
+            /* =========================================
+               OPEN CURRENT SUBMENU
+               ========================================= */
+
+            submenu.classList.add(
+                "submenu-open"
+            );
+
+        }
+    );
 
 });
 });

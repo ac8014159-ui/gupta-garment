@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Gupta Garments | Owner Dashboard</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .admin-header {
+            background: #6b1f2b;
+            color: white;
+            padding: 20px 30px;
+        }
+
+        .admin-header h1 {
+            font-size: 24px;
+        }
+
+        .admin-header p {
+            margin-top: 5px;
+            opacity: 0.9;
+        }
+
+        .admin-container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .dashboard-title {
+            margin-bottom: 20px;
+        }
+
+        .dashboard-title h2 {
+            color: #6b1f2b;
+            margin-bottom: 5px;
+        }
+
+        .dashboard-title p {
+            color: #666;
+        }
+
+        .admin-actions {
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .admin-card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+        }
+
+        .admin-card h3 {
+            margin-bottom: 10px;
+            color: #6b1f2b;
+        }
+
+        .admin-card p {
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .admin-btn {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 18px;
+            background: #6b1f2b;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .admin-btn:hover {
+            opacity: 0.9;
+        }
+        .add-product-section {
+    background: white;
+    margin-top: 30px;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+}
+
+.add-product-section h2 {
+    color: #6b1f2b;
+    margin-bottom: 5px;
+}
+
+.add-product-section > p {
+    color: #666;
+    margin-bottom: 25px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 7px;
+    font-weight: bold;
+    color: #444;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 11px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 15px;
+}
+
+.form-group textarea {
+    resize: vertical;
+}
+
+.save-product-btn {
+    background: #6b1f2b;
+    color: white;
+    border: none;
+    padding: 12px 22px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.save-product-btn:hover {
+    opacity: 0.9;
+}
+
+#productMessage {
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+@media (max-width: 700px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .add-product-section {
+        padding: 20px;
+    }
+}
+/* =================================
+   ADMIN MANAGEMENT SECTIONS
+================================= */
+
+.management-section {
+    display: none;
+}
+
+.management-section.active {
+    display: block;
+}
+/* =================================
+   EDIT PRODUCT LIST
+================================= */
+
+.edit-product-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    margin-bottom: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #fafafa;
+}
+
+.edit-product-info h3 {
+    color: #6b1f2b;
+    margin-bottom: 5px;
+}
+
+.edit-product-info p {
+    color: #666;
+    margin: 3px 0;
+}
+
+.edit-btn {
+    background: #6b1f2b;
+    color: white;
+    border: none;
+    padding: 9px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.edit-btn:hover {
+    opacity: 0.9;
+}
+
+@media (max-width: 600px) {
+
+    .edit-product-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .edit-btn {
+        width: 100%;
+    }
+}
+    </style>
+</head>
+
+<body>
+
+    <header class="admin-header">
+        <h1>Gupta Garments</h1>
+        <p>Owner Product Management Dashboard</p>
+    </header>
+
+    <main class="admin-container">
+
+        <div class="dashboard-title">
+            <h2>Product Management</h2>
+            <p>Manage your store products from one place.</p>
+        </div>
+
+        <div class="admin-actions">
+
+            <div class="admin-card">
+                <h3>➕ Add Product</h3>
+                <p>
+                    Add a new product with category,
+                    price, sizes, season and stock.
+                </p>
+                <button class="admin-btn" id="addProductCardBtn">
+    Add Product
+</button>
+            </div>
+
+            <div class="admin-card">
+                <h3>✏️ Edit Product</h3>
+                <p>
+                    Update product name, price,
+                    sizes, description and other details.
+                </p>
+                <button class="admin-btn" id="editProductCardBtn">
+    Edit Product
+</button>
+            </div>
+
+            <div class="admin-card">
+                <h3>📦 Stock Management</h3>
+                <p>
+                    Manage whether products are
+                    in stock or out of stock.
+                </p>
+                <button class="admin-btn">
+                    Manage Stock
+                </button>
+            </div>
+
+            <div class="admin-card">
+                <h3>👁️ Product Visibility</h3>
+                <p>
+                    Hide or show products on
+                    the customer website.
+                </p>
+                <button class="admin-btn">
+                    Manage Visibility
+                </button>
+            </div>
+
+        </div>
+<!-- EDIT PRODUCT SECTION -->
+<section
+    class="add-product-section management-section"
+    id="editProductSection">
+
+    <h2>Edit Product</h2>
+
+    <p>
+        Select a product that you want to edit.
+    </p>
+
+    <div id="editProductsList"></div>
+
+    <!-- EDIT FORM -->
+    <div
+        id="editProductFormContainer"
+        style="display: none; margin-top: 30px;">
+
+        <h2>Edit Selected Product</h2>
+
+        <form id="editProductForm">
+
+            <input
+                type="hidden"
+                id="edit_product_id">
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label>
+                        Product Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="edit_product_name"
+                        required>
+                </div>
+
+
+                <div class="form-group">
+                    <label>
+                        Category
+                    </label>
+
+                    <select
+                        id="edit_category"
+                        required>
+
+                        <option value="jeans">
+                            Jeans
+                        </option>
+
+                        <option value="shirts">
+                            Shirts
+                        </option>
+
+                        <option value="tshirts">
+                            T-Shirts
+                        </option>
+
+                        <option value="lower">
+                            Lower
+                        </option>
+
+                        <option value="western-dress">
+                            Western Dress
+                        </option>
+
+                        <option value="women-nighty-gown">
+                            Women Nighty / Gown
+                        </option>
+
+                        <option value="women-cardigan">
+                            Women Cardigan
+                        </option>
+
+                        <option value="women-bra">
+                            Women Bra
+                        </option>
+
+                        <option value="women-panty">
+                            Women Panty
+                        </option>
+
+                        <option value="women-socks">
+                            Women Socks
+                        </option>
+
+                        <option value="men-underwear">
+                            Men Underwear
+                        </option>
+
+                        <option value="men-inner-wear">
+                            Men Inner Wear
+                        </option>
+
+                        <option value="men-handkerchief">
+                            Cotton Handkerchief
+                        </option>
+
+                        <option value="men-socks">
+                            Men Socks
+                        </option>
+
+                        <option value="thermal-set">
+                            Thermal Set
+                        </option>
+
+                        <option value="thermal-suit">
+                            Thermal Suit
+                        </option>
+
+                        <option value="top-bottom-combo">
+                            Top & Bottom Combo
+                        </option>
+
+                        <option value="jacket">
+                            Jacket
+                        </option>
+
+                        <option value="cardigan">
+                            Cardigan
+                        </option>
+
+                        <option value="divider">
+                            Divider
+                        </option>
+
+                        <option value="jeans-top">
+                            Jeans Top
+                        </option>
+
+                    </select>
+                </div>
+
+
+                <div class="form-group">
+                    <label>
+                        Gender
+                    </label>
+
+                    <select
+                        id="edit_gender"
+                        required>
+
+                        <option value="boys">
+                            Boys
+                        </option>
+
+                        <option value="girls">
+                            Girls
+                        </option>
+
+                        <option value="women">
+                            Women
+                        </option>
+
+                        <option value="men">
+                            Men
+                        </option>
+
+                    </select>
+                </div>
+
+
+                <div class="form-group">
+                    <label>
+                        Season
+                    </label>
+
+                    <select
+                        id="edit_season"
+                        required>
+
+                        <option value="summer">
+                            Summer
+                        </option>
+
+                        <option value="winter">
+                            Winter
+                        </option>
+
+                        <option value="summer winter">
+                            Summer + Winter
+                        </option>
+
+                    </select>
+                </div>
+
+
+                <div class="form-group">
+                    <label>
+                        Price
+                    </label>
+
+                    <input
+                        type="number"
+                        id="edit_price"
+                        required>
+                </div>
+
+
+                <div class="form-group">
+                    <label>
+                        Sizes
+                    </label>
+
+                    <input
+                        type="text"
+                        id="edit_sizes"
+                        placeholder="Example: 22,24,26,28">
+                </div>
+
+
+                <div class="form-group">
+                    <label>
+                        Stock
+                    </label>
+
+                    <select
+                        id="edit_stock_status">
+
+                        <option value="in-stock">
+                            In Stock
+                        </option>
+
+                        <option value="out-of-stock">
+                            Out of Stock
+                        </option>
+
+                    </select>
+                </div>
+
+
+                <div class="form-group">
+                    <label>
+                        Visibility
+                    </label>
+
+                    <select
+                        id="edit_is_visible">
+
+                        <option value="1">
+                            Show Product
+                        </option>
+
+                        <option value="0">
+                            Hide Product
+                        </option>
+
+                    </select>
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Description
+                </label>
+
+                <textarea
+                    id="edit_description"
+                    rows="5"></textarea>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Image URL
+                </label>
+
+                <input
+                    type="text"
+                    id="edit_image_url">
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="save-product-btn">
+
+                💾 Save Changes
+
+            </button>
+
+
+            <button
+                type="button"
+                class="edit-btn"
+                id="cancelEditBtn"
+                style="margin-left: 10px;">
+
+                Cancel
+
+            </button>
+
+
+            <div id="editProductMessage"></div>
+
+        </form>
+
+    </div>
+
+</section>
+    </main>
+<!-- ADD PRODUCT FORM -->
+<section class="add-product-section management-section" id="addProductSection">
+
+    <h2>Add New Product</h2>
+    <p>Enter product details and add it to the store.</p>
+
+    <form id="addProductForm">
+
+        <div class="form-grid">
+
+            <div class="form-group">
+                <label>Product Name</label>
+                <input
+                    type="text"
+                    id="product_name"
+                    placeholder="Example: Women Cardigan"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label>Category</label>
+                <select id="category" required>
+                    <option value="">Select Category</option>
+
+                    <option value="jeans">Jeans</option>
+                    <option value="shirts">Shirts</option>
+                    <option value="tshirts">T-Shirts</option>
+                    <option value="lower">Lower</option>
+                    <option value="western-dress">Western Dress</option>
+                    <option value="women-nighty-gown">Women Nighty / Gown</option>
+                    <option value="women-cardigan">Women Cardigan</option>
+                    <option value="women-bra">Women Bra</option>
+                    <option value="women-panty">Women Panty</option>
+                    <option value="women-socks">Women Socks</option>
+                    <option value="men-underwear">Men Underwear</option>
+                    <option value="men-inner-wear">Men Inner Wear</option>
+                    <option value="men-handkerchief">Cotton Handkerchief</option>
+                    <option value="men-socks">Men Socks</option>
+                    <option value="thermal-set">Thermal Set</option>
+                    <option value="thermal-suit">Thermal Suit</option>
+                    <option value="top-bottom-combo">Top & Bottom Combo</option>
+                    <option value="jacket">Jacket</option>
+                    <option value="cardigan">Cardigan</option>
+                    <option value="divider">Divider</option>
+                    <option value="jeans-top">Jeans Top</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Gender</label>
+                <select id="gender" required>
+                    <option value="">Select Gender</option>
+                    <option value="boys">Boys</option>
+                    <option value="girls">Girls</option>
+                    <option value="women">Women</option>
+                    <option value="men">Men</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Season</label>
+                <select id="season" required>
+                    <option value="">Select Season</option>
+                    <option value="summer">Summer</option>
+                    <option value="winter">Winter</option>
+                    <option value="summer winter">Summer + Winter</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Price (₹)</label>
+                <input
+                    type="number"
+                    id="price"
+                    placeholder="599"
+                    min="0"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label>Sizes</label>
+                <input
+                    type="text"
+                    id="sizes"
+                    placeholder="22, 24, 26, 28, 30"
+                >
+            </div>
+
+            <div class="form-group">
+                <label>Stock</label>
+                <select id="stock_status">
+                    <option value="in-stock">In Stock</option>
+                    <option value="out-of-stock">Out of Stock</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Visibility</label>
+                <select id="is_visible">
+                    <option value="1">Show on Website</option>
+                    <option value="0">Hide from Website</option>
+                </select>
+            </div>
+
+        </div>
+
+        <div class="form-group">
+            <label>Description</label>
+            <textarea
+                id="description"
+                rows="4"
+                placeholder="Product description..."
+            ></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Image URL</label>
+            <input
+                type="text"
+                id="image_url"
+                placeholder="Image URL (optional)"
+            >
+        </div>
+
+        <button type="submit" class="save-product-btn">
+            ➕ Add Product
+        </button>
+
+        <div id="productMessage"></div>
+
+    </form>
+
+</section>
+<script>
+
+const PRODUCT_API_URL =
+    "http://localhost:3000/api/products";
+
+const addProductForm =
+    document.getElementById("addProductForm");
+// =================================
+// ADD PRODUCT CARD → OPEN FORM
+// =================================
+
+const addProductCardBtn =
+    document.getElementById("addProductCardBtn");
+
+const addProductSection =
+    document.getElementById("addProductSection");
+
+addProductCardBtn.addEventListener("click", function () {
+
+    addProductSection.classList.add("active");
+
+    addProductSection.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+
+});
+// =================================
+// EDIT PRODUCT CARD → OPEN LIST
+// =================================
+
+const editProductCardBtn =
+    document.getElementById("editProductCardBtn");
+
+const editProductSection =
+    document.getElementById("editProductSection");
+
+const editProductsList =
+    document.getElementById("editProductsList");
+
+const editProductFormContainer =
+    document.getElementById("editProductFormContainer");
+
+const editProductForm =
+    document.getElementById("editProductForm");
+
+const cancelEditBtn =
+    document.getElementById("cancelEditBtn");
+
+const editProductMessage =
+    document.getElementById("editProductMessage");
+
+
+// =================================
+// OPEN EDIT PRODUCT LIST
+// =================================
+
+editProductCardBtn.addEventListener(
+    "click",
+    async function () {
+
+        editProductSection.classList.add("active");
+
+        editProductSection.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+        editProductsList.innerHTML =
+            "<p>Loading products...</p>";
+
+        editProductFormContainer.style.display =
+            "none";
+
+        try {
+
+            const response = await fetch(
+                PRODUCT_API_URL
+            );
+
+            const result =
+                await response.json();
+
+            if (!response.ok || !result.success) {
+
+                throw new Error(
+                    result.message ||
+                    "Failed to load products."
+                );
+
+            }
+
+            editProductsList.innerHTML = "";
+
+            if (
+                !result.products ||
+                result.products.length === 0
+            ) {
+
+                editProductsList.innerHTML =
+                    "<p>No products found.</p>";
+
+                return;
+
+            }
+
+
+            // =================================
+            // CREATE PRODUCT LIST
+            // =================================
+
+            result.products.forEach(
+                function (product) {
+
+                    const item =
+                        document.createElement("div");
+
+                    item.className =
+                        "edit-product-item";
+
+                    item.innerHTML = `
+
+                        <div class="edit-product-info">
+
+                            <h3>
+                                ${product.product_name}
+                            </h3>
+
+                            <p>
+                                Category:
+                                ${product.category}
+                            </p>
+
+                            <p>
+                                Price:
+                                ₹${product.price}
+                            </p>
+
+                            <p>
+                                Stock:
+                                ${product.stock_status}
+                            </p>
+
+                        </div>
+
+                        <button
+                            type="button"
+                            class="edit-btn"
+                            data-product-id="${product.id}">
+
+                            ✏️ Edit
+
+                        </button>
+
+                    `;
+
+
+                    editProductsList.appendChild(item);
+
+
+                    // =================================
+                    // EDIT BUTTON CLICK
+                    // =================================
+
+                    const editButton =
+                        item.querySelector(".edit-btn");
+
+
+                    editButton.addEventListener(
+                        "click",
+                        function () {
+
+                            // Product ID
+                            document.getElementById(
+                                "edit_product_id"
+                            ).value =
+                                product.id;
+
+
+                            // Product Name
+                            document.getElementById(
+                                "edit_product_name"
+                            ).value =
+                                product.product_name || "";
+
+
+                            // Category
+                            document.getElementById(
+                                "edit_category"
+                            ).value =
+                                product.category || "";
+
+
+                            // Gender
+                            document.getElementById(
+                                "edit_gender"
+                            ).value =
+                                product.gender || "";
+
+
+                            // Season
+                            document.getElementById(
+                                "edit_season"
+                            ).value =
+                                product.season || "";
+
+
+                            // Price
+                            document.getElementById(
+                                "edit_price"
+                            ).value =
+                                product.price || "";
+
+
+                            // Sizes
+                            document.getElementById(
+                                "edit_sizes"
+                            ).value =
+                                product.sizes || "";
+
+
+                            // Stock
+                            document.getElementById(
+                                "edit_stock_status"
+                            ).value =
+                                product.stock_status ||
+                                "in-stock";
+
+
+                            // Visibility
+                            document.getElementById(
+                                "edit_is_visible"
+                            ).value =
+                                product.is_visible ? "1" : "0";
+
+
+                            // Description
+                            document.getElementById(
+                                "edit_description"
+                            ).value =
+                                product.description || "";
+
+
+                            // Image URL
+                            document.getElementById(
+                                "edit_image_url"
+                            ).value =
+                                product.image_url || "";
+
+
+                            // Clear old message
+                            editProductMessage.textContent =
+                                "";
+
+
+                            // Show edit form
+                            editProductFormContainer.style.display =
+                                "block";
+
+
+                            // Scroll to form
+                            editProductFormContainer.scrollIntoView({
+                                behavior: "smooth",
+                                block: "start"
+                            });
+
+                        }
+                    );
+
+                }
+            );
+
+        }
+        catch (error) {
+
+            console.error(
+                "Edit products error:",
+                error
+            );
+
+            editProductsList.innerHTML =
+                "<p>❌ " +
+                error.message +
+                "</p>";
+
+        }
+
+    }
+);
+
+
+// =================================
+// SAVE EDITED PRODUCT
+// =================================
+
+editProductForm.addEventListener(
+    "submit",
+    async function (event) {
+
+        event.preventDefault();
+
+
+        const productId =
+            document.getElementById(
+                "edit_product_id"
+            ).value;
+
+
+        editProductMessage.textContent =
+            "Saving changes...";
+
+
+        const updatedProduct = {
+
+            product_name:
+                document.getElementById(
+                    "edit_product_name"
+                ).value.trim(),
+
+            category:
+                document.getElementById(
+                    "edit_category"
+                ).value,
+
+            gender:
+                document.getElementById(
+                    "edit_gender"
+                ).value,
+
+            season:
+                document.getElementById(
+                    "edit_season"
+                ).value,
+
+            price:
+                Number(
+                    document.getElementById(
+                        "edit_price"
+                    ).value
+                ),
+
+            sizes:
+                document.getElementById(
+                    "edit_sizes"
+                ).value.trim(),
+
+            description:
+                document.getElementById(
+                    "edit_description"
+                ).value.trim(),
+
+            image_url:
+                document.getElementById(
+                    "edit_image_url"
+                ).value.trim() || null,
+
+            stock_status:
+                document.getElementById(
+                    "edit_stock_status"
+                ).value,
+
+            is_visible:
+                Number(
+                    document.getElementById(
+                        "edit_is_visible"
+                    ).value
+                )
+
+        };
+
+
+        try {
+
+            const response =
+                await fetch(
+                    PRODUCT_API_URL +
+                    "/" +
+                    productId,
+                    {
+                        method: "PUT",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify(
+                                updatedProduct
+                            )
+                    }
+                );
+
+
+            const result =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    result.message ||
+                    "Failed to update product."
+                );
+
+            }
+
+
+            editProductMessage.textContent =
+                "✅ Product updated successfully!";
+alert(
+    "✅ Product updated successfully!\n\n" +
+    "Product: " +
+    updatedProduct.product_name
+);
+
+
+            // Hide form after save
+            editProductFormContainer.style.display =
+                "none";
+
+
+            // Reload product list
+            editProductCardBtn.click();
+
+        }
+        catch (error) {
+
+            console.error(
+                "Product update error:",
+                error
+            );
+
+            editProductMessage.textContent =
+                "❌ " +
+                error.message;
+ alert(
+        "❌ Product update failed!\n\n" +
+        error.message
+    );
+        }
+
+    }
+);
+
+
+// =================================
+// CANCEL EDIT
+// =================================
+
+cancelEditBtn.addEventListener(
+    "click",
+    function () {
+
+        editProductFormContainer.style.display =
+            "none";
+
+        editProductMessage.textContent =
+            "";
+
+    }
+);
+const productMessage =
+    document.getElementById("productMessage");
+
+
+addProductForm.addEventListener("submit", async function(event) {
+
+    event.preventDefault();
+
+    productMessage.textContent = "Adding product...";
+
+
+    const productData = {
+
+        product_name:
+            document.getElementById("product_name").value.trim(),
+
+        category:
+            document.getElementById("category").value,
+
+        gender:
+            document.getElementById("gender").value,
+
+        season:
+            document.getElementById("season").value,
+
+        price:
+            Number(document.getElementById("price").value),
+
+        sizes:
+            document.getElementById("sizes").value.trim(),
+
+        description:
+            document.getElementById("description").value.trim(),
+
+        image_url:
+            document.getElementById("image_url").value.trim() || null,
+
+        stock_status:
+            document.getElementById("stock_status").value,
+
+        is_visible:
+            Number(document.getElementById("is_visible").value)
+    };
+
+
+    try {
+
+        const response = await fetch(
+            PRODUCT_API_URL,
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify(productData)
+            }
+        );
+
+
+        const result = await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                result.message ||
+                "Failed to add product."
+            );
+
+        }
+
+
+        productMessage.textContent =
+            "✅ Product added successfully! Product ID: " +
+            result.product_id;
+
+alert(
+    "✅ New product added successfully!\n\n" +
+    "Product: " +
+    productData.product_name +
+    "\nProduct ID: " +
+    result.product_id
+);
+        addProductForm.reset();
+
+
+    } catch (error) {
+
+        console.error(
+            "Product add error:",
+            error
+        );
+
+        productMessage.textContent =
+            "❌ " + error.message;
+alert(
+        "❌ Product could not be added!\n\n" +
+        error.message
+    );
+    }
+
+});
+
+</script>
+</body>
+</html>
