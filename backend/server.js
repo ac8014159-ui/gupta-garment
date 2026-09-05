@@ -122,7 +122,53 @@ app.get("/api/reviews/:productName", (req, res) => {
         });
     });
 });
+// ===============================
+// PRODUCT API - GET ALL PRODUCTS
+// ===============================
 
+app.get("/api/products", (req, res) => {
+
+    const sql = `
+        SELECT
+            id,
+            product_name,
+            category,
+            gender,
+            season,
+            price,
+            sizes,
+            description,
+            image_url,
+            stock_status,
+            is_visible,
+            created_at,
+            updated_at
+        FROM products
+        WHERE is_visible = 1
+        ORDER BY id DESC
+    `;
+
+    db.query(sql, (err, results) => {
+
+        if (err) {
+
+            console.error("❌ Products fetch failed:", err.message);
+
+            return res.status(500).json({
+                success: false,
+                message: "Failed to fetch products."
+            });
+
+        }
+
+        res.json({
+            success: true,
+            products: results
+        });
+
+    });
+
+});
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, "0.0.0.0", () => {

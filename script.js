@@ -593,27 +593,35 @@ function setActiveSeasonButton(season) {
     }
 
 
-    /* =====================================================
-       CLEAR FILTER
-       ===================================================== */
+    /* =====================================================*
+*       CLEAR FILTER
+*       ===================================================== */
 
-    const clearFilter =
-        document.querySelector("#clearFilter");
+const clearFilter =
+    document.querySelector("#clearFilter");
 
-    if (clearFilter) {
+if (clearFilter) {
+    clearFilter.addEventListener(
+        "click",
+        function () {
 
-        clearFilter.addEventListener(
-            "click",
-            function () {
+            /* Clear category filter */
+            currentCategory = "all";
 
-                filterProducts("all");
+            /* Clear season filter */
+            currentSeason = "all";
 
-                setActiveCategory(null);
+            /* Show all products */
+            filterProducts("all");
 
-            }
-        );
+            /* Remove active category */
+            setActiveCategory(null);
 
-    }
+            /* Remove active season */
+            setActiveSeasonButton("all");
+        }
+    );
+}
 
 
     /* =====================================================
@@ -2185,4 +2193,40 @@ viewDetailsButtons.forEach(
 console.log(
     "Gupta Garments - Customer Review Engine loaded successfully."
 );
+
+/* =========================================================
+   CATEGORY SUBMENU TOGGLE
+   Kids / Women / Men / Winter Collection
+   ========================================================= */
+
+const categorySubmenus = document.querySelectorAll(".category-submenu");
+
+categorySubmenus.forEach(function (submenu) {
+
+    const submenuTitle = submenu.querySelector(".submenu-title");
+
+    if (!submenuTitle) {
+        return;
+    }
+
+    submenuTitle.addEventListener("click", function (event) {
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        /* Close other category submenus */
+        categorySubmenus.forEach(function (otherSubmenu) {
+
+            if (otherSubmenu !== submenu) {
+                otherSubmenu.classList.remove("submenu-open");
+            }
+
+        });
+
+        /* Toggle clicked submenu */
+        submenu.classList.toggle("submenu-open");
+
+    });
+
+});
 });
