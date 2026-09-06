@@ -8,6 +8,45 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// ===============================
+// ADMIN LOGIN API
+// ===============================
+
+app.post("/api/admin/login", (req, res) => {
+    const { username, password } = req.body;
+
+    const adminUsername = process.env.ADMIN_USERNAME;
+    const adminPassword = process.env.ADMIN_PASSWORD;
+
+    if (!adminUsername || !adminPassword) {
+        console.error("❌ Admin login credentials are not configured.");
+
+        return res.status(500).json({
+            success: false,
+            message: "Admin login is not configured on server."
+        });
+    }
+
+    if (
+        username === adminUsername &&
+        password === adminPassword
+    ) {
+        console.log("✅ Admin login successful.");
+
+        return res.json({
+            success: true,
+            message: "Login successful!"
+        });
+    }
+
+    console.log("❌ Invalid admin login attempt.");
+
+    return res.status(401).json({
+        success: false,
+        message: "Invalid username or password."
+    });
+});
+
 const db = mysql.createConnection({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,

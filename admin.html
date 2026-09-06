@@ -455,10 +455,1241 @@
     }
 
 }
+/* =========================================
+   PROFESSIONAL OWNER LOGIN PAGE
+   ========================================= */
+
+.admin-login-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+
+    width: 100%;
+    height: 100vh;
+
+    display: flex;
+
+    background: #ffffff;
+
+    overflow: hidden;
+}
+
+/* =========================================
+   LEFT BRANDING PANEL
+   ========================================= */
+
+.admin-login-brand {
+    position: relative;
+
+    width: 43%;
+    min-height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    padding: 50px;
+
+    background:
+        radial-gradient(
+            circle at 20% 20%,
+            rgba(255,255,255,0.06),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 80% 80%,
+            rgba(0,0,0,0.12),
+            transparent 35%
+        ),
+        linear-gradient(
+            145deg,
+            #7d142b 0%,
+            #641021 55%,
+            #4e0b18 100%
+        );
+
+    color: #ffffff;
+
+    overflow: hidden;
+}
+
+/* Decorative clothing icons */
+
+.admin-login-brand::before {
+    content: "👕     👖     👗     🧥";
+
+    position: absolute;
+
+    top: 35px;
+    left: 35px;
+
+    width: 90%;
+    
+    font-size: 32px;
+
+    letter-spacing: 25px;
+
+    opacity: 0.07;
+
+    transform: rotate(-5deg);
+}
+
+.admin-login-brand::after {
+    content: "👗     🧥     👕     👖";
+
+    position: absolute;
+
+    bottom: 130px;
+    left: 20px;
+
+    width: 100%;
+
+    font-size: 34px;
+
+    letter-spacing: 20px;
+
+    opacity: 0.06;
+
+    transform: rotate(4deg);
+}
+
+/* Brand Content */
+
+.admin-brand-content {
+    position: relative;
+    z-index: 2;
+
+    width: 100%;
+    max-width: 560px;
+
+    text-align: center;
+}
+
+/* Logo */
+
+.admin-brand-logo {
+    width: 110px;
+    height: 110px;
+
+    margin: 0 auto 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 2px solid rgba(255,255,255,0.35);
+
+    border-radius: 50%;
+
+    background: rgba(255,255,255,0.05);
+
+    font-size: 58px;
+
+    font-family: Georgia, serif;
+    font-weight: bold;
+
+    box-shadow:
+        0 15px 35px rgba(0,0,0,0.18);
+}
+
+.admin-brand-title {
+    margin: 0;
+
+    font-family: Georgia, "Times New Roman", serif;
+
+    font-size: 43px;
+    font-weight: 700;
+
+    letter-spacing: 2px;
+
+    color: #ffffff;
+}
+
+.admin-brand-subtitle {
+    margin-top: 12px;
+
+    font-family: Georgia, "Times New Roman", serif;
+
+    font-size: 23px;
+
+    color: #ffffff;
+}
+
+.admin-brand-subtitle::before,
+.admin-brand-subtitle::after {
+    content: "";
+
+    display: inline-block;
+
+    width: 48px;
+    height: 2px;
+
+    margin: 0 15px;
+
+    vertical-align: middle;
+
+    background: #55a878;
+}
+
+.admin-brand-tagline {
+    margin-top: 24px;
+
+    font-size: 15px;
+
+    color: rgba(255,255,255,0.88);
+
+    letter-spacing: 0.5px;
+}
+
+/* Owner Admin Panel Card */
+
+.admin-owner-card {
+    margin: 70px auto 0;
+
+    width: 100%;
+    max-width: 500px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 20px;
+
+    padding: 20px 24px;
+
+    text-align: left;
+
+    border: 1px solid rgba(255,255,255,0.25);
+
+    border-radius: 15px;
+
+    background: rgba(255,255,255,0.05);
+
+    backdrop-filter: blur(8px);
+
+    box-shadow:
+        0 12px 30px rgba(0,0,0,0.12);
+}
+
+.admin-owner-icon {
+    flex: 0 0 58px;
+
+    width: 58px;
+    height: 58px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 16px;
+
+    background: rgba(82,170,126,0.28);
+
+    font-size: 29px;
+}
+
+.admin-owner-card h3 {
+    margin: 0 0 5px;
+
+    color: #ffffff;
+
+    font-size: 17px;
+}
+
+.admin-owner-card p {
+    margin: 0;
+
+    color: rgba(255,255,255,0.75);
+
+    font-size: 13px;
+
+    line-height: 1.5;
+}
+
+/* Location */
+
+.admin-brand-location {
+    position: absolute;
+
+    bottom: 28px;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    white-space: nowrap;
+
+    color: rgba(255,255,255,0.8);
+
+    font-size: 13px;
+}
+
+/* =========================================
+   RIGHT LOGIN PANEL
+   ========================================= */
+
+.admin-login-right {
+    width: 57%;
+    min-height: 100vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 50px;
+
+    background:
+        radial-gradient(
+            circle at top right,
+            #f4eeee,
+            transparent 30%
+        ),
+        #ffffff;
+
+    overflow-y: auto;
+}
+
+/* Login Card */
+
+.admin-login-box {
+    position: relative;
+
+    width: 100%;
+    max-width: 595px;
+
+    padding: 40px 45px;
+
+    background: #ffffff;
+
+    border: 1px solid #eeeeee;
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 20px 60px rgba(0,0,0,0.10);
+
+    text-align: center;
+}
+
+/* Lock Circle */
+
+.admin-login-icon {
+    width: 74px;
+    height: 74px;
+
+    margin: 0 auto 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #f8e9ed;
+
+    color: #6b1f2b;
+
+    font-size: 34px;
+}
+
+/* Welcome */
+
+.admin-login-box h2 {
+    margin: 0;
+
+    color: #6b1f2b;
+
+    font-size: 38px;
+    font-weight: 800;
+}
+
+.admin-login-title {
+    margin: 10px 0 5px;
+
+    color: #26364a;
+
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.admin-login-subtitle {
+    margin: 0 0 34px;
+
+    color: #718096;
+
+    font-size: 14px;
+}
+
+/* =========================================
+   INPUT GROUP
+   ========================================= */
+
+.login-form-group {
+    position: relative;
+
+    margin-bottom: 22px;
+
+    text-align: left;
+}
+
+.login-form-group label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #202b3c;
+
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.login-input-wrapper {
+    position: relative;
+
+    width: 100%;
+}
+
+.login-input-icon {
+    position: absolute;
+
+    left: 17px;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    color: #536579;
+
+    font-size: 19px;
+
+    pointer-events: none;
+}
+
+.login-form-group input {
+    width: 100%;
+    height: 54px;
+
+    box-sizing: border-box;
+
+    padding: 0 48px;
+
+    border: 1px solid #d9e0e8;
+
+    border-radius: 10px;
+
+    outline: none;
+
+    background: #ffffff;
+
+    color: #27364a;
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    transition:
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.login-form-group input:focus {
+    border-color: #6b1f2b;
+
+    box-shadow:
+        0 0 0 3px rgba(107,31,43,0.08);
+}
+
+.login-form-group input::placeholder {
+    color: #9aa7b8;
+}
+
+/* Password Eye */
+
+.password-toggle {
+    position: absolute;
+
+    right: 16px;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    border: none;
+
+    background: transparent;
+
+    color: #617083;
+
+    font-size: 18px;
+
+    cursor: pointer;
+
+    padding: 4px;
+}
+
+/* =========================================
+   FORGOT PASSWORD
+   ========================================= */
+
+.admin-forgot-password {
+    margin: -5px 0 24px;
+
+    text-align: right;
+}
+
+.admin-forgot-password a {
+    color: #6b1f2b;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    text-decoration: none;
+}
+
+.admin-forgot-password a:hover {
+    text-decoration: underline;
+}
+
+/* =========================================
+   LOGIN BUTTON
+   ========================================= */
+
+#adminLoginBtn {
+    width: 100% !important;
+    height: 54px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    gap: 10px;
+
+    margin: 0 !important;
+    padding: 0 20px !important;
+
+    border: none !important;
+
+    border-radius: 10px !important;
+
+    background: #6b1f2b !important;
+
+    color: #ffffff !important;
+
+    font-family: inherit !important;
+
+    font-size: 16px !important;
+    font-weight: 700 !important;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 8px 20px rgba(107,31,43,0.20);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+#adminLoginBtn:hover {
+    background: #581723 !important;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 12px 25px rgba(107,31,43,0.25);
+}
+
+/* =========================================
+   OR DIVIDER
+   ========================================= */
+
+.login-divider {
+    display: flex;
+    align-items: center;
+
+    gap: 14px;
+
+    margin: 28px 0 20px;
+
+    color: #7b8794;
+
+    font-size: 13px;
+}
+
+.login-divider::before,
+.login-divider::after {
+    content: "";
+
+    flex: 1;
+
+    height: 1px;
+
+    background: #e1e5ea;
+}
+
+/* =========================================
+   SECURITY AREA
+   ========================================= */
+
+.admin-login-security {
+    color: #4c856d;
+
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.admin-login-security-subtitle {
+    margin-top: 7px;
+
+    color: #8793a1;
+
+    font-size: 12px;
+}
+
+/* Login Error / Success */
+
+#adminLoginMessage {
+    min-height: 20px;
+
+    margin-top: 15px;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    line-height: 1.5;
+}
+
+/* =========================================
+   TABLET
+   ========================================= */
+
+@media (max-width: 1000px) {
+
+    .admin-login-brand {
+        width: 40%;
+        padding: 30px;
+    }
+
+    .admin-login-right {
+        width: 60%;
+        padding: 30px;
+    }
+
+    .admin-brand-title {
+        font-size: 32px;
+    }
+
+    .admin-brand-subtitle {
+        font-size: 18px;
+    }
+
+    .admin-owner-card {
+        margin-top: 45px;
+    }
+
+    .admin-login-box {
+        padding: 35px 30px;
+    }
+}
+
+/* =========================================
+   MOBILE
+   ========================================= */
+
+@media (max-width: 700px) {
+
+    .admin-login-screen {
+        position: fixed;
+
+        display: block;
+
+        overflow-y: auto;
+    }
+
+    .admin-login-brand {
+        width: 100%;
+        min-height: auto;
+
+        padding: 35px 20px 30px;
+    }
+
+    .admin-brand-logo {
+        width: 75px;
+        height: 75px;
+
+        font-size: 40px;
+
+        margin-bottom: 12px;
+    }
+
+    .admin-brand-title {
+        font-size: 28px;
+        letter-spacing: 1px;
+    }
+
+    .admin-brand-subtitle {
+        font-size: 17px;
+    }
+
+    .admin-brand-subtitle::before,
+    .admin-brand-subtitle::after {
+        width: 25px;
+
+        margin: 0 8px;
+    }
+
+    .admin-brand-tagline {
+        margin-top: 15px;
+
+        font-size: 12px;
+    }
+
+    .admin-owner-card {
+        margin-top: 25px;
+
+        padding: 15px;
+
+        gap: 14px;
+    }
+
+    .admin-owner-icon {
+        width: 48px;
+        height: 48px;
+
+        flex-basis: 48px;
+
+        font-size: 23px;
+    }
+
+    .admin-owner-card h3 {
+        font-size: 15px;
+    }
+
+    .admin-owner-card p {
+        font-size: 12px;
+    }
+
+    .admin-brand-location {
+        position: static;
+
+        transform: none;
+
+        margin-top: 22px;
+
+        text-align: center;
+
+        font-size: 12px;
+    }
+
+    .admin-login-right {
+        width: 100%;
+        min-height: auto;
+
+        padding: 25px 15px 40px;
+    }
+
+    .admin-login-box {
+        max-width: 100%;
+
+        padding: 30px 20px;
+
+        border-radius: 14px;
+    }
+
+    .admin-login-icon {
+        width: 65px;
+        height: 65px;
+
+        font-size: 29px;
+    }
+
+    .admin-login-box h2 {
+        font-size: 29px;
+    }
+
+    .admin-login-title {
+        font-size: 19px;
+    }
+
+    .admin-login-subtitle {
+        font-size: 12px;
+
+        margin-bottom: 27px;
+    }
+
+    .login-form-group input {
+        height: 50px;
+    }
+
+    #adminLoginBtn {
+        height: 50px !important;
+    }
+}
+
+/* =========================================
+   VERY SMALL PHONES
+   ========================================= */
+
+@media (max-width: 380px) {
+
+    .admin-brand-title {
+        font-size: 24px;
+    }
+
+    .admin-brand-subtitle {
+        font-size: 15px;
+    }
+
+    .admin-login-box {
+        padding: 25px 17px;
+    }
+
+    .admin-login-box h2 {
+        font-size: 26px;
+    }
+}
+/* =========================================
+   3D ANIMATED GG BRAND LOGO
+   ========================================= */
+
+.admin-brand-logo {
+    position: relative;
+
+    width: 125px;
+    height: 125px;
+
+    margin: 0 auto 22px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 2px solid rgba(255, 255, 255, 0.38);
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle at 30% 25%,
+            rgba(255, 255, 255, 0.18),
+            rgba(255, 255, 255, 0.03) 45%,
+            rgba(0, 0, 0, 0.18) 100%
+        );
+
+    box-shadow:
+        inset 0 3px 8px rgba(255, 255, 255, 0.12),
+        inset 0 -8px 15px rgba(0, 0, 0, 0.18),
+        0 18px 35px rgba(0, 0, 0, 0.22);
+
+    perspective: 700px;
+
+    animation: ggLogoFloat 4s ease-in-out infinite;
+}
+
+/* Front GG */
+
+.gg-logo-front {
+    position: relative;
+    z-index: 3;
+
+    display: block;
+
+    color: #ffffff;
+
+    font-family: Georgia, "Times New Roman", serif;
+
+    font-size: 58px;
+    font-weight: 900;
+
+    line-height: 1;
+
+    letter-spacing: -8px;
+
+    text-shadow:
+        1px 1px 0 #d9d9d9,
+        2px 2px 0 #bcbcbc,
+        3px 3px 0 #9d9d9d,
+        5px 5px 10px rgba(0, 0, 0, 0.35);
+
+    transform: translateZ(25px);
+
+    animation: ggLogoShine 4s ease-in-out infinite;
+}
+
+/* 3D Depth */
+
+.gg-logo-shadow {
+    position: absolute;
+
+    z-index: 1;
+
+    color: #3e0713;
+
+    font-family: Georgia, "Times New Roman", serif;
+
+    font-size: 58px;
+    font-weight: 900;
+
+    line-height: 1;
+
+    letter-spacing: -8px;
+
+    transform:
+        translate(5px, 7px)
+        translateZ(0);
+
+    opacity: 0.85;
+
+    text-shadow:
+        1px 1px 0 #26040c,
+        2px 2px 0 #26040c,
+        3px 3px 0 #26040c,
+        4px 4px 0 #26040c,
+        5px 5px 0 #26040c;
+}
+
+/* Green Brand Accent */
+
+.admin-brand-logo::after {
+    content: "";
+
+    position: absolute;
+
+    width: 24px;
+    height: 24px;
+
+    right: 16px;
+    bottom: 18px;
+
+    border-radius: 50%;
+
+    background: #4f9b72;
+
+    box-shadow:
+        0 0 12px rgba(79, 155, 114, 0.55);
+
+    opacity: 0.9;
+
+    z-index: 4;
+}
+
+/* Floating Animation */
+
+@keyframes ggLogoFloat {
+
+    0%,
+    100% {
+        transform:
+            translateY(0)
+            rotateX(0deg)
+            rotateY(-5deg);
+    }
+
+    50% {
+        transform:
+            translateY(-8px)
+            rotateX(4deg)
+            rotateY(5deg);
+    }
+}
+
+/* Shine Animation */
+
+@keyframes ggLogoShine {
+
+    0%,
+    100% {
+        filter: brightness(1);
+    }
+
+    50% {
+        filter: brightness(1.18);
+    }
+}
+
+/* Hover 3D Effect */
+
+.admin-brand-logo:hover {
+    animation-play-state: paused;
+
+    transform:
+        rotateX(8deg)
+        rotateY(-12deg)
+        scale(1.04);
+
+    transition:
+        transform 0.45s ease;
+}
+
+/* Mobile */
+
+@media (max-width: 700px) {
+
+    .admin-brand-logo {
+        width: 90px;
+        height: 90px;
+
+        margin-bottom: 15px;
+    }
+
+    .gg-logo-front,
+    .gg-logo-shadow {
+        font-size: 43px;
+        letter-spacing: -6px;
+    }
+
+    .admin-brand-logo::after {
+        width: 18px;
+        height: 18px;
+
+        right: 11px;
+        bottom: 13px;
+    }
+}
+.admin-brand-logo::after {
+    content: "";
+
+    position: absolute;
+
+    width: 24px;
+    height: 24px;
+
+    right: 16px;
+    bottom: 18px;
+
+    border-radius: 50%;
+
+    background: #4f9b72;
+
+    box-shadow:
+        0 0 12px rgba(79, 155, 114, 0.55);
+
+    opacity: 0.9;
+
+    z-index: 4;
+}
     </style>
 </head>
 
 <body>
+
+<!-- =========================================
+     PROFESSIONAL OWNER LOGIN SCREEN
+     ========================================= -->
+
+<div id="adminLoginScreen" class="admin-login-screen">
+
+    <!-- =====================================
+         LEFT BRANDING
+         ===================================== -->
+
+    <div class="admin-login-brand">
+
+        <div class="admin-brand-content">
+
+            <div class="admin-brand-logo">
+    <span class="gg-logo-front">GG</span>
+    <span class="gg-logo-shadow">GG</span>
+</div>
+
+            <h1 class="admin-brand-title">
+                GUPTA GARMENTS
+            </h1>
+
+            <div class="admin-brand-subtitle">
+                Spl. in Kids Wear
+            </div>
+
+            <p class="admin-brand-tagline">
+                Quality Kids Wear
+                &nbsp; • &nbsp;
+                Better Tomorrow
+            </p>
+
+            <div class="admin-owner-card">
+
+                <div class="admin-owner-icon">
+                    🛡️
+                </div>
+
+                <div>
+                    <h3>
+                        Owner Admin Panel
+                    </h3>
+
+                    <p>
+                        Manage your products, stock and
+                        visibility with ease.
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="admin-brand-location">
+            📍 Gupta Garments &nbsp; | &nbsp; Hapur
+        </div>
+
+    </div>
+
+
+    <!-- =====================================
+         RIGHT LOGIN AREA
+         ===================================== -->
+
+    <div class="admin-login-right">
+
+        <div class="admin-login-box">
+
+            <div class="admin-login-icon">
+                🔒
+            </div>
+
+            <h2>
+                Welcome Back
+            </h2>
+
+            <p class="admin-login-title">
+                Owner Login
+            </p>
+
+            <p class="admin-login-subtitle">
+                Login to access the Product Management Dashboard
+            </p>
+
+
+            <!-- LOGIN FORM -->
+
+            <form id="adminLoginForm">
+
+                <!-- USERNAME -->
+
+                <div class="login-form-group">
+
+                    <label for="adminUsername">
+                        Username
+                    </label>
+
+                    <div class="login-input-wrapper">
+
+                        <span class="login-input-icon">
+                            👤
+                        </span>
+
+                        <input
+                            type="text"
+                            id="adminUsername"
+                            placeholder="Enter username"
+                            autocomplete="username"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- PASSWORD -->
+
+                <div class="login-form-group">
+
+                    <label for="adminPassword">
+                        Password
+                    </label>
+
+                    <div class="login-input-wrapper">
+
+                        <span class="login-input-icon">
+                            🔒
+                        </span>
+
+                        <input
+                            type="password"
+                            id="adminPassword"
+                            placeholder="Enter password"
+                            autocomplete="current-password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="password-toggle"
+                            id="passwordToggle"
+                            aria-label="Show password">
+
+                            👁️
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- FORGOT PASSWORD -->
+
+                <div class="admin-forgot-password">
+
+                    <a
+                        href="#"
+                        id="forgotPasswordLink">
+
+                        🔒 Forgot Password?
+
+                    </a>
+
+                </div>
+
+
+                <!-- LOGIN BUTTON -->
+
+                <button
+                    type="submit"
+                    class="admin-login-btn"
+                    id="adminLoginBtn">
+
+                    <span>
+                        ➜
+                    </span>
+
+                    <span>
+                        Login
+                    </span>
+
+                </button>
+
+
+                <!-- MESSAGE -->
+
+                <div
+                    id="adminLoginMessage"
+                    class="admin-login-message">
+                </div>
+
+
+                <!-- OR -->
+
+                <div class="login-divider">
+                    <span>Or</span>
+                </div>
+
+
+                <!-- SECURITY -->
+
+                <div class="admin-login-security">
+                    🛡️ &nbsp; Secure Access
+                </div>
+
+                <div class="admin-login-security-subtitle">
+                    Only authorized owners can access this panel
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
 
     <header class="admin-header">
         <h1>Gupta Garments</h1>
@@ -2201,7 +3432,254 @@ alert(
     }
 
 });
+/* =========================================
+   ADMIN LOGIN SYSTEM
+   ========================================= */
 
+document.addEventListener("DOMContentLoaded", function () {
+
+    const adminLoginForm =
+        document.getElementById("adminLoginForm");
+
+    const adminLoginScreen =
+        document.getElementById("adminLoginScreen");
+
+    const adminUsername =
+        document.getElementById("adminUsername");
+
+    const adminPassword =
+        document.getElementById("adminPassword");
+
+    const adminLoginBtn =
+        document.getElementById("adminLoginBtn");
+
+    const adminLoginMessage =
+        document.getElementById("adminLoginMessage");
+
+    const passwordToggle =
+        document.getElementById("passwordToggle");
+
+    const forgotPasswordLink =
+        document.getElementById("forgotPasswordLink");
+
+
+    /* =========================================
+       PASSWORD SHOW / HIDE
+       ========================================= */
+
+    if (passwordToggle && adminPassword) {
+
+        passwordToggle.addEventListener(
+            "click",
+            function () {
+
+                if (adminPassword.type === "password") {
+
+                    adminPassword.type = "text";
+
+                    passwordToggle.textContent = "🙈";
+
+                    passwordToggle.setAttribute(
+                        "aria-label",
+                        "Hide password"
+                    );
+
+                } else {
+
+                    adminPassword.type = "password";
+
+                    passwordToggle.textContent = "👁️";
+
+                    passwordToggle.setAttribute(
+                        "aria-label",
+                        "Show password"
+                    );
+                }
+            }
+        );
+    }
+
+
+    /* =========================================
+       FORGOT PASSWORD
+       ========================================= */
+
+    if (forgotPasswordLink) {
+
+        forgotPasswordLink.addEventListener(
+            "click",
+            function (event) {
+
+                event.preventDefault();
+
+                alert(
+                    "🔐 Forgot Password\n\n" +
+                    "Please contact Gupta Garments owner/admin " +
+                    "to reset the password."
+                );
+            }
+        );
+    }
+
+
+    /* =========================================
+       ADMIN LOGIN
+       ========================================= */
+
+    if (adminLoginForm) {
+
+        adminLoginForm.addEventListener(
+            "submit",
+            async function (event) {
+
+                event.preventDefault();
+
+
+                const username =
+                    adminUsername.value.trim();
+
+                const password =
+                    adminPassword.value;
+
+
+                /* Empty validation */
+
+                if (!username || !password) {
+
+                    adminLoginMessage.textContent =
+                        "⚠️ Please enter username and password.";
+
+                    adminLoginMessage.style.color =
+                        "#b4232f";
+
+                    return;
+                }
+
+
+                /* Loading state */
+
+                adminLoginBtn.disabled = true;
+
+                adminLoginBtn.innerHTML =
+                    "⏳ Logging in...";
+
+                adminLoginMessage.textContent = "";
+
+
+                try {
+
+                    const response = await fetch(
+                        "https://gupta-garment-production.up.railway.app/api/admin/login",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify({
+                                username: username,
+                                password: password
+                            })
+                        }
+                    );
+
+
+                    const data =
+                        await response.json();
+
+
+                    /* =================================
+                       LOGIN SUCCESS
+                       ================================= */
+
+                    if (response.ok && data.success) {
+
+                        adminLoginMessage.textContent =
+                            "✅ Login successful!";
+
+                        adminLoginMessage.style.color =
+                            "#37815f";
+
+
+                        adminLoginBtn.innerHTML =
+                            "✅ Login Successful";
+
+
+                        /*
+                         * Small delay so owner can
+                         * see successful login message.
+                         */
+
+                        setTimeout(function () {
+
+                            adminLoginScreen.style.display =
+                                "none";
+
+                            window.scrollTo({
+                                top: 0,
+                                behavior: "smooth"
+                            });
+
+                        }, 700);
+
+
+                    }
+
+                    /* =================================
+                       LOGIN FAILED
+                       ================================= */
+
+                    else {
+
+                        adminLoginMessage.textContent =
+                            "❌ " +
+                            (
+                                data.message ||
+                                "Invalid username or password."
+                            );
+
+                        adminLoginMessage.style.color =
+                            "#b4232f";
+
+                        adminPassword.value = "";
+
+                        adminLoginBtn.innerHTML =
+                            "🔐 Login";
+
+                        adminLoginBtn.disabled =
+                            false;
+                    }
+
+
+                } catch (error) {
+
+                    console.error(
+                        "Admin login error:",
+                        error
+                    );
+
+
+                    adminLoginMessage.textContent =
+                        "❌ Unable to connect to server. Please try again.";
+
+                    adminLoginMessage.style.color =
+                        "#b4232f";
+
+
+                    adminLoginBtn.innerHTML =
+                        "🔐 Login";
+
+                    adminLoginBtn.disabled =
+                        false;
+                }
+
+            }
+        );
+    }
+
+});
 </script>
 </body>
 </html>
