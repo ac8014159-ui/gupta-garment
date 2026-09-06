@@ -1346,31 +1346,6 @@
         5px 5px 0 #26040c;
 }
 
-/* Green Brand Accent */
-
-.admin-brand-logo::after {
-    content: "";
-
-    position: absolute;
-
-    width: 24px;
-    height: 24px;
-
-    right: 16px;
-    bottom: 18px;
-
-    border-radius: 50%;
-
-    background: #4f9b72;
-
-    box-shadow:
-        0 0 12px rgba(79, 155, 114, 0.55);
-
-    opacity: 0.9;
-
-    z-index: 4;
-}
-
 /* Floating Animation */
 
 @keyframes ggLogoFloat {
@@ -1436,35 +1411,123 @@
         letter-spacing: -6px;
     }
 
-    .admin-brand-logo::after {
-        width: 18px;
-        height: 18px;
-
-        right: 11px;
-        bottom: 13px;
-    }
 }
+/* =========================================
+   GG LOGO - REMOVE GREEN DOT PERMANENTLY
+   ========================================= */
+
 .admin-brand-logo::after {
-    content: "";
+    content: none !important;
+    display: none !important;
+}
+/* =========================================
+   OWNER DASHBOARD HEADER + LOGOUT BUTTON
+   ========================================= */
 
-    position: absolute;
+.admin-header-content {
+    max-width: 1200px;
+    margin: 0 auto;
 
-    width: 24px;
-    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
 
-    right: 16px;
-    bottom: 18px;
+.admin-logout-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 
-    border-radius: 50%;
+    padding: 10px 18px;
 
-    background: #4f9b72;
+    background: #ffffff;
+    color: #6b1f2b;
 
-    box-shadow:
-        0 0 12px rgba(79, 155, 114, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 7px;
 
-    opacity: 0.9;
+    font-size: 14px;
+    font-weight: 700;
 
-    z-index: 4;
+    cursor: pointer;
+
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.admin-logout-btn:hover {
+    background: #f8e9ed;
+    color: #581723;
+
+    transform: translateY(-2px);
+
+    box-shadow: 0 7px 16px rgba(0, 0, 0, 0.18);
+}
+
+.admin-logout-btn:active {
+    transform: translateY(0);
+}
+
+/* =========================================
+   LOGOUT BUTTON - TABLET
+   ========================================= */
+
+@media (max-width: 900px) {
+
+    .admin-header-content {
+        gap: 15px;
+    }
+
+    .admin-logout-btn {
+        padding: 9px 15px;
+        font-size: 13px;
+    }
+
+}
+
+/* =========================================
+   LOGOUT BUTTON - MOBILE
+   ========================================= */
+
+@media (max-width: 600px) {
+
+    .admin-header-content {
+        align-items: center;
+    }
+
+    .admin-logout-btn {
+        flex-shrink: 0;
+
+        padding: 9px 12px;
+
+        font-size: 12px;
+        min-height: 40px;
+    }
+
+}
+
+/* =========================================
+   VERY SMALL PHONE
+   ========================================= */
+
+@media (max-width: 380px) {
+
+    .admin-header-content {
+        gap: 10px;
+    }
+
+    .admin-logout-btn {
+        padding: 8px 10px;
+        font-size: 11px;
+    }
+
 }
     </style>
 </head>
@@ -1691,10 +1754,25 @@
 
 </div>
 
-    <header class="admin-header">
-        <h1>Gupta Garments</h1>
-        <p>Owner Product Management Dashboard</p>
-    </header>
+   <header class="admin-header">
+
+    <div class="admin-header-content">
+
+        <div>
+            <h1>Gupta Garments</h1>
+            <p>Owner Product Management Dashboard</p>
+        </div>
+
+        <button
+            type="button"
+            class="admin-logout-btn"
+            id="adminLogoutBtn">
+            🚪 Logout
+        </button>
+
+    </div>
+
+</header>
 
     <main class="admin-container">
 
@@ -3433,7 +3511,7 @@ alert(
 
 });
 /* =========================================
-   ADMIN LOGIN SYSTEM
+   ADMIN LOGIN + SESSION + LOGOUT SYSTEM
    ========================================= */
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -3461,6 +3539,31 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const forgotPasswordLink =
         document.getElementById("forgotPasswordLink");
+
+    const adminLogoutBtn =
+        document.getElementById("adminLogoutBtn");
+
+
+    /* =========================================
+       CHECK OWNER LOGIN SESSION
+       ========================================= */
+
+    const isAdminLoggedIn =
+        sessionStorage.getItem("guptaAdminLoggedIn");
+
+    if (isAdminLoggedIn === "true") {
+
+        if (adminLoginScreen) {
+            adminLoginScreen.style.display = "none";
+        }
+
+    } else {
+
+        if (adminLoginScreen) {
+            adminLoginScreen.style.display = "flex";
+        }
+
+    }
 
 
     /* =========================================
@@ -3494,9 +3597,12 @@ document.addEventListener("DOMContentLoaded", function () {
                         "aria-label",
                         "Show password"
                     );
+
                 }
+
             }
         );
+
     }
 
 
@@ -3517,8 +3623,10 @@ document.addEventListener("DOMContentLoaded", function () {
                     "Please contact Gupta Garments owner/admin " +
                     "to reset the password."
                 );
+
             }
         );
+
     }
 
 
@@ -3553,6 +3661,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         "#b4232f";
 
                     return;
+
                 }
 
 
@@ -3596,6 +3705,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     if (response.ok && data.success) {
 
+
+                        /* SAVE LOGIN FOR THIS BROWSER TAB */
+
+                        sessionStorage.setItem(
+                            "guptaAdminLoggedIn",
+                            "true"
+                        );
+
+
                         adminLoginMessage.textContent =
                             "✅ Login successful!";
 
@@ -3614,8 +3732,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
                         setTimeout(function () {
 
-                            adminLoginScreen.style.display =
-                                "none";
+                            if (adminLoginScreen) {
+
+                                adminLoginScreen.style.display =
+                                    "none";
+
+                            }
+
 
                             window.scrollTo({
                                 top: 0,
@@ -3624,8 +3747,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
                         }, 700);
 
-
                     }
+
 
                     /* =================================
                        LOGIN FAILED
@@ -3643,13 +3766,16 @@ document.addEventListener("DOMContentLoaded", function () {
                         adminLoginMessage.style.color =
                             "#b4232f";
 
+
                         adminPassword.value = "";
+
 
                         adminLoginBtn.innerHTML =
                             "🔐 Login";
 
                         adminLoginBtn.disabled =
                             false;
+
                     }
 
 
@@ -3673,10 +3799,102 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     adminLoginBtn.disabled =
                         false;
+
                 }
 
             }
         );
+
+    }
+
+
+    /* =========================================
+       OWNER LOGOUT
+       ========================================= */
+
+    if (adminLogoutBtn) {
+
+        adminLogoutBtn.addEventListener(
+            "click",
+            function () {
+
+                const confirmLogout =
+                    confirm(
+                        "🚪 Are you sure you want to logout?"
+                    );
+
+
+                if (!confirmLogout) {
+                    return;
+                }
+
+
+                /* REMOVE LOGIN SESSION */
+
+                sessionStorage.removeItem(
+                    "guptaAdminLoggedIn"
+                );
+
+
+                /* SHOW LOGIN SCREEN */
+
+                if (adminLoginScreen) {
+
+                    adminLoginScreen.style.display =
+                        "flex";
+
+                }
+
+
+                /* RESET LOGIN FORM */
+
+                if (adminLoginForm) {
+                    adminLoginForm.reset();
+                }
+
+
+                if (adminLoginMessage) {
+
+                    adminLoginMessage.textContent =
+                        "";
+
+                }
+
+
+                if (adminLoginBtn) {
+
+                    adminLoginBtn.innerHTML =
+                        "🔐 Login";
+
+                    adminLoginBtn.disabled =
+                        false;
+
+                }
+
+
+                if (passwordToggle) {
+
+                    passwordToggle.textContent =
+                        "👁️";
+
+                    passwordToggle.setAttribute(
+                        "aria-label",
+                        "Show password"
+                    );
+
+                }
+
+
+                /* SCROLL TO TOP */
+
+                window.scrollTo({
+                    top: 0,
+                    behavior: "smooth"
+                });
+
+            }
+        );
+
     }
 
 });
