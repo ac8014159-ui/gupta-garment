@@ -5768,3 +5768,443 @@ MOBILE PHONE
 
     opacity: 0.8;
 }
+/* =========================================================
+   MOBILE HEADER + MENU FIX
+   SHOW TOP INFO + SOCIAL ICONS
+   FIX HAMBURGER MENU
+   ========================================================= */
+
+/* ================= TABLET / MOBILE ================= */
+
+@media (max-width: 900px) {
+
+    /* ---------- TOP BAR ---------- */
+
+    .top-bar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 6px 15px;
+        min-height: auto;
+        padding: 7px 12px;
+        font-size: 10px;
+        overflow: visible;
+    }
+
+    /* Address */
+    .top-left {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .top-left span {
+        justify-content: center;
+        text-align: center;
+        line-height: 1.4;
+    }
+
+    /* Opening time - SHOW */
+    .top-center {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        width: auto;
+    }
+
+    .top-center span {
+        justify-content: center;
+        white-space: nowrap;
+    }
+
+    /* Follow Us - SHOW */
+    .top-right {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        width: auto;
+    }
+
+    .top-right span {
+        white-space: nowrap;
+    }
+
+    .top-right a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+    }
+
+
+    /* ---------- NAVBAR ---------- */
+
+    .nav-container {
+        position: relative;
+    }
+
+    /*
+       Mobile menu is hidden normally.
+       When JS adds .mobile-open,
+       menu becomes visible.
+    */
+
+    .nav-menu.mobile-open {
+        display: flex !important;
+
+        position: absolute;
+        top: 100%;
+        left: 0;
+
+        width: 100%;
+
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: flex-start;
+
+        gap: 0;
+
+        background: #ffffff;
+
+        padding: 10px 15px 15px;
+
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+
+        border-top: 1px solid #eeeeee;
+
+        max-height: calc(100vh - 80px);
+        overflow-y: auto;
+
+        z-index: 9999;
+    }
+
+
+    /* Main mobile menu links */
+
+    .nav-menu.mobile-open > a,
+    .nav-menu.mobile-open > .dropdown > a {
+        display: flex;
+
+        align-items: center;
+        justify-content: space-between;
+
+        width: 100%;
+
+        padding: 14px 10px;
+
+        font-size: 14px;
+
+        color: #171717;
+
+        border-bottom: 1px solid #eeeeee;
+    }
+
+
+    /* Active menu item */
+
+    .nav-menu.mobile-open > a.active {
+        color: var(--maroon);
+    }
+
+
+    /* Remove desktop active underline */
+
+    .nav-menu.mobile-open > a.active::after {
+        display: none;
+    }
+
+
+    /* ---------- DROPDOWN ---------- */
+
+    .nav-menu.mobile-open .dropdown {
+        width: 100%;
+    }
+
+    .nav-menu.mobile-open .dropdown-menu {
+        position: static;
+
+        width: 100%;
+        min-width: unset;
+
+        transform: none;
+
+        margin: 0;
+
+        padding: 5px;
+
+        background: #fafafa;
+
+        box-shadow: none;
+
+        border-radius: 6px;
+
+        opacity: 1;
+        visibility: visible;
+
+        pointer-events: auto;
+    }
+
+
+    /* ---------- MOBILE MENU BUTTON ---------- */
+
+    .mobile-menu-btn {
+        display: flex !important;
+
+        align-items: center;
+        justify-content: center;
+
+        width: 42px;
+        height: 42px;
+
+        flex: 0 0 42px;
+
+        border: none;
+        background: transparent;
+
+        color: var(--maroon);
+
+        font-size: 22px;
+
+        cursor: pointer;
+    }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .top-bar {
+        padding: 7px 8px;
+
+        font-size: 9px;
+
+        gap: 5px 10px;
+    }
+
+    .top-left {
+        width: 100%;
+    }
+
+    .top-left span {
+        line-height: 1.35;
+    }
+
+    .top-center {
+        display: flex !important;
+        width: auto;
+    }
+
+    .top-center span {
+        font-size: 9px;
+    }
+
+    .top-right {
+        display: flex !important;
+
+        gap: 8px;
+    }
+
+    .top-right span {
+        font-size: 9px;
+    }
+
+    .top-right a {
+        font-size: 15px;
+    }
+
+
+    /* Mobile navigation */
+
+    .nav-menu.mobile-open {
+        padding: 8px 12px 15px;
+
+        max-height: calc(100vh - 70px);
+    }
+
+
+    .nav-menu.mobile-open > a,
+    .nav-menu.mobile-open > .dropdown > a {
+        padding: 13px 8px;
+
+        font-size: 13px;
+    }
+
+}
+
+
+/* =========================================================
+   VERY SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 380px) {
+
+    .top-bar {
+        font-size: 8px;
+
+        gap: 4px 8px;
+    }
+
+    .top-center span {
+        font-size: 8px;
+    }
+
+    .top-right {
+        gap: 6px;
+    }
+
+    .top-right span {
+        font-size: 8px;
+    }
+
+    .top-right a {
+        font-size: 14px;
+    }
+
+    .mobile-menu-btn {
+        width: 38px;
+        height: 38px;
+
+        flex-basis: 38px;
+
+        font-size: 20px;
+    }
+
+}
+/* =========================================================
+   PROFESSIONAL MOBILE DROPDOWN ANIMATION
+   CATEGORIES + SEASONS + SUBMENUS
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    /* -------------------------------
+       MAIN DROPDOWN SMOOTH FEEL
+       ------------------------------- */
+
+    .nav-menu.mobile-open .dropdown-menu {
+        overflow: hidden;
+        animation: mobileDropdownOpen 0.28s ease forwards;
+        transform-origin: top;
+    }
+
+    @keyframes mobileDropdownOpen {
+        from {
+            opacity: 0;
+            transform: translateY(-6px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+
+    /* -------------------------------
+       CATEGORY SUBMENU
+       ------------------------------- */
+
+    .category-submenu .submenu-menu {
+        display: block !important;
+
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+
+        padding-top: 0;
+        padding-bottom: 0;
+        margin-top: 0;
+        margin-bottom: 0;
+
+        transition:
+            max-height 0.35s ease,
+            opacity 0.25s ease,
+            padding 0.35s ease,
+            margin 0.35s ease;
+    }
+
+
+    /* When submenu is opened */
+
+    .category-submenu.submenu-open > .submenu-menu {
+        max-height: 600px;
+        opacity: 1;
+
+        padding-top: 5px;
+        padding-bottom: 5px;
+
+        margin-top: 4px;
+        margin-bottom: 6px;
+    }
+
+
+    /* -------------------------------
+       SUBMENU LINKS
+       ------------------------------- */
+
+    .category-submenu .submenu-menu a {
+        opacity: 0;
+        transform: translateY(-5px);
+
+        transition:
+            opacity 0.25s ease,
+            transform 0.25s ease,
+            background 0.2s ease;
+    }
+
+    .category-submenu.submenu-open > .submenu-menu a {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+
+    /* -------------------------------
+       SUBMENU ARROW ROTATION
+       ------------------------------- */
+
+    .category-submenu .submenu-arrow {
+        transition: transform 0.3s ease;
+    }
+
+    .category-submenu.submenu-open .submenu-arrow {
+        transform: rotate(90deg);
+    }
+
+
+    /* -------------------------------
+       CATEGORY / SEASON MAIN ARROW
+       ------------------------------- */
+
+    .nav-menu .dropdown > a i {
+        transition: transform 0.3s ease;
+    }
+
+
+    /* -------------------------------
+       BETTER TOUCH EXPERIENCE
+       ------------------------------- */
+
+    .nav-menu.mobile-open a {
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .nav-menu.mobile-open .dropdown-menu a,
+    .nav-menu.mobile-open .submenu-menu a {
+        transition:
+            background-color 0.2s ease,
+            color 0.2s ease,
+            padding-left 0.2s ease;
+    }
+
+    .nav-menu.mobile-open .dropdown-menu a:active,
+    .nav-menu.mobile-open .submenu-menu a:active {
+        padding-left: 18px;
+    }
+}

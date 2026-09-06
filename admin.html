@@ -232,6 +232,229 @@
         width: 100%;
     }
 }
+/* =========================================
+   OWNER DASHBOARD - PHONE & TABLET
+   RESPONSIVE DESIGN
+   ========================================= */
+
+@media (max-width: 900px) {
+
+    .admin-header {
+        padding: 18px 20px;
+    }
+
+    .admin-header h1 {
+        font-size: 22px;
+    }
+
+    .admin-container {
+        margin: 20px auto;
+        padding: 0 15px;
+    }
+
+    .dashboard-title h2 {
+        font-size: 22px;
+    }
+
+    .admin-actions {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+
+    .admin-card {
+        padding: 20px;
+    }
+
+    .admin-btn {
+        width: 100%;
+        padding: 11px 15px;
+    }
+
+    .add-product-section {
+        padding: 22px;
+    }
+
+    .form-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+
+}
+
+
+/* =========================================
+   SMALL PHONE
+   ========================================= */
+
+@media (max-width: 600px) {
+
+    .admin-header {
+        padding: 16px 15px;
+    }
+
+    .admin-header h1 {
+        font-size: 20px;
+    }
+
+    .admin-header p {
+        font-size: 13px;
+    }
+
+    .admin-container {
+        margin: 15px auto;
+        padding: 0 12px;
+    }
+
+    .dashboard-title {
+        margin-bottom: 15px;
+    }
+
+    .dashboard-title h2 {
+        font-size: 20px;
+    }
+
+    .dashboard-title p {
+        font-size: 14px;
+    }
+
+    /* Management cards one below another */
+
+    .admin-actions {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .admin-card {
+        padding: 18px;
+        border-radius: 8px;
+    }
+
+    .admin-card h3 {
+        font-size: 18px;
+    }
+
+    .admin-card p {
+        font-size: 14px;
+    }
+
+    .admin-btn {
+        width: 100%;
+        min-height: 44px;
+        font-size: 14px;
+    }
+
+    /* Management sections */
+
+    .add-product-section {
+        margin-top: 20px;
+        padding: 18px;
+        border-radius: 8px;
+    }
+
+    .add-product-section h2 {
+        font-size: 20px;
+    }
+
+    .add-product-section > p {
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+
+    /* Forms */
+
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .form-group {
+        margin-bottom: 16px;
+    }
+
+    .form-group label {
+        font-size: 14px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        font-size: 16px;
+        padding: 12px;
+    }
+
+    .save-product-btn {
+        width: 100%;
+        min-height: 46px;
+        font-size: 14px;
+    }
+
+    /* Cancel button */
+
+    #cancelEditBtn {
+        width: 100%;
+        margin-left: 0 !important;
+        margin-top: 10px;
+        min-height: 46px;
+    }
+
+    /* Product list */
+
+    .edit-product-item {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        padding: 15px;
+    }
+
+    .edit-product-info h3 {
+        font-size: 17px;
+        word-break: break-word;
+    }
+
+    .edit-product-info p {
+        font-size: 14px;
+    }
+
+    .edit-btn {
+        width: 100%;
+        min-height: 44px;
+    }
+
+}
+
+
+/* =========================================
+   VERY SMALL PHONES
+   ========================================= */
+
+@media (max-width: 380px) {
+
+    .admin-header h1 {
+        font-size: 18px;
+    }
+
+    .admin-header p {
+        font-size: 12px;
+    }
+
+    .admin-container {
+        padding: 0 10px;
+    }
+
+    .admin-card {
+        padding: 15px;
+    }
+
+    .admin-card h3 {
+        font-size: 16px;
+    }
+
+    .add-product-section {
+        padding: 15px;
+    }
+
+}
     </style>
 </head>
 
@@ -796,7 +1019,7 @@ const addProductSection =
 
 addProductCardBtn.addEventListener("click", function () {
 
-    addProductSection.classList.add("active");
+      openManagementSection(addProductSection);
 
     addProductSection.scrollIntoView({
         behavior: "smooth",
@@ -838,7 +1061,7 @@ editProductCardBtn.addEventListener(
     "click",
     async function () {
 
-        editProductSection.classList.add("active");
+        openManagementSection(editProductSection);
 
         editProductSection.scrollIntoView({
             behavior: "smooth",
@@ -1257,7 +1480,9 @@ stockManagementCardBtn.addEventListener(
     "click",
     async function () {
 
-        stockManagementSection.classList.add("active");
+        openManagementSection(
+    stockManagementSection
+);
 
         stockManagementSection.scrollIntoView({
             behavior: "smooth",
@@ -1548,9 +1773,9 @@ visibilityManagementCardBtn.addEventListener(
     "click",
     async function () {
 
-        visibilityManagementSection.classList.add(
-            "active"
-        );
+        openManagementSection(
+    visibilityManagementSection
+);
 
         visibilityManagementSection.scrollIntoView({
             behavior: "smooth",
@@ -1836,6 +2061,42 @@ visibilityManagementCardBtn.addEventListener(
 
     }
 );
+// =============================================
+// OPEN ONLY ONE MANAGEMENT SECTION AT A TIME
+// =============================================
+
+const managementSections =
+    document.querySelectorAll(".management-section");
+
+function openManagementSection(sectionToOpen) {
+
+    // Close all management sections
+    managementSections.forEach(function (section) {
+
+        section.classList.remove("active");
+
+    });
+
+    // Close Edit Product form also
+    if (editProductFormContainer) {
+
+        editProductFormContainer.style.display =
+            "none";
+
+    }
+
+    // Clear edit message
+    if (editProductMessage) {
+
+        editProductMessage.textContent =
+            "";
+
+    }
+
+    // Open selected section
+    sectionToOpen.classList.add("active");
+
+}
 const productMessage =
     document.getElementById("productMessage");
 

@@ -212,23 +212,31 @@ function syncDatabaseProductsWithCards() {
         /* =====================================================
            PRODUCT NOT FOUND
            ===================================================== */
+if (!dbProduct) {
 
-        if (!dbProduct) {
+    console.warn(
+        "🚫 Product hidden or not available for customers:",
+        htmlProductName
+    );
 
-            console.warn(
-                "⚠️ Product not found in database:",
-                htmlProductName
-            );
+    /*
+     * Product public API mein nahi mila.
+     *
+     * Public API sirf is_visible = 1
+     * wale products return karti hai.
+     *
+     * Isliye HTML ka old/static card
+     * customer website par hide kar do.
+     */
 
-            console.log(
-                "📋 Available DB products:",
-                databaseProducts.map(function (product) {
-                    return product.product_name;
-                })
-            );
+    card.style.display = "none";
 
-            return;
-        }
+    card.classList.remove(
+        "product-visible"
+    );
+
+    return;
+}
 
 
         /* =====================================================
@@ -264,6 +272,10 @@ function syncDatabaseProductsWithCards() {
             "data-stock-status",
             dbProduct.stock_status || "in-stock"
         );
+        card.setAttribute(
+    "data-is-visible",
+    Number(dbProduct.is_visible)
+);
         /* =====================================================
            STEP 3B — STOCK STATUS DISPLAY
            OUT OF STOCK BADGE + GREY PRODUCT CARD
@@ -636,10 +648,13 @@ else {
 
 
         /* ================= FINAL MATCH ================= */
+const isVisible =
+    product.getAttribute("data-is-visible") === "1";
 
-        const shouldShow =
-            categoryMatch && seasonMatch;
-
+const shouldShow =
+    isVisible &&
+    categoryMatch &&
+    seasonMatch;
 
         /* ================= SHOW / HIDE ================= */
 
@@ -1509,21 +1524,63 @@ whatsappButtons.forEach(function (button) {
 
     });
 
+/* =====================================================
+   INITIAL STATE
+   DATABASE VISIBILITY AWARE
+   ===================================================== */
 
-    /* =====================================================
-       INITIAL STATE
-       ===================================================== */
+productCards.forEach(function (product) {
 
-    productCards.forEach(function (product) {
+    /*
+     * Database se hidden product ko
+     * customer website par show nahi karna.
+     */
 
-        product.style.display = "";
+    const stockStatus =
+        (
+            product.getAttribute(
+                "data-stock-status"
+            ) || "in-stock"
+        )
+            .toLowerCase()
+            .trim();
 
-        product.classList.add(
+    /*
+     * Visibility attribute database sync
+     * ke time set kiya jayega.
+     */
+
+    const visibilityStatus =
+        product.getAttribute(
+            "data-is-visible"
+        );
+
+    /*
+     * Hidden product
+     */
+
+    if (visibilityStatus === "0") {
+
+        product.style.display = "none";
+
+        product.classList.remove(
             "product-visible"
         );
 
-    });
+        return;
+    }
 
+    /*
+     * Visible product
+     */
+
+    product.style.display = "";
+
+    product.classList.add(
+        "product-visible"
+    );
+
+});
 
     /* =====================================================
        CONSOLE
