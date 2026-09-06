@@ -264,7 +264,53 @@ function syncDatabaseProductsWithCards() {
             "data-stock-status",
             dbProduct.stock_status || "in-stock"
         );
+        /* =====================================================
+           STEP 3B — STOCK STATUS DISPLAY
+           OUT OF STOCK BADGE + GREY PRODUCT CARD
+           ===================================================== */
 
+        const stockStatus =
+            (dbProduct.stock_status || "in-stock")
+                .toLowerCase()
+                .trim();
+
+        /* Remove old stock badge if already present */
+
+        const oldStockBadge =
+            card.querySelector(".product-stock-badge");
+
+        if (oldStockBadge) {
+            oldStockBadge.remove();
+        }
+
+        /* Remove old out-of-stock class */
+
+        card.classList.remove("out-of-stock");
+
+        /* Check stock */
+
+        if (stockStatus === "out-of-stock") {
+
+            /* Add grey/faded card */
+
+            card.classList.add("out-of-stock");
+
+            /* Create OUT OF STOCK badge */
+
+            const stockBadge =
+                document.createElement("span");
+
+            stockBadge.className =
+                "product-stock-badge";
+
+            stockBadge.textContent =
+                "OUT OF STOCK";
+
+            /* Add badge to product card */
+
+            card.appendChild(stockBadge);
+
+        }
 
         /* =====================================================
            UPDATE PRODUCT NAME
@@ -1070,7 +1116,48 @@ const whatsappURL =
         );
 
     });
+/* =====================================================
+   STEP 3C — BLOCK OUT OF STOCK WHATSAPP ORDER
+   ===================================================== */
 
+whatsappButtons.forEach(function (button) {
+
+    button.addEventListener(
+        "click",
+        function (event) {
+
+            const productCard =
+                button.closest(".product-card");
+
+            if (!productCard) {
+                return;
+            }
+
+            const stockStatus =
+                (
+                    productCard.getAttribute(
+                        "data-stock-status"
+                    ) || "in-stock"
+                )
+                    .toLowerCase()
+                    .trim();
+
+            if (stockStatus === "out-of-stock") {
+
+                event.preventDefault();
+
+                alert(
+                    "🔴 This product is currently OUT OF STOCK.\n\n" +
+                    "Please contact Gupta Garments for availability."
+                );
+
+                return;
+            }
+
+        }
+    );
+
+});
 
     /* =====================================================
        NAVIGATION WHATSAPP BUTTONS
@@ -1588,7 +1675,79 @@ let currentReviewProduct = "";
                     document.querySelector(
                         "#modalWhatsapp"
                     );
+/* =====================================================
+   STEP 3C — MODAL STOCK STATUS
+   ===================================================== */
 
+const productStockStatus =
+    (
+        productCard.getAttribute(
+            "data-stock-status"
+        ) || "in-stock"
+    )
+        .toLowerCase()
+        .trim();
+
+
+/* =========================================
+   CREATE STOCK BADGE
+   ========================================= */
+
+let modalStockBadge =
+    document.querySelector(
+        "#dynamicModalStockBadge"
+    );
+
+if (!modalStockBadge) {
+
+    modalStockBadge =
+        document.createElement("span");
+
+    modalStockBadge.id =
+        "dynamicModalStockBadge";
+
+    modalStockBadge.className =
+        "modal-stock-badge";
+
+}
+
+
+/* =========================================
+   SHOW / HIDE BADGE
+   ========================================= */
+
+if (productStockStatus === "out-of-stock") {
+
+    modalStockBadge.textContent =
+        "OUT OF STOCK";
+
+    modalStockBadge.style.display =
+        "inline-block";
+
+} else {
+
+    modalStockBadge.textContent =
+        "";
+
+    modalStockBadge.style.display =
+        "none";
+
+}
+
+
+/* Put badge before product name */
+
+if (
+    modalName &&
+    modalStockBadge.parentElement !== modalName.parentElement
+) {
+
+    modalName.parentElement.insertBefore(
+        modalStockBadge,
+        modalName
+    );
+
+}
 
                 /* Fill Modal */
 
@@ -1634,32 +1793,118 @@ let currentReviewProduct = "";
 
 
                 /* WhatsApp Message */
+/* =====================================================
+   STEP 3C — MODAL WHATSAPP STOCK CONTROL
+   ===================================================== */
 
-                if (modalWhatsapp && productName) {
+if (modalWhatsapp && productName) {
 
-                    const message =
-    "Hello Gupta Garments 👋\n\n" +
-    "I am interested in the following product:\n\n" +
-    "🛍️ Product: " +
-    productName +
-    "\n" +
-    "💰 Price: " +
-    (productPrice || "Please confirm") +
-    "\n" +
-    "📏 " +
-    (productSizes || "Size details not available") +
-    "\n\n" +
-    "Please confirm:\n" +
-    "✅ Availability\n" +
-    "✅ Available sizes\n" +
-    "✅ Any other details\n\n" +
-    "Thank you!";
+    /* Save original button text only once */
 
-                    modalWhatsapp.href =
-                        "https://wa.me/918218403183?text=" +
-                        encodeURIComponent(message);
+    if (
+        !modalWhatsapp.hasAttribute(
+            "data-original-text"
+        )
+    ) {
 
-                }
+        modalWhatsapp.setAttribute(
+            "data-original-text",
+            modalWhatsapp.textContent.trim()
+        );
+
+    }
+
+
+    /* =========================================
+       OUT OF STOCK
+       ========================================= */
+
+    if (
+        productStockStatus ===
+        "out-of-stock"
+    ) {
+
+        modalWhatsapp.textContent =
+            "🔴 OUT OF STOCK";
+
+        modalWhatsapp.classList.add(
+            "modal-whatsapp-disabled"
+        );
+
+        modalWhatsapp.removeAttribute(
+            "href"
+        );
+
+        modalWhatsapp.setAttribute(
+            "aria-disabled",
+            "true"
+        );
+
+        modalWhatsapp.onclick =
+            function (event) {
+
+                event.preventDefault();
+
+                alert(
+                    "🔴 This product is currently OUT OF STOCK.\n\n" +
+                    "Please contact Gupta Garments for availability."
+                );
+
+            };
+
+    }
+
+
+    /* =========================================
+       IN STOCK
+       ========================================= */
+
+    else {
+
+        const message =
+            "Hello Gupta Garments 👋\n\n" +
+            "I am interested in the following product:\n\n" +
+            "🛍️ Product: " +
+            productName +
+            "\n" +
+            "💰 Price: " +
+            (productPrice || "Please confirm") +
+            "\n" +
+            "📏 " +
+            (productSizes ||
+                "Size details not available") +
+            "\n\n" +
+            "Please confirm:\n" +
+            "✅ Availability\n" +
+            "✅ Available sizes\n" +
+            "✅ Any other details\n\n" +
+            "Thank you!";
+
+
+        modalWhatsapp.href =
+            "https://wa.me/918218403183?text=" +
+            encodeURIComponent(message);
+
+
+        modalWhatsapp.textContent =
+            modalWhatsapp.getAttribute(
+                "data-original-text"
+            ) || "ORDER ON WHATSAPP";
+
+
+        modalWhatsapp.classList.remove(
+            "modal-whatsapp-disabled"
+        );
+
+        modalWhatsapp.removeAttribute(
+            "aria-disabled"
+        );
+
+        modalWhatsapp.onclick = null;
+
+    }
+
+}
 
 
                 /* Open */

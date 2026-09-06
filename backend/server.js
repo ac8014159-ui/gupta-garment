@@ -122,6 +122,7 @@ app.get("/api/reviews/:productName", (req, res) => {
         });
     });
 });
+
 // ===============================
 // PRODUCT API - GET ALL PRODUCTS
 // ===============================
@@ -157,6 +158,57 @@ app.get("/api/products", (req, res) => {
             return res.status(500).json({
                 success: false,
                 message: "Failed to fetch products."
+            });
+
+        }
+
+        res.json({
+            success: true,
+            products: results
+        });
+
+    });
+
+});
+// =============================================
+// ADMIN - GET ALL PRODUCTS
+// INCLUDING HIDDEN PRODUCTS
+// =============================================
+
+app.get("/api/products/admin", (req, res) => {
+
+    const sql = `
+        SELECT
+            id,
+            product_name,
+            category,
+            gender,
+            season,
+            price,
+            sizes,
+            description,
+            image_url,
+            stock_status,
+            is_visible,
+            created_at,
+            updated_at
+        FROM products
+        ORDER BY id DESC
+    `;
+
+    db.query(sql, (err, results) => {
+
+        if (err) {
+
+            console.error(
+                "Admin products fetch error:",
+                err
+            );
+
+            return res.status(500).json({
+                success: false,
+                message:
+                    "Failed to load admin products."
             });
 
         }

@@ -279,9 +279,9 @@
                     Manage whether products are
                     in stock or out of stock.
                 </p>
-                <button class="admin-btn">
-                    Manage Stock
-                </button>
+                <button class="admin-btn" id="stockManagementCardBtn">
+    Manage Stock
+</button>
             </div>
 
             <div class="admin-card">
@@ -290,9 +290,13 @@
                     Hide or show products on
                     the customer website.
                 </p>
-                <button class="admin-btn">
-                    Manage Visibility
-                </button>
+                <button
+    class="admin-btn"
+    id="visibilityManagementCardBtn">
+
+    Manage Visibility
+
+</button>
             </div>
 
         </div>
@@ -606,6 +610,37 @@
     </div>
 
 </section>
+<!-- STOCK MANAGEMENT SECTION -->
+<section
+    class="add-product-section management-section"
+    id="stockManagementSection">
+
+    <h2>📦 Stock Management</h2>
+
+    <p>
+        Manage product stock status.
+    </p>
+
+    <div id="stockProductsList"></div>
+
+</section>
+<!-- =========================================
+     PRODUCT VISIBILITY MANAGEMENT
+     ========================================= -->
+
+<section
+    class="add-product-section management-section"
+    id="visibilityManagementSection">
+
+    <h2>👁️ Product Visibility</h2>
+
+    <p>
+        Hide or show products on the customer website.
+    </p>
+
+    <div id="visibilityProductsList"></div>
+
+</section>
     </main>
 <!-- ADD PRODUCT FORM -->
 <section class="add-product-section management-section" id="addProductSection">
@@ -745,7 +780,7 @@
 <script>
 
 const PRODUCT_API_URL =
-    "http://localhost:3000/api/products";
+    "https://gupta-garment-production.up.railway.app/api/products";
 
 const addProductForm =
     document.getElementById("addProductForm");
@@ -1201,6 +1236,603 @@ cancelEditBtn.addEventListener(
 
         editProductMessage.textContent =
             "";
+
+    }
+);
+// =================================
+// STOCK MANAGEMENT
+// =================================
+
+const stockManagementCardBtn =
+    document.getElementById("stockManagementCardBtn");
+
+const stockManagementSection =
+    document.getElementById("stockManagementSection");
+
+const stockProductsList =
+    document.getElementById("stockProductsList");
+
+
+stockManagementCardBtn.addEventListener(
+    "click",
+    async function () {
+
+        stockManagementSection.classList.add("active");
+
+        stockManagementSection.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+        stockProductsList.innerHTML =
+            "<p>Loading products...</p>";
+
+        try {
+
+            const response =
+                await fetch(PRODUCT_API_URL);
+
+            const result =
+                await response.json();
+
+            if (!response.ok || !result.success) {
+
+                throw new Error(
+                    result.message ||
+                    "Failed to load products."
+                );
+
+            }
+
+            stockProductsList.innerHTML = "";
+
+            if (
+                !result.products ||
+                result.products.length === 0
+            ) {
+
+                stockProductsList.innerHTML =
+                    "<p>No products found.</p>";
+
+                return;
+            }
+
+
+            // =================================
+            // SHOW ALL PRODUCTS
+            // =================================
+
+            result.products.forEach(
+                function (product) {
+
+                    const item =
+                        document.createElement("div");
+
+                    item.className =
+                        "edit-product-item";
+
+
+                    const isInStock =
+                        product.stock_status === "in-stock";
+
+
+                    item.innerHTML = `
+
+                        <div class="edit-product-info">
+
+                            <h3>
+                                ${product.product_name}
+                            </h3>
+
+                            <p>
+                                Category:
+                                ${product.category}
+                            </p>
+
+                            <p>
+                                Price:
+                                ₹${product.price}
+                            </p>
+
+                            <p>
+                                Stock:
+                                <strong>
+                                    ${
+                                        isInStock
+                                        ? "In Stock"
+                                        : "Out of Stock"
+                                    }
+                                </strong>
+                            </p>
+
+                        </div>
+
+
+                        <button
+                            type="button"
+                            class="edit-btn stock-toggle-btn"
+                            data-product-id="${product.id}">
+
+                            ${
+                                isInStock
+                                ? "📦 Mark Out of Stock"
+                                : "📦 Mark In Stock"
+                            }
+
+                        </button>
+
+                    `;
+
+
+                    stockProductsList.appendChild(item);
+
+
+                    // =================================
+                    // STOCK BUTTON CLICK
+                    // =================================
+
+                    const stockButton =
+                        item.querySelector(
+                            ".stock-toggle-btn"
+                        );
+
+
+                    stockButton.addEventListener(
+                        "click",
+                        async function () {
+
+                            const newStockStatus =
+                                isInStock
+                                ? "out-of-stock"
+                                : "in-stock";
+
+
+                            try {
+
+                                const updateResponse =
+                                    await fetch(
+                                        PRODUCT_API_URL +
+                                        "/" +
+                                        product.id,
+                                        {
+                                            method: "PUT",
+
+                                            headers: {
+                                                "Content-Type":
+                                                    "application/json"
+                                            },
+
+                                            body:
+                                                JSON.stringify({
+
+                                                    product_name:
+                                                        product.product_name,
+
+                                                    category:
+                                                        product.category,
+
+                                                    gender:
+                                                        product.gender,
+
+                                                    season:
+                                                        product.season,
+
+                                                    price:
+                                                        Number(
+                                                            product.price
+                                                        ),
+
+                                                    sizes:
+                                                        product.sizes || "",
+
+                                                    description:
+                                                        product.description || "",
+
+                                                    image_url:
+                                                        product.image_url || null,
+
+                                                    stock_status:
+                                                        newStockStatus,
+
+                                                    is_visible:
+                                                        Number(
+                                                            product.is_visible
+                                                        )
+
+                                                })
+                                        }
+                                    );
+
+
+                                const updateResult =
+                                    await updateResponse.json();
+
+
+                                if (!updateResponse.ok) {
+
+                                    throw new Error(
+                                        updateResult.message ||
+                                        "Failed to update stock."
+                                    );
+
+                                }
+
+
+                                alert(
+                                    "✅ Stock updated successfully!\n\n" +
+                                    "Product: " +
+                                    product.product_name +
+                                    "\nNew Status: " +
+                                    (
+                                        newStockStatus === "in-stock"
+                                        ? "In Stock"
+                                        : "Out of Stock"
+                                    )
+                                );
+
+
+                                // Reload stock list
+                                stockManagementCardBtn.click();
+
+                            }
+                            catch (error) {
+
+                                console.error(
+                                    "Stock update error:",
+                                    error
+                                );
+
+
+                                alert(
+                                    "❌ Stock update failed!\n\n" +
+                                    error.message
+                                );
+
+                            }
+
+                        }
+                    );
+
+                }
+            );
+
+        }
+        catch (error) {
+
+            console.error(
+                "Stock products error:",
+                error
+            );
+
+
+            stockProductsList.innerHTML =
+                "<p>❌ " +
+                error.message +
+                "</p>";
+
+
+            alert(
+                "❌ Could not load products!\n\n" +
+                error.message
+            );
+
+        }
+
+    }
+);
+// =============================================
+// PRODUCT VISIBILITY MANAGEMENT
+// =============================================
+
+const visibilityManagementCardBtn =
+    document.getElementById(
+        "visibilityManagementCardBtn"
+    );
+
+const visibilityManagementSection =
+    document.getElementById(
+        "visibilityManagementSection"
+    );
+
+const visibilityProductsList =
+    document.getElementById(
+        "visibilityProductsList"
+    );
+
+
+// =============================================
+// OPEN VISIBILITY MANAGEMENT
+// =============================================
+
+visibilityManagementCardBtn.addEventListener(
+    "click",
+    async function () {
+
+        visibilityManagementSection.classList.add(
+            "active"
+        );
+
+        visibilityManagementSection.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+        visibilityProductsList.innerHTML =
+            "<p>Loading products...</p>";
+
+
+        try {
+
+            /*
+             * IMPORTANT:
+             * Admin API returns both
+             * visible + hidden products.
+             */
+
+            const response =
+                await fetch(
+                    PRODUCT_API_URL.replace(
+                        "/api/products",
+                        "/api/products/admin"
+                    )
+                );
+
+
+            const result =
+                await response.json();
+
+
+            if (!response.ok || !result.success) {
+
+                throw new Error(
+                    result.message ||
+                    "Failed to load products."
+                );
+
+            }
+
+
+            visibilityProductsList.innerHTML =
+                "";
+
+
+            if (
+                !result.products ||
+                result.products.length === 0
+            ) {
+
+                visibilityProductsList.innerHTML =
+                    "<p>No products found.</p>";
+
+                return;
+
+            }
+
+
+            // =================================
+            // CREATE PRODUCT LIST
+            // =================================
+
+            result.products.forEach(
+                function (product) {
+
+                    const item =
+                        document.createElement("div");
+
+                    item.className =
+                        "edit-product-item";
+
+
+                    const isVisible =
+                        Number(product.is_visible) === 1;
+
+
+                    item.innerHTML = `
+
+                        <div class="edit-product-info">
+
+                            <h3>
+                                ${product.product_name}
+                            </h3>
+
+                            <p>
+                                Category:
+                                ${product.category}
+                            </p>
+
+                            <p>
+                                Price:
+                                ₹${product.price}
+                            </p>
+
+                            <p>
+                                Status:
+                                <strong>
+                                    ${
+                                        isVisible
+                                        ? "👁️ Visible"
+                                        : "🚫 Hidden"
+                                    }
+                                </strong>
+                            </p>
+
+                        </div>
+
+
+                        <button
+                            type="button"
+                            class="edit-btn visibility-toggle-btn">
+
+                            ${
+                                isVisible
+                                ? "🚫 Hide Product"
+                                : "👁️ Show Product"
+                            }
+
+                        </button>
+
+                    `;
+
+
+                    visibilityProductsList.appendChild(
+                        item
+                    );
+
+
+                    const visibilityButton =
+                        item.querySelector(
+                            ".visibility-toggle-btn"
+                        );
+
+
+                    // =================================
+                    // HIDE / SHOW CLICK
+                    // =================================
+
+                    visibilityButton.addEventListener(
+                        "click",
+                        async function () {
+
+                            const newVisibility =
+                                isVisible
+                                ? 0
+                                : 1;
+
+
+                            try {
+
+                                const updateResponse =
+                                    await fetch(
+                                        PRODUCT_API_URL +
+                                        "/" +
+                                        product.id,
+                                        {
+                                            method: "PUT",
+
+                                            headers: {
+                                                "Content-Type":
+                                                    "application/json"
+                                            },
+
+                                            body:
+                                                JSON.stringify({
+
+                                                    product_name:
+                                                        product.product_name,
+
+                                                    category:
+                                                        product.category,
+
+                                                    gender:
+                                                        product.gender,
+
+                                                    season:
+                                                        product.season,
+
+                                                    price:
+                                                        Number(
+                                                            product.price
+                                                        ),
+
+                                                    sizes:
+                                                        product.sizes || "",
+
+                                                    description:
+                                                        product.description || "",
+
+                                                    image_url:
+                                                        product.image_url || null,
+
+                                                    stock_status:
+                                                        product.stock_status ||
+                                                        "in-stock",
+
+                                                    is_visible:
+                                                        newVisibility
+
+                                                })
+                                        }
+                                    );
+
+
+                                const updateResult =
+                                    await updateResponse.json();
+
+
+                                if (
+                                    !updateResponse.ok ||
+                                    !updateResult.success
+                                ) {
+
+                                    throw new Error(
+                                        updateResult.message ||
+                                        "Failed to update visibility."
+                                    );
+
+                                }
+
+
+                                alert(
+                                    "✅ Product visibility updated!\n\n" +
+                                    "Product: " +
+                                    product.product_name +
+                                    "\nStatus: " +
+                                    (
+                                        newVisibility === 1
+                                        ? "Visible"
+                                        : "Hidden"
+                                    )
+                                );
+
+
+                                /*
+                                 * Reload list so the button
+                                 * changes from Hide → Show
+                                 * or Show → Hide.
+                                 */
+
+                                visibilityManagementCardBtn.click();
+
+                            }
+                            catch (error) {
+
+                                console.error(
+                                    "Visibility update error:",
+                                    error
+                                );
+
+                                alert(
+                                    "❌ Visibility update failed!\n\n" +
+                                    error.message
+                                );
+
+                            }
+
+                        }
+                    );
+
+                }
+            );
+
+        }
+        catch (error) {
+
+            console.error(
+                "Visibility products error:",
+                error
+            );
+
+            visibilityProductsList.innerHTML =
+                "<p>❌ " +
+                error.message +
+                "</p>";
+
+            alert(
+                "❌ Could not load products!\n\n" +
+                error.message
+            );
+
+        }
 
     }
 );
