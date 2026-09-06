@@ -2967,7 +2967,9 @@ editProductForm.addEventListener(
 
                         headers: {
                             "Content-Type":
-                                "application/json"
+                                "application/json",
+                                "Authorization": "Bearer " +
+        sessionStorage.getItem("guptaAdminToken")
                         },
 
                         body:
@@ -3078,8 +3080,15 @@ stockManagementCardBtn.addEventListener(
 
         try {
 
-            const response =
-                await fetch(PRODUCT_API_URL);
+           const response = await fetch(
+    PRODUCT_API_URL,
+    {
+        headers: {
+            "Authorization": "Bearer " +
+                sessionStorage.getItem("guptaAdminToken")
+        }
+    }
+);
 
             const result =
                 await response.json();
@@ -3206,10 +3215,11 @@ stockManagementCardBtn.addEventListener(
                                         {
                                             method: "PUT",
 
-                                            headers: {
-                                                "Content-Type":
-                                                    "application/json"
-                                            },
+                                           headers: {
+    "Content-Type": "application/json",
+    "Authorization": "Bearer " +
+        sessionStorage.getItem("guptaAdminToken")
+},
 
                                             body:
                                                 JSON.stringify({
@@ -3379,12 +3389,18 @@ visibilityManagementCardBtn.addEventListener(
              */
 
             const response =
-                await fetch(
-                    PRODUCT_API_URL.replace(
-                        "/api/products",
-                        "/api/products/admin"
-                    )
-                );
+    await fetch(
+        PRODUCT_API_URL.replace(
+            "/api/products",
+            "/api/products/admin"
+        ),
+        {
+            headers: {
+                "Authorization": "Bearer " +
+                    sessionStorage.getItem("guptaAdminToken")
+            }
+        }
+    );
 
 
             const result =
@@ -3518,10 +3534,11 @@ visibilityManagementCardBtn.addEventListener(
                                         {
                                             method: "PUT",
 
-                                            headers: {
-                                                "Content-Type":
-                                                    "application/json"
-                                            },
+                                           headers: {
+    "Content-Type": "application/json",
+    "Authorization": "Bearer " +
+        sessionStorage.getItem("guptaAdminToken")
+},
 
                                             body:
                                                 JSON.stringify({
@@ -3734,7 +3751,9 @@ addProductForm.addEventListener("submit", async function(event) {
                 method: "POST",
 
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + sessionStorage.getItem("guptaAdminToken")
+
                 },
 
                 body: JSON.stringify(productData)
@@ -3987,7 +4006,16 @@ document.addEventListener("DOMContentLoaded", function () {
                             "guptaAdminLoggedIn",
                             "true"
                         );
+/* SAVE ADMIN TOKEN */
 
+if (data.token) {
+
+    sessionStorage.setItem(
+        "guptaAdminToken",
+        data.token
+    );
+
+}
 
                         adminLoginMessage.textContent =
                             "✅ Login successful!";
@@ -4109,7 +4137,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 sessionStorage.removeItem(
                     "guptaAdminLoggedIn"
                 );
-
+sessionStorage.removeItem(
+    "guptaAdminToken"
+);
 
                 /* SHOW LOGIN SCREEN */
 

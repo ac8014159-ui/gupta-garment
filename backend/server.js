@@ -1,6 +1,7 @@
 const express = require("express");
 const mysql = require("mysql2");
 const cors = require("cors");
+const crypto = require("crypto");
 require("dotenv").config();
 
 const app = express();
@@ -9,42 +10,256 @@ app.use(cors());
 app.use(express.json());
 
 // ===============================
-// ADMIN LOGIN API
+// ADMIN AUTHENTICATION
 // ===============================
 
+const ADMIN_TOKEN_SECRET =
+    process.env.ADMIN_TOKEN_SECRET ||
+    process.env.ADMIN_PASSWORD;
+
+
+/* =========================================
+   CREATE ADMIN TOKEN
+   ========================================= */
+
+function createAdminToken() {
+
+    const payload = {
+        role: "admin",
+        exp: Date.now() + (8 * 60 * 60 * 1000)
+    };
+
+    const payloadString =
+        Buffer.from(
+            JSON.stringify(payload)
+        ).toString("base64url");
+
+    const signature =
+        crypto
+            .createHmac(
+                "sha256",
+                ADMIN_TOKEN_SECRET
+            )
+            .update(payloadString)
+            .digest("base64url");
+
+    return payloadString + "." + signature;
+}
+
+
+/* =========================================
+   VERIFY ADMIN TOKEN
+   ========================================= */
+
+function verifyAdminToken(token) {
+
+    try {
+
+        if (!token) {
+            return false;
+        }
+
+        const parts =
+            token.split(".");
+
+        if (parts.length !== 2) {
+            return false;
+        }
+
+        const payloadString =
+            parts[0];
+
+        const receivedSignature =
+            parts[1];
+
+        const expectedSignature =
+            crypto
+                .createHmac(
+                    "sha256",
+                    ADMIN_TOKEN_SECRET
+                )
+                .update(payloadString)
+                .digest("base64url");
+
+
+        if (
+            receivedSignature.length !==
+            expectedSignature.length
+        ) {
+            return false;
+        }
+
+
+        const signatureValid =
+            crypto.timingSafeEqual(
+                Buffer.from(receivedSignature),
+                Buffer.from(expectedSignature)
+            );
+
+
+        if (!signatureValid) {
+            return false;
+        }
+
+
+        const payload =
+            JSON.parse(
+                Buffer.from(
+                    payloadString,
+                    "base64url"
+                ).toString("utf8")
+            );
+
+
+        if (
+            payload.role !== "admin" ||
+            !payload.exp ||
+            Date.now() > payload.exp
+        ) {
+            return false;
+        }
+
+
+        return true;
+
+    } catch (error) {
+
+        console.error(
+            "❌ Admin token verification failed:",
+            error.message
+        );
+
+        return false;
+    }
+}
+
+
+/* =========================================
+   ADMIN AUTH MIDDLEWARE
+   ========================================= */
+
+function requireAdminAuth(req, res, next) {
+
+    const authHeader =
+        req.headers.authorization || "";
+
+
+    if (
+        !authHeader.startsWith("Bearer ")
+    ) {
+
+        return res.status(401).json({
+            success: false,
+            message:
+                "Admin authentication required."
+        });
+
+    }
+
+
+    const token =
+        authHeader.substring(7).trim();
+
+
+    if (!verifyAdminToken(token)) {
+
+        return res.status(401).json({
+            success: false,
+            message:
+                "Invalid or expired admin session."
+        });
+
+    }
+
+
+    next();
+}
+
+
+/* =========================================
+   ADMIN LOGIN API
+   ========================================= */
+
 app.post("/api/admin/login", (req, res) => {
-    const { username, password } = req.body;
 
-    const adminUsername = process.env.ADMIN_USERNAME;
-    const adminPassword = process.env.ADMIN_PASSWORD;
+    const {
+        username,
+        password
+    } = req.body;
 
-    if (!adminUsername || !adminPassword) {
-        console.error("❌ Admin login credentials are not configured.");
+
+    const adminUsername =
+        process.env.ADMIN_USERNAME;
+
+    const adminPassword =
+        process.env.ADMIN_PASSWORD;
+
+
+    if (
+        !adminUsername ||
+        !adminPassword ||
+        !ADMIN_TOKEN_SECRET
+    ) {
+
+        console.error(
+            "❌ Admin authentication is not configured."
+        );
+
 
         return res.status(500).json({
+
             success: false,
-            message: "Admin login is not configured on server."
+
+            message:
+                "Admin authentication is not configured on server."
+
         });
+
     }
+
 
     if (
         username === adminUsername &&
         password === adminPassword
     ) {
-        console.log("✅ Admin login successful.");
+
+        const token =
+            createAdminToken();
+
+
+        console.log(
+            "✅ Admin login successful."
+        );
+
 
         return res.json({
+
             success: true,
-            message: "Login successful!"
+
+            message:
+                "Login successful!",
+
+            token: token
+
         });
+
     }
 
-    console.log("❌ Invalid admin login attempt.");
+
+    console.log(
+        "❌ Invalid admin login attempt."
+    );
+
 
     return res.status(401).json({
+
         success: false,
-        message: "Invalid username or password."
+
+        message:
+            "Invalid username or password."
+
     });
+
 });
 
 const db = mysql.createConnection({
@@ -214,7 +429,10 @@ app.get("/api/products", (req, res) => {
 // INCLUDING HIDDEN PRODUCTS
 // =============================================
 
-app.get("/api/products/admin", (req, res) => {
+app.get(
+    "/api/products/admin",
+    requireAdminAuth,
+    (req, res) => {
 
     const sql = `
         SELECT
@@ -264,7 +482,10 @@ app.get("/api/products/admin", (req, res) => {
 // PRODUCT API - UPDATE PRODUCT
 // ===============================
 
-app.put("/api/products/:id", (req, res) => {
+app.put(
+    "/api/products/:id",
+    requireAdminAuth,
+    (req, res) => {
 
     const productId = req.params.id;
 
@@ -357,7 +578,10 @@ app.put("/api/products/:id", (req, res) => {
 // PRODUCT API - ADD NEW PRODUCT
 // ===============================
 
-app.post("/api/products", (req, res) => {
+app.post(
+    "/api/products",
+    requireAdminAuth,
+    (req, res) => {
 
     const {
         product_name,
