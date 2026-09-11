@@ -6208,3 +6208,690 @@ MOBILE PHONE
         padding-left: 18px;
     }
 }
+/* =========================================
+   CUSTOMER ACCOUNT NAV BUTTON
+   ========================================= */
+
+.customer-account-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    min-height: 42px;
+    padding: 0 16px;
+
+    border: 1px solid #7b1e2b;
+    border-radius: 8px;
+
+    background: #ffffff;
+    color: #7b1e2b;
+
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+
+    transition: all 0.25s ease;
+}
+
+.customer-account-btn i {
+    font-size: 15px;
+}
+
+.customer-account-btn:hover {
+    background: #7b1e2b;
+    color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(123, 30, 43, 0.18);
+}
+
+
+/* =========================================
+   LOGGED-IN CUSTOMER
+   ========================================= */
+
+.customer-account-btn.logged-in {
+    background: #7b1e2b;
+    color: #ffffff;
+}
+
+.customer-account-btn.logged-in:hover {
+    background: #651823;
+}
+
+
+/* =========================================
+   MOBILE
+   ========================================= */
+
+@media (max-width: 900px) {
+
+    .customer-account-btn {
+        min-height: 40px;
+        padding: 0 12px;
+        font-size: 12px;
+    }
+
+    .customer-account-btn span {
+        max-width: 110px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+}
+/* =========================================================
+   CUSTOMER ACCOUNT BUTTON - SAFE RESPONSIVE FIX
+   ========================================================= */
+
+.customer-account-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+
+    max-width: 220px;
+    min-width: 0;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    flex-shrink: 1;
+
+    box-sizing: border-box;
+}
+
+.customer-account-btn i {
+    flex-shrink: 0;
+}
+
+#customerAccountText {
+    display: block;
+
+    min-width: 0;
+    max-width: 180px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Desktop */
+@media (min-width: 901px) {
+
+    .customer-account-btn {
+        max-width: 220px;
+    }
+
+    #customerAccountText {
+        max-width: 180px;
+    }
+}
+
+
+/* Tablet */
+@media (max-width: 1100px) and (min-width: 901px) {
+
+    .customer-account-btn {
+        max-width: 180px;
+    }
+
+    #customerAccountText {
+        max-width: 140px;
+    }
+}
+
+
+/* Mobile */
+@media (max-width: 900px) {
+
+    .customer-account-btn {
+        max-width: 100%;
+        width: auto;
+    }
+
+    #customerAccountText {
+        max-width: calc(100vw - 100px);
+    }
+}
+
+
+/* Very small mobile */
+@media (max-width: 480px) {
+
+    .customer-account-btn {
+        gap: 5px;
+        font-size: 13px;
+    }
+
+    #customerAccountText {
+        max-width: 145px;
+    }
+}
+/* =========================================================
+   CUSTOMER ACCOUNT DROPDOWN
+   ========================================================= */
+
+.customer-account-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+/* Account Button */
+.customer-account-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+
+    min-height: 42px;
+    max-width: 190px;
+
+    padding: 9px 12px;
+
+    border: none;
+    border-radius: 10px;
+
+    background: transparent;
+    color: inherit;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+    overflow: hidden;
+
+    transition: all 0.2s ease;
+}
+
+.customer-account-btn:hover {
+    background: rgba(123, 30, 43, 0.08);
+}
+
+.customer-account-btn > i:first-child {
+    flex-shrink: 0;
+}
+
+#customerAccountText {
+    display: block;
+
+    max-width: 135px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.customer-account-arrow {
+    font-size: 11px;
+    flex-shrink: 0;
+
+    transition: transform 0.2s ease;
+}
+
+/* Arrow rotation */
+.customer-account-btn.active
+.customer-account-arrow {
+    transform: rotate(180deg);
+}
+
+
+/* =========================================================
+   DROPDOWN BOX
+   ========================================================= */
+
+.customer-account-dropdown {
+    position: absolute;
+
+    top: calc(100% + 10px);
+    right: 0;
+
+    width: 300px;
+    max-width: calc(100vw - 24px);
+
+    padding: 8px;
+
+    background: #ffffff;
+
+    border: 1px solid #eeeeee;
+    border-radius: 14px;
+
+    box-shadow:
+        0 14px 40px rgba(0, 0, 0, 0.15);
+
+    z-index: 9999;
+
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease,
+        visibility 0.2s ease;
+}
+
+/* Open dropdown */
+.customer-account-dropdown.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+
+/* =========================================================
+   DROPDOWN ITEMS
+   ========================================================= */
+
+.customer-dropdown-item {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+
+    gap: 13px;
+
+    padding: 12px 11px;
+
+    border: none;
+    border-radius: 10px;
+
+    background: transparent;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition: background 0.18s ease;
+}
+
+.customer-dropdown-item:hover {
+    background: #f8f8f8;
+}
+
+.customer-dropdown-item .dropdown-icon {
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 10px;
+
+    background: #f8f1f2;
+
+    font-size: 20px;
+}
+
+.customer-dropdown-item > span:last-child {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 2px;
+}
+
+.customer-dropdown-item strong {
+    color: #222;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    line-height: 1.3;
+}
+
+.customer-dropdown-item small {
+    color: #888;
+
+    font-size: 11px;
+
+    line-height: 1.3;
+}
+
+
+/* =========================================================
+   DIVIDER
+   ========================================================= */
+
+.customer-dropdown-divider {
+    height: 1px;
+
+    margin: 5px 8px;
+
+    background: #eeeeee;
+}
+
+
+/* =========================================================
+   LOGOUT
+   ========================================================= */
+
+.customer-dropdown-item.logout-item {
+    margin-top: 2px;
+}
+
+.customer-dropdown-item.logout-item:hover {
+    background: #fff3f3;
+}
+
+.customer-dropdown-item.logout-item strong {
+    color: #b42318;
+}
+
+.customer-dropdown-item.logout-item .dropdown-icon {
+    background: #fff1f1;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    .customer-account-btn {
+        max-width: 155px;
+        padding: 8px 9px;
+        gap: 6px;
+        font-size: 13px;
+    }
+
+    #customerAccountText {
+        max-width: 105px;
+    }
+
+    .customer-account-dropdown {
+        width: 285px;
+        right: -5px;
+    }
+}
+
+
+@media (max-width: 480px) {
+
+    .customer-account-btn {
+        max-width: 135px;
+        padding: 7px 7px;
+        font-size: 12px;
+    }
+
+    #customerAccountText {
+        max-width: 82px;
+    }
+
+    .customer-account-dropdown {
+        width: 275px;
+        max-width: calc(100vw - 20px);
+
+        right: -5px;
+    }
+
+    .customer-dropdown-item {
+        padding: 11px 9px;
+    }
+
+    .customer-dropdown-item .dropdown-icon {
+        width: 35px;
+        height: 35px;
+        font-size: 18px;
+    }
+}
+/* =========================================================
+   CUSTOMER ACCOUNT - FULL NAME DISPLAY
+   ========================================================= */
+
+.customer-account-wrapper {
+    flex-shrink: 0;
+}
+
+.customer-account-btn {
+    white-space: nowrap;
+    min-width: 180px;
+    max-width: none;
+}
+
+#customerAccountText {
+    display: inline-block;
+    white-space: nowrap;
+    overflow: visible;
+    text-overflow: unset;
+    max-width: none;
+}
+@media (max-width: 768px) {
+
+    .customer-account-btn {
+        min-width: auto;
+    }
+
+    #customerAccountText {
+        max-width: 140px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+}
+/* =========================================================
+   CUSTOMER ACCOUNT - NAVBAR OVERLAP FIX
+   ========================================================= */
+
+.nav-container {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+/* Navigation ko available space ke according adjust karo */
+.nav-menu {
+    flex: 1;
+    min-width: 0;
+    gap: 16px;
+}
+
+/* Customer account ko apni proper space do */
+.customer-account-wrapper {
+    flex-shrink: 0;
+    position: relative;
+}
+
+.customer-account-btn {
+    white-space: nowrap;
+    min-width: max-content;
+    width: auto;
+}
+
+/* Customer name ko cut mat karo */
+#customerAccountText {
+    white-space: nowrap;
+    overflow: visible;
+    text-overflow: clip;
+}
+
+/* WhatsApp button ko shrink/overlap mat hone do */
+.nav-whatsapp {
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   DESKTOP NAVBAR
+   ========================================================= */
+
+@media (min-width: 1101px) {
+
+    .nav-menu {
+        gap: 14px;
+    }
+
+    .customer-account-btn {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+}
+
+
+/* =========================================================
+   SMALL DESKTOP / TABLET
+   ========================================================= */
+
+@media (max-width: 1100px) and (min-width: 769px) {
+
+    .nav-container {
+        gap: 10px;
+    }
+
+    .nav-menu {
+        gap: 10px;
+    }
+
+    .customer-account-btn {
+        font-size: 13px;
+    }
+
+    .nav-whatsapp {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+}
+/* =========================================================
+   CUSTOMER ACCOUNT DROPDOWN - FIX
+   ========================================================= */
+
+.customer-account-wrapper {
+    position: relative;
+    z-index: 1000;
+}
+
+.customer-account-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    width: 300px;
+    background: #ffffff;
+    border-radius: 14px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.18);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    padding: 10px;
+    z-index: 9999;
+}
+
+.customer-account-dropdown.active {
+    display: block !important;
+}
+
+.customer-dropdown-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    background: transparent;
+    border: none;
+    border-radius: 10px;
+    text-align: left;
+    cursor: pointer;
+}
+
+.customer-dropdown-item:hover {
+    background: #f7f2f2;
+}
+
+.customer-dropdown-item span:last-child {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.customer-dropdown-item strong {
+    font-size: 14px;
+    color: #222;
+}
+
+.customer-dropdown-item small {
+    font-size: 11px;
+    color: #777;
+}
+
+.dropdown-icon {
+    font-size: 20px;
+    min-width: 28px;
+    text-align: center;
+}
+
+.customer-dropdown-divider {
+    height: 1px;
+    background: #eeeeee;
+    margin: 8px 4px;
+}
+
+.customer-account-arrow {
+    transition: transform 0.25s ease;
+}
+
+.customer-account-arrow.rotate {
+    transform: rotate(180deg);
+}
+
+.customer-account-btn {
+    position: relative;
+    z-index: 10001;
+}
+/* =========================================================
+   CUSTOMER DROPDOWN - OVERLAP / CLIPPING FIX
+   ========================================================= */
+
+.navbar {
+    position: relative !important;
+    z-index: 9999 !important;
+    overflow: visible !important;
+}
+
+.nav-container {
+    position: relative !important;
+    z-index: 10000 !important;
+    overflow: visible !important;
+}
+
+.customer-account-wrapper {
+    position: relative !important;
+    z-index: 10001 !important;
+}
+
+.customer-account-dropdown {
+    position: absolute !important;
+    top: calc(100% + 10px) !important;
+    right: 0 !important;
+
+    display: none !important;
+
+    width: 300px !important;
+    max-height: 500px;
+    overflow-y: auto;
+
+    background: #ffffff !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.20) !important;
+    border: 1px solid #e5e5e5 !important;
+
+    z-index: 999999 !important;
+}
+
+.customer-account-dropdown.active {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}

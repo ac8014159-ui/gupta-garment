@@ -377,7 +377,110 @@
                 </a>
 
             </nav>
+<!-- ================= CUSTOMER ACCOUNT ================= -->
 
+<div class="customer-account-wrapper">
+
+    <button
+        type="button"
+        class="customer-account-btn"
+        id="customerAccountBtn"
+    >
+        <i class="fa-solid fa-user"></i>
+
+        <span id="customerAccountText">
+            Login
+        </span>
+
+        <i
+            class="fa-solid fa-chevron-down customer-account-arrow"
+            id="customerAccountArrow"
+        ></i>
+    </button>
+
+    <!-- CUSTOMER ACCOUNT DROPDOWN -->
+    <div
+        class="customer-account-dropdown"
+        id="customerAccountDropdown"
+    >
+
+     <button
+    type="button"
+    class="customer-dropdown-item"
+    id="customerProfileBtn"
+>
+    <span class="dropdown-icon">👤</span>
+    <span>
+        <strong>My Profile</strong>
+        <small>View and edit your profile</small>
+    </span>
+</button>
+
+        <button type="button" class="customer-dropdown-item">
+            <span class="dropdown-icon">🛍️</span>
+            <span>
+                <strong>My Orders</strong>
+                <small>Track your orders</small>
+            </span>
+        </button>
+
+        <button type="button" class="customer-dropdown-item">
+            <span class="dropdown-icon">❤️</span>
+            <span>
+                <strong>Wishlist</strong>
+                <small>Your saved products</small>
+            </span>
+        </button>
+
+        <button type="button" class="customer-dropdown-item">
+            <span class="dropdown-icon">📍</span>
+            <span>
+                <strong>Addresses</strong>
+                <small>Manage delivery addresses</small>
+            </span>
+        </button>
+
+        <button type="button" class="customer-dropdown-item">
+            <span class="dropdown-icon">🔔</span>
+            <span>
+                <strong>Notifications</strong>
+                <small>Important account updates</small>
+            </span>
+        </button>
+
+        <button type="button" class="customer-dropdown-item">
+            <span class="dropdown-icon">⚙️</span>
+            <span>
+                <strong>Settings</strong>
+                <small>Manage account settings</small>
+            </span>
+        </button>
+
+        <button type="button" class="customer-dropdown-item">
+            <span class="dropdown-icon">🔐</span>
+            <span>
+                <strong>Security</strong>
+                <small>Password and security</small>
+            </span>
+        </button>
+
+        <div class="customer-dropdown-divider"></div>
+
+        <button
+            type="button"
+            class="customer-dropdown-item logout-item"
+            id="customerDropdownLogout"
+        >
+            <span class="dropdown-icon">🚪</span>
+            <span>
+                <strong>Logout</strong>
+                <small>Sign out of your account</small>
+            </span>
+        </button>
+
+    </div>
+
+</div>
             <!-- WhatsApp Button -->
 
             <a href="https://wa.me/918218403183?text=Hello%20Gupta%20Garments,%20I%20want%20to%20know%20about%20your%20Kids%20Wear%20collection."
@@ -2127,8 +2230,114 @@
     </a>
 
     <!-- ================= JAVASCRIPT ================= -->
+<script src="script.js"></script>
 
-    <script src="script.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const customerAccountBtn =
+        document.getElementById("customerAccountBtn");
+
+    const customerAccountText =
+        document.getElementById("customerAccountText");
+
+    const customerAccountArrow =
+        document.getElementById("customerAccountArrow");
+
+    const customerAccountDropdown =
+        document.getElementById("customerAccountDropdown");
+
+    if (
+        !customerAccountBtn ||
+        !customerAccountText ||
+        !customerAccountDropdown
+    ) {
+        return;
+    }
+
+    const customerLoggedIn =
+        localStorage.getItem("guptaCustomerLoggedIn") === "true";
+
+    const customerName =
+        (localStorage.getItem("guptaCustomerName") || "").trim();
+
+
+    /* ================= CUSTOMER NAME ================= */
+
+    if (customerLoggedIn && customerName) {
+
+        customerAccountText.textContent =
+            "Hi, " + customerName + " 👋";
+
+        customerAccountBtn.classList.add("customer-logged-in");
+
+    } else {
+
+        customerAccountText.textContent =
+            "Login";
+
+        customerAccountBtn.classList.remove("customer-logged-in");
+
+    }
+
+
+    /* ================= ACCOUNT DROPDOWN ================= */
+
+    customerAccountBtn.addEventListener("click", function (event) {
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        customerAccountDropdown.classList.toggle("active");
+
+        if (customerAccountArrow) {
+
+            customerAccountArrow.classList.toggle("rotate");
+
+        }
+
+    });
+
+
+    /* ================= CLOSE ON OUTSIDE CLICK ================= */
+
+    document.addEventListener("click", function (event) {
+
+        if (
+            !customerAccountBtn.contains(event.target) &&
+            !customerAccountDropdown.contains(event.target)
+        ) {
+
+            customerAccountDropdown.classList.remove("active");
+
+            if (customerAccountArrow) {
+
+                customerAccountArrow.classList.remove("rotate");
+
+            }
+
+        }
+
+    });
+    /* ================= MY PROFILE ================= */
+
+const customerProfileBtn =
+    document.getElementById("customerProfileBtn");
+
+if (customerProfileBtn) {
+
+    customerProfileBtn.addEventListener("click", function () {
+
+        window.location.href = "customer.html";
+
+    });
+
+}
+
+});
+
+</script>
+    
 <!-- =========================================================
      PRODUCT DETAILS MODAL
      ========================================================= -->
