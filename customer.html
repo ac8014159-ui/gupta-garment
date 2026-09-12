@@ -903,11 +903,131 @@
 
             </div>
 
+            <!-- MY PROFILE SECTION -->
+
+<div
+    id="myProfileSection"
+    style="
+        display: none;
+        background: white;
+        border-radius: 16px;
+        padding: 25px;
+        margin-bottom: 25px;
+        box-shadow: 0 5px 20px rgba(0,0,0,.06);
+    "
+>
+
+    <h2 style="color: #7b1e2b; margin-bottom: 20px;">
+        My Profile
+    </h2>
+
+    <div style="display: grid; gap: 15px;">
+
+        <div>
+            <strong>Full Name</strong>
+            <p id="profileName" style="color:#777; margin-top:5px;">
+                -
+            </p>
+        </div>
+
+        <div>
+            <strong>Mobile Number</strong>
+            <p id="profileMobile" style="color:#777; margin-top:5px;">
+                -
+            </p>
+        </div>
+
+        <div>
+            <strong>Email Address</strong>
+            <p id="profileEmail" style="color:#777; margin-top:5px;">
+                -
+            </p>
+        </div>
+
+    </div>
+
+    <button
+        type="button"
+        class="auth-btn"
+        id="backToDashboardBtn"
+        style="margin-top:20px; max-width:180px;"
+    >
+        ← Back to Dashboard
+    </button>
+<button
+    type="button"
+    class="auth-btn"
+    id="editProfileBtn"
+    style="margin-top:15px; max-width:180px;"
+>
+    Edit Profile
+</button>
+
+<div
+    id="editProfileForm"
+    style="
+        display:none;
+        margin-top:25px;
+        padding-top:20px;
+        border-top:1px solid #eee;
+    "
+>
+    <h3 style="color:#7b1e2b; margin-bottom:20px;">
+        Edit Your Profile
+    </h3>
+
+    <div style="display:grid; gap:15px;">
+
+        <div>
+            <label><strong>Full Name</strong></label>
+            <input
+                type="text"
+                id="editProfileName"
+                class="auth-input"
+                placeholder="Enter your full name"
+            >
+        </div>
+
+        <div>
+            <label><strong>Mobile Number</strong></label>
+            <input
+                type="text"
+                id="editProfileMobile"
+                class="auth-input"
+                placeholder="Enter mobile number"
+                maxlength="10"
+            >
+        </div>
+
+        <div>
+            <label><strong>Email Address</strong></label>
+            <input
+                type="email"
+                id="editProfileEmail"
+                class="auth-input"
+                placeholder="Enter email address"
+            >
+        </div>
+
+    </div>
+
+    <button
+        type="button"
+        class="auth-btn"
+        id="saveProfileBtn"
+        style="margin-top:20px; max-width:180px;"
+    >
+        Save Changes
+    </button>
+</div>
+</div>
 
             <div class="dashboard-grid">
 
-
-                <div class="dashboard-card">
+<div
+    class="dashboard-card"
+    id="myProfileCard"
+>
 
                     <div class="dashboard-icon">
                         👤
@@ -2544,7 +2664,206 @@ if (customerLoginForm) {
 
     }
 
+/* =========================================
+   MY PROFILE
+   ========================================= */
+const myProfileCard = document.getElementById("myProfileCard");
+const myProfileSection = document.getElementById("myProfileSection");
+const backToDashboardBtn = document.getElementById("backToDashboardBtn");
 
+if (myProfileCard && myProfileSection) {
+    myProfileCard.addEventListener("click", function () {
+
+        // Hide dashboard cards
+        document.querySelector(".dashboard-grid").style.display = "none";
+
+        // Show My Profile
+        myProfileSection.style.display = "block";
+
+        // Get saved customer data
+        const customerName =
+            localStorage.getItem("guptaCustomerName") || "-";
+
+        const customerMobile =
+            localStorage.getItem("guptaCustomerMobile") || "-";
+
+        const customerEmail =
+            localStorage.getItem("guptaCustomerEmail") || "-";
+
+        // Display customer data
+        document.getElementById("profileName").textContent = customerName;
+        document.getElementById("profileMobile").textContent = customerMobile;
+        document.getElementById("profileEmail").textContent = customerEmail;
+    });
+}
+
+if (backToDashboardBtn) {
+    backToDashboardBtn.addEventListener("click", function () {
+
+        // Hide My Profile
+        myProfileSection.style.display = "none";
+
+        // Show dashboard cards
+        document.querySelector(".dashboard-grid").style.display = "grid";
+    });
+}
+/* =========================================
+   EDIT PROFILE
+   ========================================= */
+
+const editProfileBtn =
+    document.getElementById("editProfileBtn");
+
+const editProfileForm =
+    document.getElementById("editProfileForm");
+
+const editProfileName =
+    document.getElementById("editProfileName");
+
+const editProfileMobile =
+    document.getElementById("editProfileMobile");
+
+const editProfileEmail =
+    document.getElementById("editProfileEmail");
+
+const saveProfileBtn =
+    document.getElementById("saveProfileBtn");
+
+
+if (editProfileBtn && editProfileForm) {
+
+    editProfileBtn.addEventListener(
+        "click",
+        function () {
+
+            // Get current customer data
+            const customerName =
+                localStorage.getItem(
+                    "guptaCustomerName"
+                ) || "";
+
+            const customerMobile =
+                localStorage.getItem(
+                    "guptaCustomerMobile"
+                ) || "";
+
+            const customerEmail =
+                localStorage.getItem(
+                    "guptaCustomerEmail"
+                ) || "";
+
+
+            // Put current data inside fields
+            editProfileName.value =
+                customerName;
+
+            editProfileMobile.value =
+                customerMobile;
+
+            editProfileEmail.value =
+                customerEmail;
+
+
+            // Show edit form
+            editProfileForm.style.display =
+                "block";
+
+
+            // Change button text
+            editProfileBtn.textContent =
+                "Close Edit";
+        }
+    );
+
+}
+
+
+if (saveProfileBtn) {
+
+    saveProfileBtn.addEventListener(
+        "click",
+        function () {
+
+            const newName =
+                editProfileName.value.trim();
+
+            const newMobile =
+                editProfileMobile.value.trim();
+
+            const newEmail =
+                editProfileEmail.value.trim();
+
+
+            if (!newName || !newMobile || !newEmail) {
+
+                alert(
+                    "Please fill all profile details."
+                );
+
+                return;
+            }
+
+
+            // Temporary local update
+            localStorage.setItem(
+                "guptaCustomerName",
+                newName
+            );
+
+            localStorage.setItem(
+                "guptaCustomerMobile",
+                newMobile
+            );
+
+            localStorage.setItem(
+                "guptaCustomerEmail",
+                newEmail
+            );
+
+
+            // Update profile display
+            document.getElementById(
+                "profileName"
+            ).textContent = newName;
+
+            document.getElementById(
+                "profileMobile"
+            ).textContent = newMobile;
+
+            document.getElementById(
+                "profileEmail"
+            ).textContent = newEmail;
+
+
+            // Update welcome name
+            const customerNameElement =
+                document.getElementById(
+                    "customerName"
+                );
+
+            if (customerNameElement) {
+
+                customerNameElement.textContent =
+                    newName;
+
+            }
+
+
+            alert(
+                "Profile updated successfully."
+            );
+
+
+            // Close edit form
+            editProfileForm.style.display =
+                "none";
+
+            editProfileBtn.textContent =
+                "Edit Profile";
+        }
+    );
+
+}
     /* =========================================
        CUSTOMER LOGOUT
        ========================================= */

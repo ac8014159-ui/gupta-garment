@@ -1284,6 +1284,208 @@ app.post("/api/customers/login", async (req, res) => {
     }
 
 });
+/* =========================================
+   CUSTOMER PROFILE UPDATE
+   ========================================= */
+
+app.put("/api/customers/:id/profile", async (req, res) => {
+
+    const customerId = req.params.id;
+
+    const {
+        full_name,
+        mobile,
+        email
+    } = req.body;
+
+
+    if (!customerId || !full_name || !mobile || !email) {
+
+        return res.status(400).json({
+            success: false,
+            message: "Customer ID, name, mobile and email are required."
+        });
+
+    }
+
+
+    const cleanName = full_name.trim();
+    const cleanMobile = mobile.trim();
+    const cleanEmail = email.trim().toLowerCase();
+
+
+    if (!/^[0-9]{10}$/.test(cleanMobile)) {
+
+        return res.status(400).json({
+            success: false,
+            message: "Please enter a valid 10-digit mobile number."
+        });
+
+    }
+
+
+    try {
+
+        // Check customer exists
+        const checkSql = `
+            SELECT id
+            FROM customers
+            WHERE id = ?
+            LIMIT 1
+        `;
+
+
+        db.query(
+            checkSql,
+            [customerId],
+            (checkErr, checkResults) => {
+
+                if (checkErr) {
+
+                    console.error(
+                        "❌ Profile check error:",
+                        checkErr.message
+                    );
+
+                    return res.status(500).json({
+                        success: false,
+                        message: "Database error while checking customer."
+                    });
+
+                }
+
+
+                if (checkResults.length === 0) {
+
+                    return res.status(404).json({
+                        success: false,
+                        message: "Customer not found."
+                    });
+
+                }
+
+
+                // Check whether mobile/email belongs to another customer
+                const duplicateSql = `
+                    SELECT id
+                    FROM customers
+                    WHERE (mobile = ? OR LOWER(email) = LOWER(?))
+                    AND id <> ?
+                    LIMIT 1
+                `;
+
+
+                db.query(
+                    duplicateSql,
+                    [
+                        cleanMobile,
+                        cleanEmail,
+                        customerId
+                    ],
+                    (duplicateErr, duplicateResults) => {
+
+                        if (duplicateErr) {
+
+                            console.error(
+                                "❌ Profile duplicate check error:",
+                                duplicateErr.message
+                            );
+
+                            return res.status(500).json({
+                                success: false,
+                                message: "Database error while checking profile details."
+                            });
+
+                        }
+
+
+                        if (duplicateResults.length > 0) {
+
+                            return res.status(409).json({
+                                success: false,
+                                message: "Mobile number or email is already used by another customer."
+                            });
+
+                        }
+
+
+                        const updateSql = `
+                            UPDATE customers
+                            SET
+                                full_name = ?,
+                                mobile = ?,
+                                email = ?,
+                                updated_at = CURRENT_TIMESTAMP
+                            WHERE id = ?
+                        `;
+
+
+                        db.query(
+                            updateSql,
+                            [
+                                cleanName,
+                                cleanMobile,
+                                cleanEmail,
+                                customerId
+                            ],
+                            (updateErr) => {
+
+                                if (updateErr) {
+
+                                    console.error(
+                                        "❌ Profile update error:",
+                                        updateErr.message
+                                    );
+
+                                    return res.status(500).json({
+                                        success: false,
+                                        message: "Unable to update customer profile."
+                                    });
+
+                                }
+
+
+                                console.log(
+                                    "✅ Customer profile updated. ID:",
+                                    customerId
+                                );
+
+
+                                return res.status(200).json({
+                                    success: true,
+                                    message: "Customer profile updated successfully.",
+                                    customer: {
+                                        id: Number(customerId),
+                                        full_name: cleanName,
+                                        mobile: cleanMobile,
+                                        email: cleanEmail
+                                    }
+                                });
+
+                            }
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+    } catch (error) {
+
+        console.error(
+            "❌ Customer profile update error:",
+            error.message
+        );
+
+        return res.status(500).json({
+            success: false,
+            message: "Unable to update customer profile."
+        });
+
+    }
+
+});
 // =====================================================
 // SEND MOBILE OTP
 // Supports existing customers + pending registrations
