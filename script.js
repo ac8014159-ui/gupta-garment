@@ -59,29 +59,170 @@ document.addEventListener("DOMContentLoaded", function () {
        PRODUCT ELEMENTS
        ===================================================== */
 
-    const productCards =
+    let productCards =
         document.querySelectorAll(".product-card");
 
     const categoryCards =
         document.querySelectorAll(".category-card");
 
 /* =====================================================
-   STEP 4A — LOAD PRODUCTS FROM RAILWAY API
+   STEP 4A — LOAD PRODUCTS FROM waifly API
    ===================================================== */
 
 const PRODUCT_API_URL =
-    "https://gupta-garment-production.up.railway.app/api/products";
+    "http://node.waifly.com:27785/api/products";
 
 let databaseProducts = [];
 
+/* =====================================================
+   WISHLIST — CUSTOMER LOGIN CHECK
+   ===================================================== */
+const WISHLIST_API_URL =
+    "http://localhost:3000/api/wishlist";
 
+function isCustomerLoggedIn() {
+
+    return (
+        localStorage.getItem("guptaCustomerLoggedIn") === "true" &&
+        localStorage.getItem("guptaCustomerId")
+    );
+
+}
+/* =====================================================
+   WISHLIST — AUTOMATIC PRODUCT BUTTON
+   ===================================================== */
+
+function addWishlistButtonsToProducts() {
+
+    const productCards =
+        document.querySelectorAll(".product-card");
+
+    productCards.forEach(function (card) {
+
+        /* Already added */
+        if (card.querySelector(".wishlist-btn")) {
+            return;
+        }
+
+        const productImage =
+            card.querySelector(".product-image");
+
+        if (!productImage) {
+            return;
+        }
+
+        /* Create Wishlist Button */
+
+        const wishlistButton =
+            document.createElement("button");
+
+        wishlistButton.type = "button";
+        wishlistButton.className = "wishlist-btn";
+
+        wishlistButton.setAttribute(
+            "aria-label",
+            "Add to Wishlist"
+        );
+
+        wishlistButton.setAttribute(
+            "title",
+            "Add to Wishlist"
+        );
+
+        wishlistButton.innerHTML =
+            '<i class="fa-regular fa-heart"></i>';
+
+        /* Put inside product image */
+
+        productImage.appendChild(
+            wishlistButton
+        );
+
+    });
+
+}
+// WISHLIST — ADD PRODUCT ON HEART CLICK
+document.addEventListener("click", async function (event) {
+    const wishlistButton = event.target.closest(".wishlist-btn");
+
+    if (!wishlistButton) {
+        return;
+    }
+
+    const customerId = localStorage.getItem("guptaCustomerId");
+
+    if (!customerId) {
+        alert("Please login to add products to your wishlist.");
+        return;
+    }
+
+    const productCard = wishlistButton.closest(".product-card");
+
+    if (!productCard) {
+        return;
+    }
+
+    const productName =
+        productCard.getAttribute("data-product");
+
+    const product = databaseProducts.find(function (item) {
+        return item.product_name === productName;
+    });
+
+    if (!product) {
+        alert("Product information not found.");
+        return;
+    }
+
+    try {
+        wishlistButton.disabled = true;
+
+        const response = await fetch(WISHLIST_API_URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                customer_id: Number(customerId),
+                product_id: Number(product.id)
+            })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+            alert(result.message || "Unable to add product to wishlist.");
+            return;
+        }
+
+        wishlistButton.innerHTML =
+            '<i class="fa-solid fa-heart"></i>';
+
+        wishlistButton.setAttribute(
+            "aria-label",
+            "Remove from Wishlist"
+        );
+
+        wishlistButton.setAttribute(
+            "title",
+            "Added to Wishlist"
+        );
+
+        alert("Product added to wishlist.");
+    } catch (error) {
+        console.error("❌ Wishlist error:", error);
+        alert("Unable to connect to the server.");
+    } finally {
+        wishlistButton.disabled = false;
+    }
+});
 /* ================= LOAD DATABASE PRODUCTS ================= */
 
 async function loadDatabaseProducts() {
 
     try {
 
-        console.log("⏳ Loading products from Railway API...");
+        console.log("⏳ Loading products from waifly API...");
 
         const response =
             await fetch(PRODUCT_API_URL);
@@ -157,6 +298,173 @@ function syncDatabaseProductsWithCards() {
     if (!databaseProducts.length) {
         console.warn("⚠️ No database products available for sync.");
         return;
+    }
+
+        /* =====================================================
+       STEP 4D — CREATE NEW DATABASE PRODUCT CARDS
+       ===================================================== */
+
+    const productsGrid =
+        document.querySelector("#productsGrid");
+
+    if (productsGrid) {
+
+        databaseProducts.forEach(function (dbProduct) {
+
+            const existingCard =
+    Array.from(productCards).find(function (card) {
+
+        const title = card.querySelector("h3");
+
+        if (!title) {
+            return false;
+        }
+
+        const htmlProductName =
+            title.textContent.trim();
+
+        /* Exact product name match */
+        if (
+            htmlProductName ===
+            dbProduct.product_name
+        ) {
+            return true;
+        }
+
+        /* Girls Nighty / Gown and
+           Women Nighty / Gown are same product */
+        if (
+            htmlProductName ===
+                "Girls Nighty / Gown" &&
+            dbProduct.product_name ===
+                "Women Nighty / Gown"
+        ) {
+            return true;
+        }
+
+        return false;
+    });
+
+            /* Product already exists in HTML */
+            if (existingCard) {
+                return;
+            }
+
+            /* Use first existing card as template */
+            const templateCard =
+                productCards[0];
+
+            if (!templateCard) {
+                return;
+            }
+
+            const newCard =
+                templateCard.cloneNode(true);
+newCard.classList.add("database-product-card");
+            /* Remove old hidden/visibility state */
+            newCard.style.display = "";
+            newCard.classList.remove(
+                "out-of-stock"
+            );
+
+            newCard.classList.add(
+                "product-visible"
+            );
+
+            /* Product name */
+            const titleElement =
+                newCard.querySelector("h3");
+
+            if (titleElement) {
+                titleElement.textContent =
+                    dbProduct.product_name;
+            }
+
+            /* Product price */
+            const priceElement =
+                newCard.querySelector(".price");
+
+            if (priceElement) {
+                priceElement.textContent =
+                    "₹" +
+                    Number(dbProduct.price || 0)
+                        .toLocaleString("en-IN");
+            }
+
+            /* Product sizes */
+            const sizesElement =
+                newCard.querySelector(".product-info p");
+
+            if (sizesElement) {
+                sizesElement.textContent =
+                    dbProduct.sizes
+                        ? "Sizes: " + dbProduct.sizes
+                        : "Sizes: Please confirm";
+            }
+
+            /* Database data */
+            newCard.setAttribute(
+                "data-category",
+                dbProduct.category || ""
+            );
+
+            newCard.setAttribute(
+                "data-gender",
+                dbProduct.gender || ""
+            );
+
+            newCard.setAttribute(
+                "data-season",
+                dbProduct.season || ""
+            );
+
+            newCard.setAttribute(
+                "data-price",
+                dbProduct.price || ""
+            );
+
+            newCard.setAttribute(
+                "data-description",
+                dbProduct.description || ""
+            );
+
+            newCard.setAttribute(
+                "data-stock-status",
+                dbProduct.stock_status || "in-stock"
+            );
+
+            newCard.setAttribute(
+                "data-is-visible",
+                Number(dbProduct.is_visible)
+            );
+
+            newCard.setAttribute(
+                "data-product",
+                dbProduct.product_name
+            );
+
+            /* Hide if product is not visible */
+            if (
+                Number(dbProduct.is_visible) === 0
+            ) {
+                newCard.style.display = "none";
+                return;
+            }
+
+            /* Add new card to products grid */
+            productsGrid.appendChild(newCard);
+
+            console.log(
+                "🆕 New product card created:",
+                dbProduct.product_name
+            );
+
+        });
+
+        /* Refresh product card list */
+        productCards =
+            document.querySelectorAll(".product-card");
+
     }
 
     productCards.forEach(function (card) {
@@ -400,7 +708,7 @@ if (!dbProduct) {
     console.log(
         "🎯 Database product sync completed."
     );
-
+addWishlistButtonsToProducts();
 }
 
 /* =====================================================
@@ -2048,7 +2356,8 @@ if (modalWhatsapp && productName) {
    STEP 2.3-C — MYSQL REVIEW API
    ===================================================== */
 
-const REVIEW_API_URL = "https://gupta-garment-production.up.railway.app/api/reviews";
+const REVIEW_API_URL =
+    "http://node.waifly.com:27785/api/reviews";
 
 
 /* ================= GET PRODUCT REVIEWS ================= */
@@ -2915,4 +3224,326 @@ categorySubmenus.forEach(function (submenu) {
     );
 
 });
+/* =========================================================
+   STEP 4J — DYNAMIC DATABASE PRODUCT BUTTONS
+   VIEW DETAILS + WHATSAPP
+   ========================================================= */
+
+const productsGridForDynamicButtons =
+    document.querySelector("#productsGrid");
+
+if (productsGridForDynamicButtons) {
+
+    productsGridForDynamicButtons.addEventListener(
+        "click",
+        function (event) {
+
+            const dynamicCard =
+                event.target.closest(
+                    ".database-product-card"
+                );
+
+            if (!dynamicCard) {
+                return;
+            }
+
+
+            /* =================================================
+               VIEW DETAILS
+               ================================================= */
+
+            const viewButton =
+                event.target.closest(
+                    ".view-details-btn"
+                );
+
+            if (viewButton) {
+
+                event.preventDefault();
+
+                const productName =
+                    dynamicCard
+                        .querySelector("h3")
+                        ?.textContent
+                        .trim();
+
+                const productPrice =
+                    dynamicCard
+                        .querySelector(".price")
+                        ?.textContent
+                        .trim();
+
+                const productSizes =
+                    dynamicCard
+                        .querySelector(".product-info p")
+                        ?.textContent
+                        .trim();
+
+                if (!productName) {
+                    return;
+                }
+
+
+                const productModal =
+                    document.querySelector(
+                        "#productModal"
+                    );
+
+                if (!productModal) {
+                    return;
+                }
+
+
+                const modalName =
+                    document.querySelector(
+                        "#modalProductName"
+                    );
+
+                const modalPrice =
+                    document.querySelector(
+                        "#modalProductPrice"
+                    );
+
+                const modalSizes =
+                    document.querySelector(
+                        "#modalProductSizes"
+                    );
+
+                const modalDescription =
+                    document.querySelector(
+                        "#modalProductDescription"
+                    );
+
+                const modalImage =
+                    document.querySelector(
+                        "#modalProductImage"
+                    );
+
+                const modalWhatsapp =
+                    document.querySelector(
+                        "#modalWhatsapp"
+                    );
+
+
+                /* Product name */
+
+                if (modalName) {
+                    modalName.textContent =
+                        productName;
+                }
+
+
+                /* Price */
+
+                if (modalPrice) {
+                    modalPrice.textContent =
+                        productPrice ||
+                        "Please confirm";
+                }
+
+
+                /* Sizes */
+
+                if (modalSizes) {
+                    modalSizes.textContent =
+                        productSizes ||
+                        "Please confirm availability";
+                }
+
+
+                /* Description */
+
+                if (modalDescription) {
+
+                    modalDescription.textContent =
+                        dynamicCard.getAttribute(
+                            "data-description"
+                        ) ||
+                        "Stylish and comfortable kids wear from Gupta Garments.";
+
+                }
+
+
+                /* Product visual */
+
+                const productImage =
+                    dynamicCard.querySelector(
+                        ".dummy-product"
+                    );
+
+                if (
+                    modalImage &&
+                    productImage
+                ) {
+
+                    modalImage.textContent =
+                        productImage.textContent.trim();
+
+                    modalImage.className =
+                        "modal-dummy-product " +
+                        productImage.className
+                            .replace(
+                                "dummy-product",
+                                ""
+                            )
+                            .trim();
+
+                }
+
+
+                /* Modal WhatsApp */
+
+                if (
+                    modalWhatsapp &&
+                    productName
+                ) {
+
+                    const message =
+                        "Hello Gupta Garments 👋\n\n" +
+                        "I am interested in the following product:\n\n" +
+                        "🛍️ Product: " +
+                        productName +
+                        "\n" +
+                        "💰 Price: " +
+                        (productPrice ||
+                            "Please confirm") +
+                        "\n" +
+                        "📏 " +
+                        (productSizes ||
+                            "Size details not available") +
+                        "\n\n" +
+                        "Please confirm:\n" +
+                        "✅ Availability\n" +
+                        "✅ Available sizes\n" +
+                        "✅ Any other details\n\n" +
+                        "Thank you!";
+
+                    modalWhatsapp.href =
+                        "https://wa.me/918218403183?text=" +
+                        encodeURIComponent(message);
+
+                }
+
+
+                /* Review system */
+
+                if (
+                    typeof currentReviewProduct !==
+                    "undefined"
+                ) {
+
+                    currentReviewProduct =
+                        productName;
+
+                    if (
+                        typeof renderReviews ===
+                        "function"
+                    ) {
+
+                        renderReviews(
+                            currentReviewProduct
+                        );
+
+                    }
+
+                    if (
+                        typeof resetReviewRating ===
+                        "function"
+                    ) {
+
+                        resetReviewRating();
+
+                    }
+
+                }
+
+
+                /* Open modal */
+
+                productModal.classList.add(
+                    "active"
+                );
+
+                document.body.classList.add(
+                    "modal-open"
+                );
+
+                return;
+            }
+
+
+            /* =================================================
+               PRODUCT WHATSAPP
+               ================================================= */
+
+            const whatsappButton =
+                event.target.closest(
+                    ".product-whatsapp"
+                );
+
+            if (whatsappButton) {
+
+                event.preventDefault();
+
+                const productName =
+                    dynamicCard
+                        .querySelector("h3")
+                        ?.textContent
+                        .trim();
+
+                const productPrice =
+                    dynamicCard
+                        .querySelector(".price")
+                        ?.textContent
+                        .trim();
+
+                const productSizes =
+                    dynamicCard
+                        .querySelector(
+                            ".product-info p"
+                        )
+                        ?.textContent
+                        .trim();
+
+                if (!productName) {
+                    return;
+                }
+
+
+                const message =
+                    "Hello Gupta Garments 👋\n\n" +
+                    "I am interested in the following product:\n\n" +
+                    "🛍️ Product: " +
+                    productName +
+                    "\n" +
+                    "💰 Price: " +
+                    (productPrice ||
+                        "Please confirm") +
+                    "\n" +
+                    "📏 " +
+                    (productSizes ||
+                        "Size details not available") +
+                    "\n\n" +
+                    "Please confirm:\n" +
+                    "✅ Availability\n" +
+                    "✅ Available sizes\n" +
+                    "✅ Any other details\n\n" +
+                    "Thank you!";
+
+
+                const whatsappURL =
+                    "https://wa.me/918218403183?text=" +
+                    encodeURIComponent(message);
+
+
+                window.location.href =
+                    whatsappURL;
+
+            }
+
+        }
+
+    );
+
+}
 });

@@ -416,21 +416,29 @@
     </span>
 </button>
 
-        <button type="button" class="customer-dropdown-item">
-            <span class="dropdown-icon">🛍️</span>
-            <span>
-                <strong>My Orders</strong>
-                <small>Track your orders</small>
-            </span>
-        </button>
+   <button
+    type="button"
+    class="customer-dropdown-item"
+    id="customerDropdownOrders"
+>
+    <span class="dropdown-icon">🛍️</span>
+    <span>
+        <strong>My Orders</strong>
+        <small>Track your orders</small>
+    </span>
+</button>
 
-        <button type="button" class="customer-dropdown-item">
-            <span class="dropdown-icon">❤️</span>
-            <span>
-                <strong>Wishlist</strong>
-                <small>Your saved products</small>
-            </span>
-        </button>
+     <button
+    type="button"
+    class="customer-dropdown-item"
+    id="customerDropdownWishlist"
+>
+    <span class="dropdown-icon">❤️</span>
+    <span>
+        <strong>Wishlist</strong>
+        <small>Your saved products</small>
+    </span>
+</button>
 
         <button type="button" class="customer-dropdown-item">
             <span class="dropdown-icon">📍</span>
@@ -2319,6 +2327,27 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
     });
+    // =====================================================
+// CUSTOMER DROPDOWN - MY ORDERS
+// =====================================================
+
+const customerDropdownOrders =
+    document.getElementById("customerDropdownOrders");
+
+if (customerDropdownOrders) {
+    customerDropdownOrders.addEventListener("click", function () {
+
+        const customerLoggedIn =
+            localStorage.getItem("guptaCustomerLoggedIn") === "true";
+
+        if (!customerLoggedIn) {
+            alert("Please login to view your orders.");
+            return;
+        }
+
+        window.location.href = "customer.html";
+    });
+}
     /* ================= MY PROFILE ================= */
 
 const customerProfileBtn =
@@ -2333,7 +2362,28 @@ if (customerProfileBtn) {
     });
 
 }
+// =====================================================
+// CUSTOMER DROPDOWN - WISHLIST
+// =====================================================
 
+const customerDropdownWishlist =
+    document.getElementById("customerDropdownWishlist");
+
+if (customerDropdownWishlist) {
+
+    customerDropdownWishlist.addEventListener("click", function () {
+
+        const customerLoggedIn =
+            localStorage.getItem("guptaCustomerLoggedIn") === "true";
+
+        if (!customerLoggedIn) {
+            alert("Please login to view your wishlist.");
+            return;
+        }
+
+        window.location.href = "customer.html";
+    });
+}
 });
 
 </script>

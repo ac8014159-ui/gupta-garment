@@ -3069,6 +3069,968 @@ app.post("/api/customers/complete-registration", (req, res) => {
         }
     );
 });
+// =====================================================
+// CUSTOMER ORDERS API - CREATE NEW ORDER
+// =====================================================
+
+app.post("/api/orders", (req, res) => {
+
+    const {
+        customer_id,
+        delivery_name,
+        delivery_mobile,
+        delivery_address,
+        delivery_city,
+        delivery_pincode,
+        payment_method,
+        order_source,
+        items
+    } = req.body;
+
+
+    // =================================================
+    // BASIC VALIDATION
+    // =================================================
+
+    if (
+        !customer_id ||
+        !delivery_name ||
+        !delivery_mobile ||
+        !delivery_address ||
+        !Array.isArray(items) ||
+        items.length === 0
+    ) {
+
+        return res.status(400).json({
+            success: false,
+            message:
+                "Customer, delivery details and order items are required."
+        });
+
+    }
+
+
+    // =================================================
+    // MOBILE VALIDATION
+    // =================================================
+
+    if (!/^[6-9]\d{9}$/.test(delivery_mobile.trim())) {
+
+        return res.status(400).json({
+            success: false,
+            message:
+                "Please enter a valid 10-digit delivery mobile number."
+        });
+
+    }
+
+
+    // =================================================
+    // CHECK CUSTOMER
+    // =================================================
+
+    const customerSql = `
+        SELECT
+            id,
+            full_name,
+            mobile,
+            email
+        FROM customers
+        WHERE id = ?
+        LIMIT 1
+    `;
+
+
+    db.query(
+        customerSql,
+        [customer_id],
+        (customerErr, customerResults) => {
+
+            if (customerErr) {
+
+                console.error(
+                    "❌ Order customer lookup failed:",
+                    customerErr.message
+                );
+
+                return res.status(500).json({
+                    success: false,
+                    message:
+                        "Database error while checking customer."
+                });
+
+            }
+
+
+            if (customerResults.length === 0) {
+
+                return res.status(404).json({
+                    success: false,
+                    message:
+                        "Customer not found."
+                });
+
+            }
+
+
+            // =================================================
+            // PREPARE PRODUCT IDS
+            // =================================================
+
+            const productIds = [];
+
+            for (const item of items) {
+
+                if (
+                    !item.product_id ||
+                    !Number.isInteger(Number(item.quantity)) ||
+                    Number(item.quantity) <= 0
+                ) {
+
+                    return res.status(400).json({
+                        success: false,
+                        message:
+                            "Each order item must have a valid product_id and quantity."
+                    });
+
+                }
+
+                productIds.push(
+                    Number(item.product_id)
+                );
+
+            }
+
+
+            // Remove duplicate product IDs
+            const uniqueProductIds =
+                [...new Set(productIds)];
+
+
+            // =================================================
+            // GET PRODUCT DETAILS FROM DATABASE
+            // =================================================
+
+            const placeholders =
+                uniqueProductIds
+                    .map(() => "?")
+                    .join(",");
+
+
+            const productSql = `
+                SELECT
+                    id,
+                    product_name,
+                    price,
+                    stock_status,
+                    is_visible
+                FROM products
+                WHERE id IN (${placeholders})
+            `;
+
+
+            db.query(
+                productSql,
+                uniqueProductIds,
+                (productErr, productResults) => {
+
+                    if (productErr) {
+
+                        console.error(
+                            "❌ Order product lookup failed:",
+                            productErr.message
+                        );
+
+                        return res.status(500).json({
+                            success: false,
+                            message:
+                                "Database error while checking products."
+                        });
+
+                    }
+
+
+                    // =================================================
+                    // CHECK ALL PRODUCTS EXIST
+                    // =================================================
+
+                    if (
+                        productResults.length !==
+                        uniqueProductIds.length
+                    ) {
+
+                        return res.status(404).json({
+                            success: false,
+                            message:
+                                "One or more products were not found."
+                        });
+
+                    }
+
+
+                    // =================================================
+                    // CREATE PRODUCT MAP
+                    // =================================================
+
+                    const productMap = {};
+
+                    productResults.forEach(product => {
+
+                        productMap[product.id] =
+                            product;
+
+                    });
+
+
+                    // =================================================
+                    // CHECK PRODUCT VISIBILITY / STOCK
+                    // =================================================
+
+                    for (const item of items) {
+
+                        const product =
+                            productMap[
+                                Number(item.product_id)
+                            ];
+
+
+                        if (
+                            Number(product.is_visible) !== 1
+                        ) {
+
+                            return res.status(400).json({
+                                success: false,
+                                message:
+                                    `${product.product_name} is currently unavailable.`
+                            });
+
+                        }
+
+
+                        if (
+                            product.stock_status &&
+                            product.stock_status
+                                .toLowerCase() === "out-of-stock"
+                        ) {
+
+                            return res.status(400).json({
+                                success: false,
+                                message:
+                                    `${product.product_name} is currently out of stock.`
+                            });
+
+                        }
+
+                    }
+
+
+                    // =================================================
+                    // CALCULATE ORDER TOTAL
+                    // PRICE COMES FROM DATABASE
+                    // =================================================
+
+                    let totalAmount = 0;
+
+                    const orderItems =
+                        items.map(item => {
+
+                            const product =
+                                productMap[
+                                    Number(item.product_id)
+                                ];
+
+                            const quantity =
+                                Number(item.quantity);
+
+                            const price =
+                                Number(product.price);
+
+                            const itemTotal =
+                                price * quantity;
+
+                            totalAmount +=
+                                itemTotal;
+
+                            return {
+                                product_id:
+                                    product.id,
+
+                                product_name:
+                                    product.product_name,
+
+                                quantity:
+                                    quantity,
+
+                                price:
+                                    price,
+
+                                size:
+                                    item.size ?
+                                    String(item.size).trim() :
+                                    null
+                            };
+
+                        });
+
+
+                    // =================================================
+                    // GENERATE UNIQUE ORDER NUMBER
+                    // =================================================
+
+                    const orderNumber =
+                        "GG" +
+                        Date.now() +
+                        Math.floor(
+                            100 +
+                            Math.random() * 900
+                        );
+
+
+                    // =================================================
+                    // START DATABASE TRANSACTION
+                    // =================================================
+
+                    db.beginTransaction(
+                        (transactionErr) => {
+
+                            if (transactionErr) {
+
+                                console.error(
+                                    "❌ Order transaction start failed:",
+                                    transactionErr.message
+                                );
+
+                                return res.status(500).json({
+                                    success: false,
+                                    message:
+                                        "Unable to start order transaction."
+                                });
+
+                            }
+
+
+                            // =================================================
+                            // INSERT ORDER
+                            // =================================================
+
+                            const insertOrderSql = `
+                                INSERT INTO orders
+                                (
+                                    customer_id,
+                                    order_number,
+                                    total_amount,
+                                    order_status,
+                                    payment_status,
+                                    payment_method,
+                                    delivery_name,
+                                    delivery_mobile,
+                                    delivery_address,
+                                    delivery_city,
+                                    delivery_pincode,
+                                    order_source
+                                )
+                                VALUES
+                                (?, ?, ?, 'placed', 'pending', ?, ?, ?, ?, ?, ?, ?)
+                            `;
+
+
+                            const orderValues = [
+
+                                customer_id,
+
+                                orderNumber,
+
+                                totalAmount,
+
+                                payment_method ||
+                                    "cod",
+
+                                delivery_name.trim(),
+
+                                delivery_mobile.trim(),
+
+                                delivery_address.trim(),
+
+                                delivery_city ?
+                                    delivery_city.trim() :
+                                    "Hapur",
+
+                                delivery_pincode ?
+                                    delivery_pincode.trim() :
+                                    null,
+
+                                order_source ||
+                                    "website"
+
+                            ];
+
+
+                            db.query(
+                                insertOrderSql,
+                                orderValues,
+                                (orderErr, orderResult) => {
+
+                                    if (orderErr) {
+
+                                        return db.rollback(() => {
+
+                                            console.error(
+                                                "❌ Order creation failed:",
+                                                orderErr.message
+                                            );
+
+                                            return res.status(500).json({
+                                                success: false,
+                                                message:
+                                                    "Failed to create order."
+                                            });
+
+                                        });
+
+                                    }
+
+
+                                    const orderId =
+                                        orderResult.insertId;
+
+
+                                    // =================================================
+                                    // INSERT ORDER ITEMS
+                                    // =================================================
+
+                                    const insertItemSql = `
+                                        INSERT INTO order_items
+                                        (
+                                            order_id,
+                                            product_id,
+                                            product_name,
+                                            quantity,
+                                            price,
+                                            size
+                                        )
+                                        VALUES (?, ?, ?, ?, ?, ?)
+                                    `;
+
+
+                                    let currentIndex = 0;
+
+
+                                    function insertNextItem() {
+
+                                        if (
+                                            currentIndex >=
+                                            orderItems.length
+                                        ) {
+
+                                            // =============================================
+                                            // ALL ITEMS INSERTED
+                                            // COMMIT TRANSACTION
+                                            // =============================================
+
+                                            return db.commit(
+                                                (commitErr) => {
+
+                                                    if (commitErr) {
+
+                                                        return db.rollback(() => {
+
+                                                            console.error(
+                                                                "❌ Order commit failed:",
+                                                                commitErr.message
+                                                            );
+
+                                                            return res.status(500).json({
+                                                                success: false,
+                                                                message:
+                                                                    "Failed to complete order."
+                                                            });
+
+                                                        });
+
+                                                    }
+
+
+                                                    console.log(
+                                                        "✅ Order created successfully:",
+                                                        orderNumber
+                                                    );
+
+
+                                                    return res.status(201).json({
+
+                                                        success: true,
+
+                                                        message:
+                                                            "Order created successfully.",
+
+                                                        order: {
+
+                                                            id:
+                                                                orderId,
+
+                                                            order_number:
+                                                                orderNumber,
+
+                                                            customer_id:
+                                                                Number(customer_id),
+
+                                                            total_amount:
+                                                                totalAmount,
+
+                                                            order_status:
+                                                                "placed",
+
+                                                            payment_status:
+                                                                "pending",
+
+                                                            payment_method:
+                                                                payment_method ||
+                                                                "cod",
+
+                                                            delivery_name:
+                                                                delivery_name.trim(),
+
+                                                            delivery_mobile:
+                                                                delivery_mobile.trim(),
+
+                                                            delivery_address:
+                                                                delivery_address.trim(),
+
+                                                            delivery_city:
+                                                                delivery_city ?
+                                                                delivery_city.trim() :
+                                                                "Hapur",
+
+                                                            delivery_pincode:
+                                                                delivery_pincode ?
+                                                                delivery_pincode.trim() :
+                                                                null,
+
+                                                            items:
+                                                                orderItems
+
+                                                        }
+
+                                                    });
+
+                                                }
+                                            );
+
+                                        }
+
+
+                                        const item =
+                                            orderItems[
+                                                currentIndex
+                                            ];
+
+
+                                        db.query(
+                                            insertItemSql,
+                                            [
+                                                orderId,
+
+                                                item.product_id,
+
+                                                item.product_name,
+
+                                                item.quantity,
+
+                                                item.price,
+
+                                                item.size
+
+                                            ],
+                                            (itemErr) => {
+
+                                                if (itemErr) {
+
+                                                    return db.rollback(() => {
+
+                                                        console.error(
+                                                            "❌ Order item insert failed:",
+                                                            itemErr.message
+                                                        );
+
+                                                        return res.status(500).json({
+                                                            success: false,
+                                                            message:
+                                                                "Failed to save order items."
+                                                        });
+
+                                                    });
+
+                                                }
+
+
+                                                currentIndex++;
+
+                                                insertNextItem();
+
+                                            }
+                                        );
+
+                                    }
+
+
+                                    insertNextItem();
+
+                                }
+                            );
+
+                        }
+                    );
+
+                }
+            );
+
+        }
+    );
+
+});
+/* =====================================================
+   CUSTOMER WISHLIST API
+   ===================================================== */
+
+/* ================= ADD TO WISHLIST ================= */
+
+app.post("/api/wishlist", (req, res) => {
+
+    const { customer_id, product_id } = req.body;
+
+    if (!customer_id || !product_id) {
+        return res.status(400).json({
+            success: false,
+            message: "Customer ID and product ID are required."
+        });
+    }
+
+    /* Check customer */
+
+    const customerSql = `
+        SELECT id
+        FROM customers
+        WHERE id = ?
+        LIMIT 1
+    `;
+
+    db.query(
+        customerSql,
+        [customer_id],
+        (customerErr, customerResults) => {
+
+            if (customerErr) {
+                console.error(
+                    "❌ Wishlist customer check error:",
+                    customerErr.message
+                );
+
+                return res.status(500).json({
+                    success: false,
+                    message: "Database error while checking customer."
+                });
+            }
+
+            if (customerResults.length === 0) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Customer not found."
+                });
+            }
+
+
+            /* Check product */
+
+            const productSql = `
+                SELECT
+                    id,
+                    product_name,
+                    price,
+                    stock_status,
+                    is_visible
+                FROM products
+                WHERE id = ?
+                LIMIT 1
+            `;
+
+            db.query(
+                productSql,
+                [product_id],
+                (productErr, productResults) => {
+
+                    if (productErr) {
+                        console.error(
+                            "❌ Wishlist product check error:",
+                            productErr.message
+                        );
+
+                        return res.status(500).json({
+                            success: false,
+                            message: "Database error while checking product."
+                        });
+                    }
+
+                    if (productResults.length === 0) {
+                        return res.status(404).json({
+                            success: false,
+                            message: "Product not found."
+                        });
+                    }
+
+
+                    const product =
+                        productResults[0];
+
+
+                    /* Hidden product cannot be added */
+
+                    if (Number(product.is_visible) !== 1) {
+                        return res.status(400).json({
+                            success: false,
+                            message: "This product is currently unavailable."
+                        });
+                    }
+
+
+                    /* Check duplicate */
+
+                    const duplicateSql = `
+                        SELECT id
+                        FROM wishlist
+                        WHERE customer_id = ?
+                          AND product_id = ?
+                        LIMIT 1
+                    `;
+
+                    db.query(
+                        duplicateSql,
+                        [customer_id, product_id],
+                        (duplicateErr, duplicateResults) => {
+
+                            if (duplicateErr) {
+                                console.error(
+                                    "❌ Wishlist duplicate check error:",
+                                    duplicateErr.message
+                                );
+
+                                return res.status(500).json({
+                                    success: false,
+                                    message: "Database error while checking wishlist."
+                                });
+                            }
+
+
+                            if (duplicateResults.length > 0) {
+                                return res.status(200).json({
+                                    success: true,
+                                    already_added: true,
+                                    message: "Product is already in your wishlist."
+                                });
+                            }
+
+
+                            /* Insert wishlist */
+
+                            const insertSql = `
+                                INSERT INTO wishlist
+                                (
+                                    customer_id,
+                                    product_id
+                                )
+                                VALUES (?, ?)
+                            `;
+
+                            db.query(
+                                insertSql,
+                                [customer_id, product_id],
+                                (insertErr, insertResult) => {
+
+                                    if (insertErr) {
+                                        console.error(
+                                            "❌ Wishlist insert error:",
+                                            insertErr.message
+                                        );
+
+                                        return res.status(500).json({
+                                            success: false,
+                                            message: "Unable to add product to wishlist."
+                                        });
+                                    }
+
+
+                                    console.log(
+                                        "❤️ Product added to wishlist. Customer:",
+                                        customer_id,
+                                        "| Product:",
+                                        product_id
+                                    );
+
+
+                                    return res.status(201).json({
+                                        success: true,
+                                        already_added: false,
+                                        message: "Product added to wishlist.",
+                                        wishlist: {
+                                            id: insertResult.insertId,
+                                            customer_id: Number(customer_id),
+                                            product_id: Number(product_id),
+                                            product_name: product.product_name,
+                                            price: product.price
+                                        }
+                                    });
+
+                                }
+                            );
+
+                        }
+                    );
+
+                }
+            );
+
+        }
+    );
+
+});
+
+
+/* ================= GET CUSTOMER WISHLIST ================= */
+
+app.get("/api/wishlist/:customerId", (req, res) => {
+
+    const customerId =
+        req.params.customerId;
+
+    if (!customerId) {
+        return res.status(400).json({
+            success: false,
+            message: "Customer ID is required."
+        });
+    }
+
+
+    const sql = `
+        SELECT
+            w.id,
+            w.customer_id,
+            w.product_id,
+            w.created_at,
+            p.product_name,
+            p.category,
+            p.gender,
+            p.season,
+            p.price,
+            p.sizes,
+            p.description,
+            p.image_url,
+            p.stock_status,
+            p.is_visible
+        FROM wishlist w
+        INNER JOIN products p
+            ON w.product_id = p.id
+        WHERE w.customer_id = ?
+        ORDER BY w.id DESC
+    `;
+
+
+    db.query(
+        sql,
+        [customerId],
+        (err, results) => {
+
+            if (err) {
+                console.error(
+                    "❌ Get wishlist error:",
+                    err.message
+                );
+
+                return res.status(500).json({
+                    success: false,
+                    message: "Unable to load wishlist."
+                });
+            }
+
+
+            return res.status(200).json({
+                success: true,
+                wishlist: results
+            });
+
+        }
+    );
+
+});
+
+
+/* ================= REMOVE FROM WISHLIST ================= */
+
+app.delete("/api/wishlist/:customerId/:productId", (req, res) => {
+
+    const customerId =
+        req.params.customerId;
+
+    const productId =
+        req.params.productId;
+
+
+    if (!customerId || !productId) {
+        return res.status(400).json({
+            success: false,
+            message: "Customer ID and product ID are required."
+        });
+    }
+
+
+    const sql = `
+        DELETE FROM wishlist
+        WHERE customer_id = ?
+          AND product_id = ?
+    `;
+
+
+    db.query(
+        sql,
+        [customerId, productId],
+        (err, result) => {
+
+            if (err) {
+                console.error(
+                    "❌ Remove wishlist error:",
+                    err.message
+                );
+
+                return res.status(500).json({
+                    success: false,
+                    message: "Unable to remove product from wishlist."
+                });
+            }
+
+
+            if (result.affectedRows === 0) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Product is not in your wishlist."
+                });
+            }
+
+
+            console.log(
+                "💔 Product removed from wishlist. Customer:",
+                customerId,
+                "| Product:",
+                productId
+            );
+
+
+            return res.status(200).json({
+                success: true,
+                message: "Product removed from wishlist."
+            });
+
+        }
+    );
+
+});
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, "0.0.0.0", () => {

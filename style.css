@@ -5205,7 +5205,7 @@ MOBILE PHONE
 
     position: absolute;
 
-    top: calc(100% + 10px);
+    top:100%;
 
     left: 50%;
 
@@ -5590,7 +5590,7 @@ MOBILE PHONE
 
     position: absolute;
     top: 0;
-    left: calc(100% + 6px);
+    left: 100%;
 
     min-width: 220px;
     padding: 8px;
@@ -6448,7 +6448,7 @@ MOBILE PHONE
 .customer-account-dropdown {
     position: absolute;
 
-    top: calc(100% + 10px);
+    top: 100%;
     right: 0;
 
     width: 300px;
@@ -6894,4 +6894,206 @@ MOBILE PHONE
     display: block !important;
     visibility: visible !important;
     opacity: 1 !important;
+}
+/* =========================================
+   CUSTOMER - EDIT PROFILE
+   ========================================= */
+
+#myProfileSection {
+    max-width: 100%;
+}
+
+#myProfileSection #editProfileBtn,
+#myProfileSection #backToDashboardBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 12px 22px;
+    margin-right: 10px;
+    box-sizing: border-box;
+}
+
+#myProfileSection #editProfileForm {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#myProfileSection #editProfileForm > div {
+    display: grid !important;
+    grid-template-columns: 1fr;
+    gap: 18px !important;
+}
+
+#myProfileSection #editProfileForm > div > div {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+#myProfileSection #editProfileForm label {
+    display: block;
+    font-size: 15px;
+    color: #222;
+}
+
+#myProfileSection #editProfileForm .auth-input {
+    width: 100%;
+    min-height: 46px;
+    padding: 11px 14px;
+    border: 1px solid #d8d8d8;
+    border-radius: 8px;
+    font-size: 15px;
+    box-sizing: border-box;
+    outline: none;
+    background: #fff;
+}
+
+#myProfileSection #editProfileForm .auth-input:focus {
+    border-color: #7b1e2b;
+    box-shadow: 0 0 0 3px rgba(123, 30, 43, 0.08);
+}
+
+#myProfileSection #saveProfileBtn {
+    min-height: 48px;
+    padding: 12px 24px;
+    margin-top: 22px !important;
+}
+
+
+/* =========================================
+   CUSTOMER - EDIT PROFILE MOBILE
+   ========================================= */
+
+@media (max-width: 600px) {
+
+    #myProfileSection {
+        padding: 20px !important;
+    }
+
+    #myProfileSection #editProfileBtn,
+    #myProfileSection #backToDashboardBtn {
+        width: 100%;
+        max-width: none !important;
+        margin: 6px 0;
+    }
+
+    #myProfileSection #editProfileForm {
+        margin-top: 20px !important;
+    }
+
+    #myProfileSection #editProfileForm .auth-input {
+        font-size: 16px;
+    }
+
+}
+/* =========================================
+   MY PROFILE BUTTONS - FINAL FIX
+   ========================================= */
+
+#myProfileSection #backToDashboardBtn,
+#myProfileSection #editProfileBtn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    width: 210px !important;
+    max-width: 210px !important;
+    height: 48px !important;
+    min-height: 48px !important;
+
+    margin-top: 20px !important;
+    margin-bottom: 0 !important;
+    margin-right: 8px !important;
+    margin-left: 0 !important;
+
+    padding: 10px 18px !important;
+
+    box-sizing: border-box !important;
+
+    white-space: nowrap !important;
+    vertical-align: middle !important;
+}
+
+/* Remove extra gap from Edit Profile */
+#myProfileSection #editProfileBtn {
+    margin-left: 0 !important;
+}
+
+
+/* Mobile */
+@media (max-width: 600px) {
+
+    #myProfileSection #backToDashboardBtn,
+    #myProfileSection #editProfileBtn {
+        display: flex !important;
+
+        width: 100% !important;
+        max-width: 100% !important;
+
+        margin: 10px 0 0 0 !important;
+    }
+
+}
+/* =====================================================
+   WISHLIST BUTTON — PRODUCT CARD
+   ===================================================== */
+
+.product-image {
+    position: relative;
+}
+
+.product-image .wishlist-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+
+    width: 38px;
+    height: 38px;
+
+    border: 1px solid #eeeeee;
+    border-radius: 50%;
+
+    background: #ffffff;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+
+    z-index: 5;
+
+    font-size: 18px;
+
+    color: #7b1e2b;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.product-image .wishlist-btn:hover {
+    transform: scale(1.08);
+
+    background: #7b1e2b;
+
+    color: #ffffff;
+
+    box-shadow:
+        0 5px 15px rgba(123, 30, 43, 0.20);
+}
+
+.product-image .wishlist-btn.active {
+    background: #7b1e2b;
+
+    color: #ffffff;
+
+    border-color: #7b1e2b;
+}
+
+.product-image .wishlist-btn.active i {
+    font-weight: 900;
 }

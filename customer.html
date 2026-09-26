@@ -900,7 +900,16 @@
                     Manage your Gupta Garments account
                     from here.
                 </p>
-
+<div style="margin-top: 20px;">
+    <button
+        type="button"
+        id="backToWebsiteBtn"
+        class="auth-btn"
+        style="max-width: 220px;"
+    >
+        ← Back to Website
+    </button>
+</div>
             </div>
 
             <!-- MY PROFILE SECTION -->
@@ -946,22 +955,50 @@
 
     </div>
 
+    <div
+    id="profileActionButtons"
+    style="
+        display:flex;
+        align-items:center;
+        gap:12px;
+        margin-top:20px;
+        flex-wrap:wrap;
+    "
+>
+
     <button
         type="button"
         class="auth-btn"
         id="backToDashboardBtn"
-        style="margin-top:20px; max-width:180px;"
+        style="
+            width:210px;
+            max-width:210px;
+            height:48px;
+            margin:0;
+            padding:10px 15px;
+            white-space:nowrap;
+        "
     >
         ← Back to Dashboard
     </button>
-<button
-    type="button"
-    class="auth-btn"
-    id="editProfileBtn"
-    style="margin-top:15px; max-width:180px;"
->
-    Edit Profile
-</button>
+
+    <button
+        type="button"
+        class="auth-btn"
+        id="editProfileBtn"
+        style="
+            width:210px;
+            max-width:210px;
+            height:48px;
+            margin:0;
+            padding:10px 15px;
+            white-space:nowrap;
+        "
+    >
+        Edit Profile
+    </button>
+
+</div>
 
 <div
     id="editProfileForm"
@@ -1021,7 +1058,130 @@
     </button>
 </div>
 </div>
+<!-- MY ORDERS SECTION -->
 
+<div
+    id="myOrdersSection"
+    style="
+        display: none;
+        background: white;
+        border-radius: 16px;
+        padding: 25px;
+        margin-bottom: 25px;
+        box-shadow: 0 5px 20px rgba(0,0,0,.06);
+    "
+>
+
+    <h2 style="color: #7b1e2b; margin-bottom: 20px;">
+        My Orders
+    </h2>
+
+    <div
+        id="ordersList"
+        style="
+            display: grid;
+            gap: 15px;
+        "
+    >
+
+        <div
+            style="
+                padding: 25px;
+                text-align: center;
+                border: 1px solid #eee;
+                border-radius: 12px;
+                color: #777;
+            "
+        >
+            <div style="font-size: 40px; margin-bottom: 10px;">
+                🛍️
+            </div>
+
+            <h3 style="color:#333; margin-bottom:8px;">
+                No Orders Yet
+            </h3>
+
+            <p style="margin:0;">
+                Your orders will appear here.
+            </p>
+        </div>
+
+    </div>
+
+    <button
+        type="button"
+        class="auth-btn"
+        id="backFromOrdersBtn"
+        style="
+            margin-top:20px;
+            max-width:210px;
+        "
+    >
+        ← Back to Dashboard
+    </button>
+
+</div>
+<!-- =====================================================
+     MY WISHLIST SECTION
+===================================================== -->
+
+<div
+    id="myWishlistSection"
+    style="
+        display: none;
+        background: white;
+        border-radius: 16px;
+        padding: 25px;
+        margin-bottom: 25px;
+        box-shadow: 0 5px 20px rgba(0,0,0,.06);
+    "
+>
+    <h2 style="color: #7b1e2b; margin-bottom: 20px;">
+        My Wishlist
+    </h2>
+
+    <div
+        id="wishlistList"
+        style="
+            display: grid;
+            gap: 15px;
+        "
+    >
+        <div
+            style="
+                padding: 25px;
+                text-align: center;
+                border: 1px solid #eee;
+                border-radius: 12px;
+                color: #777;
+            "
+        >
+            <div style="font-size: 40px; margin-bottom: 10px;">
+                ❤️
+            </div>
+
+            <h3 style="color:#333; margin-bottom:8px;">
+                Your Wishlist is Empty
+            </h3>
+
+            <p style="margin:0;">
+                Products you save will appear here.
+            </p>
+        </div>
+    </div>
+
+    <button
+        type="button"
+        class="auth-btn"
+        id="backFromWishlistBtn"
+        style="
+            margin-top:20px;
+            max-width:210px;
+        "
+    >
+        ← Back to Dashboard
+    </button>
+</div>
             <div class="dashboard-grid">
 
 <div
@@ -1043,40 +1203,43 @@
 
                 </div>
 
+<div
+    class="dashboard-card"
+    id="myOrdersCard"
+>
 
-                <div class="dashboard-card">
+    <div class="dashboard-icon">
+        🛍️
+    </div>
 
-                    <div class="dashboard-icon">
-                        🛍️
-                    </div>
+    <h3>
+        My Orders
+    </h3>
 
-                    <h3>
-                        My Orders
-                    </h3>
+    <p>
+        Track your orders
+    </p>
 
-                    <p>
-                        Track your orders
-                    </p>
+</div>
 
-                </div>
+<div
+    class="dashboard-card"
+    id="myWishlistCard"
+>
 
+    <div class="dashboard-icon">
+        ❤️
+    </div>
 
-                <div class="dashboard-card">
+    <h3>
+        Wishlist
+    </h3>
 
-                    <div class="dashboard-icon">
-                        ❤️
-                    </div>
+    <p>
+        Your saved products
+    </p>
 
-                    <h3>
-                        Wishlist
-                    </h3>
-
-                    <p>
-                        Your saved products
-                    </p>
-
-                </div>
-
+</div>
 
                 <div class="dashboard-card">
 
@@ -1180,7 +1343,7 @@
        ========================================= */
 
     const API_BASE_URL =
-    "https://gupta-garment-production.up.railway.app";
+    "http://node.waifly.com:27785";
 
     /* =========================================
        MAIN SECTIONS
@@ -2663,11 +2826,152 @@ if (customerLoginForm) {
         );
 
     }
+/* =========================================
+   BACK TO MAIN WEBSITE
+   ========================================= */
 
+const backToWebsiteBtn =
+    document.getElementById("backToWebsiteBtn");
+
+if (backToWebsiteBtn) {
+
+    backToWebsiteBtn.addEventListener(
+        "click",
+        function () {
+
+            window.location.href = "index.html";
+
+        }
+    );
+
+}
 /* =========================================
    MY PROFILE
    ========================================= */
 const myProfileCard = document.getElementById("myProfileCard");
+
+// =====================================================
+// MY ORDERS
+// =====================================================
+
+const myOrdersCard =
+    document.getElementById("myOrdersCard");
+
+const myOrdersSection =
+    document.getElementById("myOrdersSection");
+
+const backFromOrdersBtn =
+    document.getElementById("backFromOrdersBtn");
+
+if (myOrdersCard && myOrdersSection) {
+
+    myOrdersCard.addEventListener("click", function () {
+
+        // Hide dashboard cards
+        const dashboardGrid =
+            document.querySelector(".dashboard-grid");
+
+        if (dashboardGrid) {
+            dashboardGrid.style.display = "none";
+        }
+
+        // Hide My Profile section if open
+        const myProfileSection =
+            document.getElementById("myProfileSection");
+
+        if (myProfileSection) {
+            myProfileSection.style.display = "none";
+        }
+
+        // Show My Orders
+        myOrdersSection.style.display = "block";
+
+    });
+}
+
+if (backFromOrdersBtn) {
+
+    backFromOrdersBtn.addEventListener("click", function () {
+
+        // Hide My Orders
+        if (myOrdersSection) {
+            myOrdersSection.style.display = "none";
+        }
+
+        // Show Dashboard cards again
+        const dashboardGrid =
+            document.querySelector(".dashboard-grid");
+
+        if (dashboardGrid) {
+            dashboardGrid.style.display = "grid";
+        }
+
+    });
+}
+// =====================================================
+// MY WISHLIST
+// =====================================================
+
+const myWishlistCard =
+    document.getElementById("myWishlistCard");
+
+const myWishlistSection =
+    document.getElementById("myWishlistSection");
+
+const backFromWishlistBtn =
+    document.getElementById("backFromWishlistBtn");
+
+if (myWishlistCard && myWishlistSection) {
+
+    myWishlistCard.addEventListener("click", function () {
+
+        // Hide dashboard cards
+        const dashboardGrid =
+            document.querySelector(".dashboard-grid");
+
+        if (dashboardGrid) {
+            dashboardGrid.style.display = "none";
+        }
+
+        // Hide My Profile section if open
+        const myProfileSection =
+            document.getElementById("myProfileSection");
+
+        if (myProfileSection) {
+            myProfileSection.style.display = "none";
+        }
+
+        // Hide My Orders section if open
+        const myOrdersSection =
+            document.getElementById("myOrdersSection");
+
+        if (myOrdersSection) {
+            myOrdersSection.style.display = "none";
+        }
+
+        // Show My Wishlist
+        myWishlistSection.style.display = "block";
+    });
+}
+
+if (backFromWishlistBtn) {
+
+    backFromWishlistBtn.addEventListener("click", function () {
+
+        // Hide Wishlist
+        if (myWishlistSection) {
+            myWishlistSection.style.display = "none";
+        }
+
+        // Show Dashboard cards
+        const dashboardGrid =
+            document.querySelector(".dashboard-grid");
+
+        if (dashboardGrid) {
+            dashboardGrid.style.display = "grid";
+        }
+    });
+}
 const myProfileSection = document.getElementById("myProfileSection");
 const backToDashboardBtn = document.getElementById("backToDashboardBtn");
 
@@ -2777,12 +3081,11 @@ if (editProfileBtn && editProfileForm) {
 
 }
 
-
 if (saveProfileBtn) {
 
     saveProfileBtn.addEventListener(
         "click",
-        function () {
+        async function () {
 
             const newName =
                 editProfileName.value.trim();
@@ -2804,66 +3107,148 @@ if (saveProfileBtn) {
             }
 
 
-            // Temporary local update
-            localStorage.setItem(
-                "guptaCustomerName",
-                newName
-            );
-
-            localStorage.setItem(
-                "guptaCustomerMobile",
-                newMobile
-            );
-
-            localStorage.setItem(
-                "guptaCustomerEmail",
-                newEmail
-            );
-
-
-            // Update profile display
-            document.getElementById(
-                "profileName"
-            ).textContent = newName;
-
-            document.getElementById(
-                "profileMobile"
-            ).textContent = newMobile;
-
-            document.getElementById(
-                "profileEmail"
-            ).textContent = newEmail;
-
-
-            // Update welcome name
-            const customerNameElement =
-                document.getElementById(
-                    "customerName"
+            // Get logged-in customer ID
+            const customerId =
+                localStorage.getItem(
+                    "guptaCustomerId"
                 );
 
-            if (customerNameElement) {
 
-                customerNameElement.textContent =
-                    newName;
+            if (!customerId) {
 
+                alert(
+                    "Customer session not found. Please login again."
+                );
+
+                return;
             }
 
 
-            alert(
-                "Profile updated successfully."
-            );
+            // Save profile to Railway backend
+            try {
+
+                saveProfileBtn.disabled = true;
+                saveProfileBtn.textContent = "Saving...";
 
 
-            // Close edit form
-            editProfileForm.style.display =
-                "none";
+                const response = await fetch(
+                    `${API_BASE_URL}/api/customers/${customerId}/profile`,
+                    {
+                        method: "PUT",
 
-            editProfileBtn.textContent =
-                "Edit Profile";
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            full_name: newName,
+                            mobile: newMobile,
+                            email: newEmail
+                        })
+                    }
+                );
+
+
+                const result =
+                    await response.json();
+
+
+                if (!response.ok || !result.success) {
+
+                    alert(
+                        result.message ||
+                        "Unable to update profile."
+                    );
+
+                    return;
+                }
+
+
+                // Save updated data locally
+                localStorage.setItem(
+                    "guptaCustomerName",
+                    result.customer.full_name
+                );
+
+                localStorage.setItem(
+                    "guptaCustomerMobile",
+                    result.customer.mobile
+                );
+
+                localStorage.setItem(
+                    "guptaCustomerEmail",
+                    result.customer.email
+                );
+
+
+                // Update profile display
+                document.getElementById(
+                    "profileName"
+                ).textContent =
+                    result.customer.full_name;
+
+                document.getElementById(
+                    "profileMobile"
+                ).textContent =
+                    result.customer.mobile;
+
+                document.getElementById(
+                    "profileEmail"
+                ).textContent =
+                    result.customer.email;
+
+
+                // Update welcome name
+                const customerNameElement =
+                    document.getElementById(
+                        "customerName"
+                    );
+
+                if (customerNameElement) {
+
+                    customerNameElement.textContent =
+                        result.customer.full_name;
+
+                }
+
+
+                alert(
+                    "Profile updated successfully."
+                );
+
+
+                // Close edit form
+                editProfileForm.style.display =
+                    "none";
+
+                editProfileBtn.textContent =
+                    "Edit Profile";
+
+
+            } catch (error) {
+
+                console.error(
+                    "❌ Profile update error:",
+                    error
+                );
+
+                alert(
+                    "Unable to connect to the server. Please try again."
+                );
+
+            } finally {
+
+                saveProfileBtn.disabled = false;
+                saveProfileBtn.textContent =
+                    "Save Changes";
+
+            }
+
         }
     );
 
 }
+
     /* =========================================
        CUSTOMER LOGOUT
        ========================================= */
