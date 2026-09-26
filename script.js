@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", function () {
    ===================================================== */
 
 const PRODUCT_API_URL =
-    "http://node.waifly.com:27785/api/products";
+    "https://guptagarments.waifly.com/api/products";
 
 let databaseProducts = [];
 
@@ -2357,7 +2357,7 @@ if (modalWhatsapp && productName) {
    ===================================================== */
 
 const REVIEW_API_URL =
-    "http://node.waifly.com:27785/api/reviews";
+    "https://guptagarments.waifly.com/api/reviews";
 
 
 /* ================= GET PRODUCT REVIEWS ================= */
