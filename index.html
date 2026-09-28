@@ -399,94 +399,48 @@
     </button>
 
     <!-- CUSTOMER ACCOUNT DROPDOWN -->
-    <div
-        class="customer-account-dropdown"
-        id="customerAccountDropdown"
+<div
+    class="customer-account-dropdown"
+    id="customerAccountDropdown"
+>
+
+    <!-- ================= MY PROFILE ================= -->
+
+    <button
+        type="button"
+        class="customer-dropdown-item"
+        id="customerProfileBtn"
     >
+        <span class="dropdown-icon">👤</span>
 
-     <button
-    type="button"
-    class="customer-dropdown-item"
-    id="customerProfileBtn"
->
-    <span class="dropdown-icon">👤</span>
-    <span>
-        <strong>My Profile</strong>
-        <small>View and edit your profile</small>
-    </span>
-</button>
+        <span>
+            <strong>My Profile</strong>
 
-   <button
-    type="button"
-    class="customer-dropdown-item"
-    id="customerDropdownOrders"
->
-    <span class="dropdown-icon">🛍️</span>
-    <span>
-        <strong>My Orders</strong>
-        <small>Track your orders</small>
-    </span>
-</button>
+            <small>
+                View and edit your profile
+            </small>
+        </span>
+    </button>
 
-     <button
-    type="button"
-    class="customer-dropdown-item"
-    id="customerDropdownWishlist"
->
-    <span class="dropdown-icon">❤️</span>
-    <span>
-        <strong>Wishlist</strong>
-        <small>Your saved products</small>
-    </span>
-</button>
+    <!-- ================= LOGOUT ================= -->
 
-        <button type="button" class="customer-dropdown-item">
-            <span class="dropdown-icon">📍</span>
-            <span>
-                <strong>Addresses</strong>
-                <small>Manage delivery addresses</small>
-            </span>
-        </button>
+    <button
+        type="button"
+        class="customer-dropdown-item logout-item"
+        id="customerDropdownLogout"
+    >
+        <span class="dropdown-icon">🚪</span>
 
-        <button type="button" class="customer-dropdown-item">
-            <span class="dropdown-icon">🔔</span>
-            <span>
-                <strong>Notifications</strong>
-                <small>Important account updates</small>
-            </span>
-        </button>
+        <span>
+            <strong>Logout</strong>
 
-        <button type="button" class="customer-dropdown-item">
-            <span class="dropdown-icon">⚙️</span>
-            <span>
-                <strong>Settings</strong>
-                <small>Manage account settings</small>
-            </span>
-        </button>
+            <small>
+                Sign out of your account
+            </small>
+        </span>
+    </button>
 
-        <button type="button" class="customer-dropdown-item">
-            <span class="dropdown-icon">🔐</span>
-            <span>
-                <strong>Security</strong>
-                <small>Password and security</small>
-            </span>
-        </button>
-
-        <div class="customer-dropdown-divider"></div>
-
-        <button
-            type="button"
-            class="customer-dropdown-item logout-item"
-            id="customerDropdownLogout"
-        >
-            <span class="dropdown-icon">🚪</span>
-            <span>
-                <strong>Logout</strong>
-                <small>Sign out of your account</small>
-            </span>
-        </button>
-
-    </div>
+</div>
 
 </div>
             <!-- WhatsApp Button -->
@@ -2362,6 +2316,100 @@ if (customerProfileBtn) {
     });
 
 }
+
+// =====================================================
+// CUSTOMER DROPDOWN - LOGOUT CONFIRMATION
+// =====================================================
+
+const customerDropdownLogout =
+    document.getElementById("customerDropdownLogout");
+
+const logoutConfirmOverlay =
+    document.getElementById("logoutConfirmOverlay");
+
+const logoutCancelBtn =
+    document.getElementById("logoutCancelBtn");
+
+const logoutConfirmBtn =
+    document.getElementById("logoutConfirmBtn");
+
+
+// ================= OPEN LOGOUT POPUP =================
+
+if (
+    customerDropdownLogout &&
+    logoutConfirmOverlay
+) {
+
+    customerDropdownLogout.addEventListener("click", function (event) {
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        // Close customer account dropdown
+        customerAccountDropdown.classList.remove("active");
+
+        if (customerAccountArrow) {
+            customerAccountArrow.classList.remove("rotate");
+        }
+
+        // Show logout confirmation popup
+        logoutConfirmOverlay.classList.add("active");
+
+    });
+
+}
+
+
+// ================= CANCEL LOGOUT =================
+
+if (logoutCancelBtn) {
+
+    logoutCancelBtn.addEventListener("click", function () {
+
+        logoutConfirmOverlay.classList.remove("active");
+
+    });
+
+}
+
+
+// ================= CONFIRM LOGOUT =================
+
+if (logoutConfirmBtn) {
+
+    logoutConfirmBtn.addEventListener("click", function () {
+
+        // Remove customer login session
+        localStorage.removeItem("guptaCustomerLoggedIn");
+
+        // Remove saved customer name
+        localStorage.removeItem("guptaCustomerName");
+
+        // Redirect to customer login page
+        window.location.href = "customer.html";
+
+    });
+
+}
+
+
+// ================= CLOSE ON OVERLAY CLICK =================
+
+if (logoutConfirmOverlay) {
+
+    logoutConfirmOverlay.addEventListener("click", function (event) {
+
+        if (event.target === logoutConfirmOverlay) {
+
+            logoutConfirmOverlay.classList.remove("active");
+
+        }
+
+    });
+
+}
+
 // =====================================================
 // CUSTOMER DROPDOWN - WISHLIST
 // =====================================================
@@ -2616,6 +2664,49 @@ if (customerDropdownWishlist) {
                 ORDER ON WHATSAPP
 
             </a>
+
+        </div>
+
+    </div>
+
+</div>
+<!-- =====================================================
+     LOGOUT CONFIRMATION POPUP
+     ===================================================== -->
+
+<div class="logout-confirm-overlay" id="logoutConfirmOverlay">
+
+    <div class="logout-confirm-box">
+
+        <div class="logout-confirm-icon">
+            <i class="fa-solid fa-right-from-bracket"></i>
+        </div>
+
+        <h3>
+            Are you sure you want to logout?
+        </h3>
+
+        <p>
+            You will need to login again to access your account.
+        </p>
+
+        <div class="logout-confirm-buttons">
+
+            <button
+                type="button"
+                class="logout-cancel-btn"
+                id="logoutCancelBtn"
+            >
+                Cancel
+            </button>
+
+            <button
+                type="button"
+                class="logout-confirm-btn"
+                id="logoutConfirmBtn"
+            >
+                Logout
+            </button>
 
         </div>
 

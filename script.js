@@ -77,126 +77,55 @@ let databaseProducts = [];
 /* =====================================================
    WISHLIST — CUSTOMER LOGIN CHECK
    ===================================================== */
+
 const WISHLIST_API_URL =
-    "http://localhost:3000/api/wishlist";
+    "https://guptagarments.waifly.com/api/wishlist";
+
+let savedWishlistProductIds =
+    new Set();
+
 
 function isCustomerLoggedIn() {
 
     return (
-        localStorage.getItem("guptaCustomerLoggedIn") === "true" &&
-        localStorage.getItem("guptaCustomerId")
+        localStorage.getItem(
+            "guptaCustomerLoggedIn"
+        ) === "true" &&
+        !!localStorage.getItem(
+            "guptaCustomerId"
+        )
     );
 
 }
+
+
 /* =====================================================
-   WISHLIST — AUTOMATIC PRODUCT BUTTON
+   WISHLIST — SET HEART STATE
    ===================================================== */
 
-function addWishlistButtonsToProducts() {
-
-    const productCards =
-        document.querySelectorAll(".product-card");
-
-    productCards.forEach(function (card) {
-
-        /* Already added */
-        if (card.querySelector(".wishlist-btn")) {
-            return;
-        }
-
-        const productImage =
-            card.querySelector(".product-image");
-
-        if (!productImage) {
-            return;
-        }
-
-        /* Create Wishlist Button */
-
-        const wishlistButton =
-            document.createElement("button");
-
-        wishlistButton.type = "button";
-        wishlistButton.className = "wishlist-btn";
-
-        wishlistButton.setAttribute(
-            "aria-label",
-            "Add to Wishlist"
-        );
-
-        wishlistButton.setAttribute(
-            "title",
-            "Add to Wishlist"
-        );
-
-        wishlistButton.innerHTML =
-            '<i class="fa-regular fa-heart"></i>';
-
-        /* Put inside product image */
-
-        productImage.appendChild(
-            wishlistButton
-        );
-
-    });
-
-}
-// WISHLIST — ADD PRODUCT ON HEART CLICK
-document.addEventListener("click", async function (event) {
-    const wishlistButton = event.target.closest(".wishlist-btn");
+function setWishlistButtonState(
+    wishlistButton,
+    isAdded
+) {
 
     if (!wishlistButton) {
         return;
     }
 
-    const customerId = localStorage.getItem("guptaCustomerId");
 
-    if (!customerId) {
-        alert("Please login to add products to your wishlist.");
-        return;
-    }
+    const icon =
+        wishlistButton.querySelector("i");
 
-    const productCard = wishlistButton.closest(".product-card");
 
-    if (!productCard) {
-        return;
-    }
+    if (isAdded) {
 
-    const productName =
-        productCard.getAttribute("data-product");
-
-    const product = databaseProducts.find(function (item) {
-        return item.product_name === productName;
-    });
-
-    if (!product) {
-        alert("Product information not found.");
-        return;
-    }
-
-    try {
-        wishlistButton.disabled = true;
-
-        const response = await fetch(WISHLIST_API_URL, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                customer_id: Number(customerId),
-                product_id: Number(product.id)
-            })
-        });
-
-        const result = await response.json();
-
-        if (!response.ok || !result.success) {
-            alert(result.message || "Unable to add product to wishlist.");
-            return;
+        if (icon) {
+            icon.className =
+                "fa-solid fa-heart";
         }
 
-        wishlistButton.innerHTML =
-            '<i class="fa-solid fa-heart"></i>';
+        wishlistButton.style.color =
+            "#d1002f";
 
         wishlistButton.setAttribute(
             "aria-label",
@@ -205,17 +134,556 @@ document.addEventListener("click", async function (event) {
 
         wishlistButton.setAttribute(
             "title",
-            "Added to Wishlist"
+            "Remove from Wishlist"
         );
 
-        alert("Product added to wishlist.");
-    } catch (error) {
-        console.error("❌ Wishlist error:", error);
-        alert("Unable to connect to the server.");
-    } finally {
-        wishlistButton.disabled = false;
+    } else {
+
+        if (icon) {
+            icon.className =
+                "fa-regular fa-heart";
+        }
+
+        wishlistButton.style.color =
+            "";
+
+        wishlistButton.setAttribute(
+            "aria-label",
+            "Add to Wishlist"
+        );
+
+        wishlistButton.setAttribute(
+            "title",
+            "Add to Wishlist"
+        );
+
     }
-});
+
+}
+
+
+/* =====================================================
+   WISHLIST — AUTOMATIC PRODUCT BUTTON
+   ===================================================== */
+
+function addWishlistButtonsToProducts() {
+
+    const productCards =
+        document.querySelectorAll(
+            ".product-card"
+        );
+
+
+    productCards.forEach(
+        function (card) {
+
+            let wishlistButton =
+                card.querySelector(
+                    ".wishlist-btn"
+                );
+
+
+            /* =================================================
+               CREATE WISHLIST BUTTON
+               ================================================= */
+
+            if (!wishlistButton) {
+
+                const productImage =
+                    card.querySelector(
+                        ".product-image"
+                    );
+
+
+                if (!productImage) {
+                    return;
+                }
+
+
+                wishlistButton =
+                    document.createElement(
+                        "button"
+                    );
+
+
+                wishlistButton.type =
+                    "button";
+
+
+                wishlistButton.className =
+                    "wishlist-btn";
+
+
+                wishlistButton.setAttribute(
+                    "aria-label",
+                    "Add to Wishlist"
+                );
+
+
+                wishlistButton.setAttribute(
+                    "title",
+                    "Add to Wishlist"
+                );
+
+
+                wishlistButton.innerHTML =
+                    '<i class="fa-regular fa-heart"></i>';
+
+
+                productImage.appendChild(
+                    wishlistButton
+                );
+
+            }
+
+
+            /* =================================================
+               FIND PRODUCT NAME
+               ================================================= */
+
+            const productName =
+                card.getAttribute(
+                    "data-product"
+                ) ||
+                (
+                    card.querySelector("h3")
+                        ?.textContent
+                        .trim() || ""
+                );
+
+
+            if (!productName) {
+                return;
+            }
+
+
+            /* =================================================
+               FIND DATABASE PRODUCT
+               ================================================= */
+
+            const databaseProduct =
+                databaseProducts.find(
+                    function (item) {
+
+                        return (
+                            item.product_name ===
+                            productName
+                        );
+
+                    }
+                );
+
+
+            if (!databaseProduct) {
+                return;
+            }
+
+
+            /* =================================================
+               SAVE DATABASE PRODUCT ID
+               ================================================= */
+
+            const productId =
+                Number(
+                    databaseProduct.id
+                );
+
+
+            if (!productId) {
+                return;
+            }
+
+
+            card.setAttribute(
+                "data-product-id",
+                productId
+            );
+
+
+            /* =================================================
+               RESTORE HEART STATE
+               ================================================= */
+
+            const isAdded =
+                savedWishlistProductIds.has(
+                    productId
+                );
+
+
+            setWishlistButtonState(
+                wishlistButton,
+                isAdded
+            );
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   WISHLIST — LOAD SAVED PRODUCTS
+   ===================================================== */
+
+async function loadCustomerWishlistState() {
+
+    const customerId =
+        localStorage.getItem(
+            "guptaCustomerId"
+        );
+
+
+    if (!customerId) {
+        return;
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                `${WISHLIST_API_URL}/${encodeURIComponent(customerId)}`
+            );
+
+
+        const result =
+            await response.json();
+
+
+        if (
+            !response.ok ||
+            !result.success
+        ) {
+
+            console.error(
+                "❌ Wishlist load failed:",
+                result.message
+            );
+
+            return;
+
+        }
+
+
+        savedWishlistProductIds =
+            new Set();
+
+
+        const wishlist =
+            Array.isArray(
+                result.wishlist
+            )
+                ? result.wishlist
+                : [];
+
+
+        wishlist.forEach(
+            function (item) {
+
+                const productId =
+                    Number(
+                        item.product_id
+                    );
+
+
+                if (productId) {
+
+                    savedWishlistProductIds.add(
+                        productId
+                    );
+
+                }
+
+            }
+        );
+
+
+        /* Restore hearts */
+        addWishlistButtonsToProducts();
+
+
+    }
+    catch (error) {
+
+        console.error(
+            "❌ Wishlist state load error:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   WISHLIST — HEART CLICK
+   ===================================================== */
+
+document.addEventListener(
+    "click",
+    async function (event) {
+
+        const wishlistButton =
+            event.target.closest(
+                ".wishlist-btn"
+            );
+
+
+        if (!wishlistButton) {
+            return;
+        }
+
+
+        const customerId =
+            localStorage.getItem(
+                "guptaCustomerId"
+            );
+
+
+        if (!customerId) {
+
+            alert(
+                "Please login to add products to your wishlist."
+            );
+
+            return;
+
+        }
+
+
+        const productCard =
+            wishlistButton.closest(
+                ".product-card"
+            );
+
+
+        if (!productCard) {
+            return;
+        }
+
+
+        const productName =
+            productCard.getAttribute(
+                "data-product"
+            ) ||
+            (
+                productCard.querySelector("h3")
+                    ?.textContent
+                    .trim() || ""
+            );
+
+
+        if (!productName) {
+
+            alert(
+                "Product information not found."
+            );
+
+            return;
+
+        }
+
+
+        const product =
+            databaseProducts.find(
+                function (item) {
+
+                    return (
+                        item.product_name ===
+                        productName
+                    );
+
+                }
+            );
+
+
+        if (!product) {
+
+            alert(
+                "Product information not found."
+            );
+
+            return;
+
+        }
+
+
+        const productId =
+            Number(product.id);
+
+
+        if (!productId) {
+
+            alert(
+                "Product ID not found."
+            );
+
+            return;
+
+        }
+
+
+        const alreadyAdded =
+            savedWishlistProductIds.has(
+                productId
+            );
+
+
+        try {
+
+            wishlistButton.disabled =
+                true;
+
+
+            /* =================================================
+               REMOVE FROM WISHLIST
+               ================================================= */
+
+            if (alreadyAdded) {
+
+                const response =
+                    await fetch(
+                        `${WISHLIST_API_URL}/${encodeURIComponent(customerId)}/${encodeURIComponent(productId)}`,
+                        {
+                            method:
+                                "DELETE"
+                        }
+                    );
+
+
+                const result =
+                    await response.json();
+
+
+                if (
+                    !response.ok ||
+                    !result.success
+                ) {
+
+                    throw new Error(
+                        result.message ||
+                        "Unable to remove product from wishlist."
+                    );
+
+                }
+
+
+                savedWishlistProductIds.delete(
+                    productId
+                );
+
+
+                setWishlistButtonState(
+                    wishlistButton,
+                    false
+                );
+
+
+                alert(
+                    "Product removed from wishlist."
+                );
+
+
+                return;
+
+            }
+
+
+            /* =================================================
+               ADD TO WISHLIST
+               ================================================= */
+
+            const response =
+                await fetch(
+                    WISHLIST_API_URL,
+                    {
+                        method:
+                            "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify({
+                                customer_id:
+                                    Number(
+                                        customerId
+                                    ),
+
+                                product_id:
+                                    productId
+                            })
+                    }
+                );
+
+
+            const result =
+                await response.json();
+
+
+            if (
+                !response.ok ||
+                !result.success
+            ) {
+
+                throw new Error(
+                    result.message ||
+                    "Unable to add product to wishlist."
+                );
+
+            }
+
+
+            savedWishlistProductIds.add(
+                productId
+            );
+
+
+            setWishlistButtonState(
+                wishlistButton,
+                true
+            );
+
+
+            alert(
+                "Product added to wishlist."
+            );
+
+        }
+        catch (error) {
+
+            console.error(
+                "❌ Wishlist error:",
+                error
+            );
+
+
+            alert(
+                error.message ||
+                "Unable to connect to the server."
+            );
+
+        }
+        finally {
+
+            wishlistButton.disabled =
+                false;
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   WISHLIST — INITIAL SETUP
+   ===================================================== */
+
+addWishlistButtonsToProducts();
+
+loadCustomerWishlistState();
 /* ================= LOAD DATABASE PRODUCTS ================= */
 
 async function loadDatabaseProducts() {

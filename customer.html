@@ -511,7 +511,9 @@
     }
 }
     </style>
-
+ <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 
 
@@ -592,17 +594,50 @@
                     <label>
                         Password
                     </label>
+<div class="password-input-wrapper"
+style="position: relative;" >
 
-                    <input
-                        type="password"
-                        id="loginPassword"
-                        placeholder="Enter password"
-                        required
-                    >
+    <input
+        type="password"
+        id="loginPassword"
+        placeholder="Enter password"
+        required
+        style="width: 100%; padding-right: 50px; box-sizing: border-box;"
+    >
 
-                </div>
+    <button
+        type="button"
+        id="toggleLoginPassword"
+        class="password-toggle"
+        aria-label="Show password"
+    style="
+                position: absolute;
+                right: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 36px;
+                height: 36px;
+                margin: 0;
+                padding: 0;
+                border: none;
+                background: transparent;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                z-index: 999;
+            "
+        >
+        <i class="fa-solid fa-eye"
+          style="
+                    font-size: 18px;
+                    color: #555;
+                "></i>
+    </button>
 
+</div>
 
+ </div>
                 <button
                     type="submit"
                     class="auth-btn"
@@ -1344,7 +1379,8 @@
 
     const API_BASE_URL =
     "https://guptagarments.waifly.com";
-
+const WISHLIST_API_URL =
+    API_BASE_URL + "/api/wishlist";
     /* =========================================
        MAIN SECTIONS
        ========================================= */
@@ -1662,7 +1698,72 @@ if (customerLoginForm) {
     );
 
 }
+/* =========================================================
+   LOGIN PASSWORD SHOW / HIDE
+   ========================================================= */
 
+const toggleLoginPassword =
+    document.getElementById(
+        "toggleLoginPassword"
+    );
+
+const loginPasswordInput =
+    document.getElementById(
+        "loginPassword"
+    );
+
+if (
+    toggleLoginPassword &&
+    loginPasswordInput
+) {
+
+    toggleLoginPassword.addEventListener(
+        "click",
+        function () {
+
+            const eyeIcon =
+                toggleLoginPassword.querySelector(
+                    "i"
+                );
+
+            if (
+                loginPasswordInput.type ===
+                "password"
+            ) {
+
+                loginPasswordInput.type =
+                    "text";
+
+                if (eyeIcon) {
+                    eyeIcon.className =
+                        "fa-solid fa-eye-slash";
+                }
+
+                toggleLoginPassword.setAttribute(
+                    "aria-label",
+                    "Hide password"
+                );
+
+            } else {
+
+                loginPasswordInput.type =
+                    "password";
+
+                if (eyeIcon) {
+                    eyeIcon.className =
+                        "fa-solid fa-eye";
+                }
+
+                toggleLoginPassword.setAttribute(
+                    "aria-label",
+                    "Show password"
+                );
+            }
+
+        }
+    );
+
+}
     /* =========================================
        CUSTOMER SIGNUP
        ========================================= */
@@ -2913,64 +3014,696 @@ if (backFromOrdersBtn) {
 // =====================================================
 
 const myWishlistCard =
-    document.getElementById("myWishlistCard");
+    document.getElementById(
+        "myWishlistCard"
+    );
 
 const myWishlistSection =
-    document.getElementById("myWishlistSection");
+    document.getElementById(
+        "myWishlistSection"
+    );
 
 const backFromWishlistBtn =
-    document.getElementById("backFromWishlistBtn");
+    document.getElementById(
+        "backFromWishlistBtn"
+    );
 
-if (myWishlistCard && myWishlistSection) {
+const wishlistList =
+    document.getElementById(
+        "wishlistList"
+    );
 
-    myWishlistCard.addEventListener("click", function () {
 
-        // Hide dashboard cards
-        const dashboardGrid =
-            document.querySelector(".dashboard-grid");
+// =====================================================
+// LOAD CUSTOMER WISHLIST
+// =====================================================
 
-        if (dashboardGrid) {
-            dashboardGrid.style.display = "none";
+async function loadCustomerWishlist() {
+
+    if (!wishlistList) {
+        return;
+    }
+
+    const customerId =
+        localStorage.getItem(
+            "guptaCustomerId"
+        );
+
+    if (!customerId) {
+
+        wishlistList.innerHTML = `
+            <div
+                style="
+                    padding:25px;
+                    text-align:center;
+                    border:1px solid #eee;
+                    border-radius:12px;
+                    color:#777;
+                "
+            >
+                <div
+                    style="
+                        font-size:40px;
+                        margin-bottom:10px;
+                    "
+                >
+                    🔐
+                </div>
+
+                <h3
+                    style="
+                        color:#333;
+                        margin-bottom:8px;
+                    "
+                >
+                    Please Login Again
+                </h3>
+
+                <p style="margin:0;">
+                    Customer session not found.
+                </p>
+            </div>
+        `;
+
+        return;
+    }
+
+
+    // Loading
+
+    wishlistList.innerHTML = `
+        <div
+            style="
+                padding:25px;
+                text-align:center;
+                color:#777;
+            "
+        >
+            Loading your wishlist...
+        </div>
+    `;
+
+
+    try {
+
+        const response =
+            await fetch(
+                `${WISHLIST_API_URL}/${encodeURIComponent(customerId)}`
+            );
+
+
+        const result =
+            await response.json();
+
+
+        if (
+            !response.ok ||
+            !result.success
+        ) {
+
+            throw new Error(
+                result.message ||
+                "Unable to load wishlist."
+            );
+
         }
 
-        // Hide My Profile section if open
-        const myProfileSection =
-            document.getElementById("myProfileSection");
 
-        if (myProfileSection) {
-            myProfileSection.style.display = "none";
+        const wishlist =
+            Array.isArray(result.wishlist)
+                ? result.wishlist
+                : [];
+
+
+        // =================================================
+        // EMPTY WISHLIST
+        // =================================================
+
+        if (wishlist.length === 0) {
+
+            wishlistList.innerHTML = `
+                <div
+                    style="
+                        padding:25px;
+                        text-align:center;
+                        border:1px solid #eee;
+                        border-radius:12px;
+                        color:#777;
+                    "
+                >
+                    <div
+                        style="
+                            font-size:40px;
+                            margin-bottom:10px;
+                        "
+                    >
+                        ❤️
+                    </div>
+
+                    <h3
+                        style="
+                            color:#333;
+                            margin-bottom:8px;
+                        "
+                    >
+                        Your Wishlist is Empty
+                    </h3>
+
+                    <p style="margin:0;">
+                        Products you save will appear here.
+                    </p>
+                </div>
+            `;
+
+            return;
         }
 
-        // Hide My Orders section if open
-        const myOrdersSection =
-            document.getElementById("myOrdersSection");
 
-        if (myOrdersSection) {
-            myOrdersSection.style.display = "none";
-        }
+        // =================================================
+        // SHOW SAVED PRODUCTS
+        // =================================================
 
-        // Show My Wishlist
-        myWishlistSection.style.display = "block";
-    });
+        wishlistList.innerHTML = "";
+
+
+        wishlist.forEach(
+            function (item) {
+
+                const card =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                card.style.cssText = `
+                    background:#fff;
+                    border:1px solid #eee;
+                    border-radius:12px;
+                    padding:15px;
+                    display:flex;
+                    align-items:center;
+                    gap:15px;
+                    flex-wrap:wrap;
+                `;
+
+
+                // =================================================
+                // IMAGE
+                // =================================================
+
+                if (
+                    item.image_url &&
+                    String(
+                        item.image_url
+                    ).trim()
+                ) {
+
+                    const image =
+                        document.createElement(
+                            "img"
+                        );
+
+                    image.src =
+                        item.image_url;
+
+                    image.alt =
+                        item.product_name || "Product";
+
+                    image.style.cssText = `
+                        width:90px;
+                        height:90px;
+                        object-fit:cover;
+                        border-radius:10px;
+                        background:#f7f7f7;
+                        flex-shrink:0;
+                    `;
+
+                    card.appendChild(
+                        image
+                    );
+
+                } else {
+
+                    const imagePlaceholder =
+                        document.createElement(
+                            "div"
+                        );
+
+                    imagePlaceholder.textContent =
+                        "👕";
+
+                    imagePlaceholder.style.cssText = `
+                        width:90px;
+                        height:90px;
+                        border-radius:10px;
+                        background:#f7f7f7;
+                        display:flex;
+                        align-items:center;
+                        justify-content:center;
+                        font-size:40px;
+                        flex-shrink:0;
+                    `;
+
+                    card.appendChild(
+                        imagePlaceholder
+                    );
+
+                }
+
+
+                // =================================================
+                // PRODUCT INFORMATION
+                // =================================================
+
+                const info =
+                    document.createElement(
+                        "div"
+                    );
+
+                info.style.cssText = `
+                    flex:1;
+                    min-width:180px;
+                `;
+
+
+                const name =
+                    document.createElement(
+                        "h3"
+                    );
+
+                name.textContent =
+                    item.product_name || "";
+
+                name.style.cssText = `
+                    margin:0 0 6px;
+                    color:#333;
+                    font-size:17px;
+                `;
+
+
+                const category =
+                    document.createElement(
+                        "p"
+                    );
+
+                category.textContent =
+                    item.category || "";
+
+                category.style.cssText = `
+                    margin:3px 0;
+                    color:#777;
+                    font-size:13px;
+                `;
+
+
+                const price =
+                    document.createElement(
+                        "p"
+                    );
+
+                price.textContent =
+                    "₹" +
+                    Number(
+                        item.price || 0
+                    ).toLocaleString(
+                        "en-IN"
+                    );
+
+                price.style.cssText = `
+                    margin:6px 0;
+                    color:#7b1e2b;
+                    font-size:17px;
+                    font-weight:700;
+                `;
+
+
+                const sizes =
+                    document.createElement(
+                        "p"
+                    );
+
+                sizes.textContent =
+                    item.sizes
+                        ? "Sizes: " + item.sizes
+                        : "";
+
+                sizes.style.cssText = `
+                    margin:3px 0;
+                    color:#666;
+                    font-size:12px;
+                `;
+
+
+                info.appendChild(
+                    name
+                );
+
+                info.appendChild(
+                    category
+                );
+
+                info.appendChild(
+                    price
+                );
+
+                if (item.sizes) {
+
+                    info.appendChild(
+                        sizes
+                    );
+
+                }
+
+
+                card.appendChild(
+                    info
+                );
+
+
+                // =================================================
+                // ACTIONS
+                // =================================================
+
+                const actions =
+                    document.createElement(
+                        "div"
+                    );
+
+                actions.style.cssText = `
+                    display:flex;
+                    flex-direction:column;
+                    gap:8px;
+                    min-width:130px;
+                `;
+
+
+                // WhatsApp
+
+                const whatsapp =
+                    document.createElement(
+                        "a"
+                    );
+
+                whatsapp.href =
+                    "https://wa.me/918218403183?text=" +
+                    encodeURIComponent(
+                        "Hello Gupta Garments, I am interested in " +
+                        (item.product_name || "") +
+                        " ₹" +
+                        (item.price || "")
+                    );
+
+                whatsapp.target =
+                    "_blank";
+
+                whatsapp.rel =
+                    "noopener";
+
+                whatsapp.textContent =
+                    "Order on WhatsApp";
+
+                whatsapp.style.cssText = `
+                    display:inline-flex;
+                    align-items:center;
+                    justify-content:center;
+                    padding:9px 12px;
+                    border-radius:8px;
+                    background:#22994b;
+                    color:#fff;
+                    text-decoration:none;
+                    font-size:12px;
+                    font-weight:700;
+                `;
+
+
+                // Remove
+
+                const removeBtn =
+                    document.createElement(
+                        "button"
+                    );
+
+                removeBtn.type =
+                    "button";
+
+                removeBtn.textContent =
+                    "Remove";
+
+                removeBtn.style.cssText = `
+                    padding:9px 12px;
+                    border:1px solid #ddd;
+                    border-radius:8px;
+                    background:#fff;
+                    color:#b00020;
+                    cursor:pointer;
+                    font-size:12px;
+                    font-weight:700;
+                `;
+
+
+                removeBtn.addEventListener(
+                    "click",
+                    async function () {
+
+                        try {
+
+                            removeBtn.disabled =
+                                true;
+
+                            removeBtn.textContent =
+                                "Removing...";
+
+
+                            const removeResponse =
+                                await fetch(
+                                    `${WISHLIST_API_URL}/${encodeURIComponent(customerId)}/${encodeURIComponent(item.product_id)}`,
+                                    {
+                                        method:
+                                            "DELETE"
+                                    }
+                                );
+
+
+                            const removeResult =
+                                await removeResponse.json();
+
+
+                            if (
+                                !removeResponse.ok ||
+                                !removeResult.success
+                            ) {
+
+                                throw new Error(
+                                    removeResult.message ||
+                                    "Unable to remove product."
+                                );
+
+                            }
+
+
+                            await loadCustomerWishlist();
+
+                        }
+                        catch (error) {
+
+                            console.error(
+                                "❌ Wishlist remove error:",
+                                error
+                            );
+
+                            alert(
+                                "❌ " +
+                                error.message
+                            );
+
+                            removeBtn.disabled =
+                                false;
+
+                            removeBtn.textContent =
+                                "Remove";
+
+                        }
+
+                    }
+                );
+
+
+                actions.appendChild(
+                    whatsapp
+                );
+
+                actions.appendChild(
+                    removeBtn
+                );
+
+
+                card.appendChild(
+                    actions
+                );
+
+
+                wishlistList.appendChild(
+                    card
+                );
+
+            }
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "❌ Wishlist loading error:",
+            error
+        );
+
+
+        wishlistList.innerHTML = `
+            <div
+                style="
+                    padding:25px;
+                    text-align:center;
+                    border:1px solid #eee;
+                    border-radius:12px;
+                    color:#777;
+                "
+            >
+                <div
+                    style="
+                        font-size:40px;
+                        margin-bottom:10px;
+                    "
+                >
+                    ⚠️
+                </div>
+
+                <h3
+                    style="
+                        color:#333;
+                        margin-bottom:8px;
+                    "
+                >
+                    Unable to Load Wishlist
+                </h3>
+
+                <p style="margin:0;">
+                    Please try again.
+                </p>
+            </div>
+        `;
+
+    }
+
 }
+
+
+// =====================================================
+// OPEN WISHLIST
+// =====================================================
+
+if (
+    myWishlistCard &&
+    myWishlistSection
+) {
+
+    myWishlistCard.addEventListener(
+        "click",
+        async function () {
+
+            const dashboardGrid =
+                document.querySelector(
+                    ".dashboard-grid"
+                );
+
+
+            if (dashboardGrid) {
+
+                dashboardGrid.style.display =
+                    "none";
+
+            }
+
+
+            // Hide My Profile
+
+            const myProfileSection =
+                document.getElementById(
+                    "myProfileSection"
+                );
+
+            if (myProfileSection) {
+
+                myProfileSection.style.display =
+                    "none";
+
+            }
+
+
+            // Hide My Orders
+
+            const myOrdersSection =
+                document.getElementById(
+                    "myOrdersSection"
+                );
+
+            if (myOrdersSection) {
+
+                myOrdersSection.style.display =
+                    "none";
+
+            }
+
+
+            // Show Wishlist
+
+            myWishlistSection.style.display =
+                "block";
+
+
+            // Load saved products
+
+            await loadCustomerWishlist();
+
+        }
+    );
+
+}
+
+
+// =====================================================
+// BACK TO DASHBOARD
+// =====================================================
 
 if (backFromWishlistBtn) {
 
-    backFromWishlistBtn.addEventListener("click", function () {
+    backFromWishlistBtn.addEventListener(
+        "click",
+        function () {
 
-        // Hide Wishlist
-        if (myWishlistSection) {
-            myWishlistSection.style.display = "none";
+            if (myWishlistSection) {
+
+                myWishlistSection.style.display =
+                    "none";
+
+            }
+
+
+            const dashboardGrid =
+                document.querySelector(
+                    ".dashboard-grid"
+                );
+
+
+            if (dashboardGrid) {
+
+                dashboardGrid.style.display =
+                    "grid";
+
+            }
+
         }
+    );
 
-        // Show Dashboard cards
-        const dashboardGrid =
-            document.querySelector(".dashboard-grid");
-
-        if (dashboardGrid) {
-            dashboardGrid.style.display = "grid";
-        }
-    });
 }
 const myProfileSection = document.getElementById("myProfileSection");
 const backToDashboardBtn = document.getElementById("backToDashboardBtn");
