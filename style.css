@@ -7265,3 +7265,186 @@ MOBILE PHONE
     }
 
 }
+/* =================================
+   FESTIVAL / ALERT POPUP
+================================= */
+
+#festivalAlertPopup {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+}
+
+#festivalAlertOverlay {
+    position: fixed;
+    inset: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    background: rgba(0, 0, 0, 0.72);
+}
+
+#festivalAlertBox {
+    position: relative;
+
+    width: 100%;
+    max-width: 480px;
+
+    background: #ffffff;
+
+    border-radius: 18px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.35);
+
+    animation: festivalPopupShow 0.35s ease;
+}
+
+#festivalAlertClose {
+    position: absolute;
+
+    top: 10px;
+    right: 10px;
+
+    width: 36px;
+    height: 36px;
+
+    border: none;
+    border-radius: 50%;
+
+    background: rgba(0, 0, 0, 0.65);
+    color: #ffffff;
+
+    font-size: 26px;
+    line-height: 36px;
+
+    cursor: pointer;
+
+    z-index: 2;
+}
+
+#festivalAlertClose:hover {
+    background: rgba(0, 0, 0, 0.85);
+}
+
+#festivalAlertImage {
+    display: block;
+
+    width: 100%;
+    height: 280px;
+
+    object-fit: cover;
+
+    background: #f5f5f5;
+}
+
+#festivalAlertContent {
+    padding: 24px 22px 26px;
+
+    text-align: center;
+}
+
+#festivalAlertTitle {
+    margin: 0 0 8px;
+
+    color: #7b1e1e;
+
+    font-size: 28px;
+    font-weight: 700;
+}
+
+#festivalAlertSubtitle {
+    margin: 0 0 12px;
+
+    color: #2f6b3f;
+
+    font-size: 18px;
+    font-weight: 600;
+}
+
+#festivalAlertDescription {
+    margin: 0 0 20px;
+
+    color: #555555;
+
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+#festivalAlertButton {
+    display: inline-block;
+
+    padding: 11px 24px;
+
+    border-radius: 6px;
+
+    background: #7b1e1e;
+    color: #ffffff;
+
+    text-decoration: none;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    transition: 0.2s ease;
+}
+
+#festivalAlertButton:hover {
+    background: #5e1515;
+}
+
+@keyframes festivalPopupShow {
+
+    from {
+        opacity: 0;
+        transform: scale(0.92);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+}
+
+/* Mobile */
+
+@media (max-width: 600px) {
+
+    #festivalAlertOverlay {
+        padding: 15px;
+    }
+
+    #festivalAlertBox {
+        max-width: 100%;
+        border-radius: 14px;
+    }
+
+    #festivalAlertImage {
+        height: 220px;
+    }
+
+    #festivalAlertContent {
+        padding: 20px 16px 22px;
+    }
+
+    #festivalAlertTitle {
+        font-size: 24px;
+    }
+
+    #festivalAlertSubtitle {
+        font-size: 16px;
+    }
+
+    #festivalAlertDescription {
+        font-size: 14px;
+    }
+
+}

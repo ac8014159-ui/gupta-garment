@@ -1,6 +1,9 @@
 const express = require("express");
 const mysql = require("mysql2");
 const cors = require("cors");
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 require("dotenv").config();
@@ -9,7 +12,111 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(
+    "/uploads",
+    express.static(
+        path.join(__dirname, "uploads")
+    )
+);
+// =================================
+// FESTIVAL POPUP IMAGE UPLOAD
+// =================================
 
+const festivalUploadDir =
+    path.join(__dirname, "uploads", "festival-popups");
+
+if (!fs.existsSync(festivalUploadDir)) {
+    fs.mkdirSync(festivalUploadDir, {
+        recursive: true
+    });
+}
+
+const festivalStorage = multer.diskStorage({
+
+    destination: function (req, file, cb) {
+        cb(null, festivalUploadDir);
+    },
+
+    filename: function (req, file, cb) {
+
+        const extension =
+            path.extname(file.originalname);
+
+        const fileName =
+            "festival-" +
+            Date.now() +
+            extension;
+
+        cb(null, fileName);
+    }
+
+});
+
+const festivalUpload = multer({
+
+    storage: festivalStorage,
+
+    limits: {
+        fileSize: 5 * 1024 * 1024
+    },
+
+    fileFilter: function (req, file, cb) {
+
+        if (!file.mimetype.startsWith("image/")) {
+            return cb(
+                new Error("Only image files are allowed")
+            );
+        }
+
+        cb(null, true);
+    }
+
+});
+// =================================
+// FESTIVAL POPUP IMAGE UPLOAD API
+// =================================
+
+app.post(
+    "/api/festival-popup/upload-image",
+    requireAdminAuth,
+    festivalUpload.single("image"),
+    function (req, res) {
+
+        try {
+
+            if (!req.file) {
+
+                return res.status(400).json({
+                    message: "Please select an image"
+                });
+
+            }
+
+            const imageUrl =
+                "/uploads/festival-popups/" +
+                req.file.filename;
+
+            return res.json({
+                success: true,
+                image_url: imageUrl
+            });
+
+        }
+        catch (error) {
+
+            console.error(
+                "Festival Popup Image Upload Error:",
+                error
+            );
+
+            return res.status(500).json({
+                message: "Failed to upload image"
+            });
+
+        }
+
+    }
+);
 // ===============================
 // ADMIN AUTHENTICATION
 // ===============================
@@ -4031,6 +4138,378 @@ app.delete("/api/wishlist/:customerId/:productId", (req, res) => {
     );
 
 });
+// =====================================================
+// FESTIVAL / ALERT POPUP APIs
+// =====================================================
+
+// PUBLIC: Get currently active popup
+app.get("/api/festival-popup/active", (req, res) => {
+
+    const sql = `
+        SELECT
+            id,
+            popup_type,
+            title,
+            subtitle,
+            description,
+            image_url,
+            button_text,
+            button_link,
+            start_at,
+            end_at,
+            priority
+        FROM festival_popups
+        WHERE is_active = 1
+          AND start_at <= NOW()
+          AND end_at >= NOW()
+        ORDER BY priority DESC, id DESC
+        LIMIT 1
+    `;
+
+    db.query(sql, (err, results) => {
+
+        if (err) {
+            console.error(
+                "❌ Active festival popup fetch error:",
+                err.message
+            );
+
+            return res.status(500).json({
+                success: false,
+                message: "Unable to fetch active popup."
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            popup: results.length > 0 ? results[0] : null
+        });
+
+    });
+
+});
+
+
+// ADMIN: Get all festival / alert popups
+app.get(
+    "/api/festival-popups/admin",
+    requireAdminAuth,
+    (req, res) => {
+
+        const sql = `
+            SELECT
+                id,
+                popup_type,
+                title,
+                subtitle,
+                description,
+                image_url,
+                button_text,
+                button_link,
+                start_at,
+                end_at,
+                is_active,
+                priority,
+                created_at,
+                updated_at
+            FROM festival_popups
+            ORDER BY priority DESC, id DESC
+        `;
+
+        db.query(sql, (err, results) => {
+
+            if (err) {
+                console.error(
+                    "❌ Festival popup admin fetch error:",
+                    err.message
+                );
+
+                return res.status(500).json({
+                    success: false,
+                    message: "Unable to fetch festival popups."
+                });
+            }
+
+            return res.status(200).json({
+                success: true,
+                popups: results
+            });
+
+        });
+
+    }
+);
+
+
+// ADMIN: Create festival / alert popup
+app.post(
+    "/api/festival-popups",
+    requireAdminAuth,
+    (req, res) => {
+
+        const {
+            popup_type,
+            title,
+            subtitle,
+            description,
+            image_url,
+            button_text,
+            button_link,
+            start_at,
+            end_at,
+            is_active,
+            priority
+        } = req.body;
+
+
+        if (
+            !popup_type ||
+            !title ||
+            !start_at ||
+            !end_at
+        ) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Popup type, title, start date and end date are required."
+            });
+        }
+
+
+        const sql = `
+            INSERT INTO festival_popups
+            (
+                popup_type,
+                title,
+                subtitle,
+                description,
+                image_url,
+                button_text,
+                button_link,
+                start_at,
+                end_at,
+                is_active,
+                priority
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `;
+
+
+        db.query(
+            sql,
+            [
+                popup_type,
+                title,
+                subtitle || null,
+                description || null,
+                image_url || null,
+                button_text || null,
+                button_link || null,
+                start_at,
+                end_at,
+                is_active === undefined ? 1 : Number(is_active),
+                priority === undefined ? 1 : Number(priority)
+            ],
+            (err, result) => {
+
+                if (err) {
+                    console.error(
+                        "❌ Festival popup create error:",
+                        err.message
+                    );
+
+                    return res.status(500).json({
+                        success: false,
+                        message: "Unable to create popup."
+                    });
+                }
+
+
+                return res.status(201).json({
+                    success: true,
+                    message: "Festival popup created successfully.",
+                    id: result.insertId
+                });
+
+            }
+        );
+
+    }
+);
+
+
+// ADMIN: Update festival / alert popup
+app.put(
+    "/api/festival-popups/:id",
+    requireAdminAuth,
+    (req, res) => {
+
+        const popupId = Number(req.params.id);
+
+        if (!popupId) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid popup ID."
+            });
+        }
+
+
+        const {
+            popup_type,
+            title,
+            subtitle,
+            description,
+            image_url,
+            button_text,
+            button_link,
+            start_at,
+            end_at,
+            is_active,
+            priority
+        } = req.body;
+
+
+        if (
+            !popup_type ||
+            !title ||
+            !start_at ||
+            !end_at
+        ) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Popup type, title, start date and end date are required."
+            });
+        }
+
+
+        const sql = `
+            UPDATE festival_popups
+            SET
+                popup_type = ?,
+                title = ?,
+                subtitle = ?,
+                description = ?,
+                image_url = ?,
+                button_text = ?,
+                button_link = ?,
+                start_at = ?,
+                end_at = ?,
+                is_active = ?,
+                priority = ?
+            WHERE id = ?
+        `;
+
+
+        db.query(
+            sql,
+            [
+                popup_type,
+                title,
+                subtitle || null,
+                description || null,
+                image_url || null,
+                button_text || null,
+                button_link || null,
+                start_at,
+                end_at,
+                is_active === undefined ? 1 : Number(is_active),
+                priority === undefined ? 1 : Number(priority),
+                popupId
+            ],
+            (err, result) => {
+
+                if (err) {
+                    console.error(
+                        "❌ Festival popup update error:",
+                        err.message
+                    );
+
+                    return res.status(500).json({
+                        success: false,
+                        message: "Unable to update popup."
+                    });
+                }
+
+
+                if (result.affectedRows === 0) {
+                    return res.status(404).json({
+                        success: false,
+                        message: "Popup not found."
+                    });
+                }
+
+
+                return res.status(200).json({
+                    success: true,
+                    message: "Festival popup updated successfully."
+                });
+
+            }
+        );
+
+    }
+);
+
+
+// ADMIN: Delete festival / alert popup
+app.delete(
+    "/api/festival-popups/:id",
+    requireAdminAuth,
+    (req, res) => {
+
+        const popupId = Number(req.params.id);
+
+        if (!popupId) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid popup ID."
+            });
+        }
+
+
+        const sql = `
+            DELETE FROM festival_popups
+            WHERE id = ?
+        `;
+
+
+        db.query(
+            sql,
+            [popupId],
+            (err, result) => {
+
+                if (err) {
+                    console.error(
+                        "❌ Festival popup delete error:",
+                        err.message
+                    );
+
+                    return res.status(500).json({
+                        success: false,
+                        message: "Unable to delete popup."
+                    });
+                }
+
+
+                if (result.affectedRows === 0) {
+                    return res.status(404).json({
+                        success: false,
+                        message: "Popup not found."
+                    });
+                }
+
+
+                return res.status(200).json({
+                    success: true,
+                    message: "Festival popup deleted successfully."
+                });
+
+            }
+        );
+
+    }
+);
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, "0.0.0.0", () => {

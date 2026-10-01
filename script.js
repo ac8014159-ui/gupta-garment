@@ -4015,3 +4015,147 @@ if (productsGridForDynamicButtons) {
 
 }
 });
+// =================================
+// FESTIVAL / ALERT POPUP
+// =================================
+
+document.addEventListener("DOMContentLoaded", async function () {
+
+    const popup =
+        document.getElementById("festivalAlertPopup");
+
+    const overlay =
+        document.getElementById("festivalAlertOverlay");
+
+    const closeButton =
+        document.getElementById("festivalAlertClose");
+
+    const popupImage =
+        document.getElementById("festivalAlertImage");
+
+    const popupTitle =
+        document.getElementById("festivalAlertTitle");
+
+    const popupSubtitle =
+        document.getElementById("festivalAlertSubtitle");
+
+    const popupDescription =
+        document.getElementById("festivalAlertDescription");
+
+    const popupButton =
+        document.getElementById("festivalAlertButton");
+
+    if (!popup) {
+        return;
+    }
+
+    try {
+
+        const response = await fetch(
+            "https://guptagarments.waifly.com/api/festival-popup/active"
+        );
+
+        const data =
+            await response.json();
+
+        if (!response.ok || !data) {
+            return;
+        }
+
+        popupTitle.textContent =
+            data.title || "";
+
+        popupSubtitle.textContent =
+            data.subtitle || "";
+
+        popupDescription.textContent =
+            data.description || "";
+
+        // Image
+        if (data.image_url) {
+
+            popupImage.src =
+                data.image_url.startsWith("http")
+                    ? data.image_url
+                    : "https://guptagarments.waifly.com" +
+                      data.image_url;
+
+            popupImage.style.display =
+                "block";
+
+        }
+        else {
+
+            popupImage.style.display =
+                "none";
+
+        }
+
+        // Button
+        if (
+            data.button_text &&
+            data.button_link
+        ) {
+
+            popupButton.textContent =
+                data.button_text;
+
+            popupButton.href =
+                data.button_link;
+
+            popupButton.style.display =
+                "inline-block";
+
+        }
+        else {
+
+            popupButton.style.display =
+                "none";
+
+        }
+
+        // Show popup
+        popup.style.display =
+            "block";
+
+
+        // Close button
+        closeButton.addEventListener(
+            "click",
+            function () {
+
+                popup.style.display =
+                    "none";
+
+            }
+        );
+
+
+        // Click outside popup
+        overlay.addEventListener(
+            "click",
+            function (event) {
+
+                if (
+                    event.target === overlay
+                ) {
+
+                    popup.style.display =
+                        "none";
+
+                }
+
+            }
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Festival Popup Error:",
+            error
+        );
+
+    }
+
+});

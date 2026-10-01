@@ -2105,8 +2105,183 @@
 
 </button>
             </div>
+<div class="admin-card">
+
+    <h3>🎉 Festival / Alert Popup</h3>
+
+    <p>
+        Manage festival, offer, collection
+        and stock alerts on the website.
+    </p>
+
+    <button
+        class="admin-btn"
+        id="festivalPopupCardBtn">
+        Manage Popup
+    </button>
+
+</div>
+        </div>
+
+<!-- FESTIVAL / ALERT POPUP MANAGEMENT -->
+<section
+    class="add-product-section management-section"
+    id="festivalPopupSection">
+
+    <h2>Festival / Alert Popup</h2>
+
+    <p>
+        Manage festival, offer, collection and stock alerts shown on the customer website.
+    </p>
+
+    <form id="festivalPopupForm">
+
+        <input
+            type="hidden"
+            id="festival_popup_id">
+
+        <div class="form-grid">
+
+            <div class="form-group">
+                <label>Popup Type</label>
+
+                <select id="festival_popup_type" required>
+                    <option value="festival">Festival</option>
+                    <option value="offer">Offer</option>
+                    <option value="collection">Collection</option>
+                    <option value="stock">Stock</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Title</label>
+
+                <input
+                    type="text"
+                    id="festival_popup_title"
+                    placeholder="Example: Happy Navratri"
+                    required>
+            </div>
+
+            <div class="form-group">
+                <label>Subtitle</label>
+
+                <input
+                    type="text"
+                    id="festival_popup_subtitle"
+                    placeholder="Example: Special Collection">
+            </div>
+
+            <div class="form-group">
+    <label>Popup Image</label>
+
+    <input
+        type="file"
+        id="festival_popup_image_file"
+        accept="image/*">
+
+    <input
+        type="hidden"
+        id="festival_popup_image">
+
+    <small>
+        Select festival / offer popup image.
+    </small>
+</div>
+
+            <div class="form-group">
+                <label>Button Text</label>
+
+                <input
+                    type="text"
+                    id="festival_popup_button_text"
+                    placeholder="Example: Shop Now">
+            </div>
+
+            <div class="form-group">
+                <label>Button Link</label>
+
+                <input
+                    type="text"
+                    id="festival_popup_button_link"
+                    placeholder="Example: #new-arrivals">
+            </div>
+
+            <div class="form-group">
+                <label>Start Date & Time</label>
+
+                <input
+                    type="datetime-local"
+                    id="festival_popup_start_at"
+                    required>
+            </div>
+
+            <div class="form-group">
+                <label>End Date & Time</label>
+
+                <input
+                    type="datetime-local"
+                    id="festival_popup_end_at"
+                    required>
+            </div>
+
+            <div class="form-group">
+                <label>Priority</label>
+
+                <input
+                    type="number"
+                    id="festival_popup_priority"
+                    value="1"
+                    min="1">
+            </div>
+
+            <div class="form-group">
+                <label>Active</label>
+
+                <select id="festival_popup_active">
+                    <option value="1">Active</option>
+                    <option value="0">Inactive</option>
+                </select>
+            </div>
 
         </div>
+
+        <div class="form-group">
+            <label>Description</label>
+
+            <textarea
+                id="festival_popup_description"
+                rows="4"
+                placeholder="Enter popup description"></textarea>
+        </div>
+
+        <button
+            type="submit"
+            class="save-product-btn"
+            id="saveFestivalPopupBtn">
+            Save Popup
+        </button>
+
+        <button
+            type="button"
+            class="edit-btn"
+            id="cancelFestivalPopupBtn"
+            style="margin-left:10px;">
+            Cancel
+        </button>
+
+        <p id="festivalPopupMessage"></p>
+
+    </form>
+
+    <hr style="margin:30px 0;">
+
+    <h2>Existing Festival / Alerts</h2>
+
+    <div id="festivalPopupsList"></div>
+
+</section>
+
 <!-- EDIT PRODUCT SECTION -->
 <section
     class="add-product-section management-section"
@@ -2596,6 +2771,556 @@ const addProductForm =
 
 const addProductCardBtn =
     document.getElementById("addProductCardBtn");
+// =================================
+// FESTIVAL / ALERT POPUP CARD
+// =================================
+
+const festivalPopupCardBtn =
+    document.getElementById("festivalPopupCardBtn");
+
+const festivalPopupSection =
+    document.getElementById("festivalPopupSection");
+
+festivalPopupCardBtn.addEventListener("click", function () {
+
+    openManagementSection(festivalPopupSection);
+
+    festivalPopupSection.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+
+});
+// =================================
+// LOAD FESTIVAL / ALERT POPUPS
+// =================================
+
+const festivalPopupsList =
+    document.getElementById("festivalPopupsList");
+
+const festivalPopupForm =
+    document.getElementById("festivalPopupForm");
+
+const FESTIVAL_POPUP_API =
+    "https://guptagarments.waifly.com/api/festival-popups/admin";
+async function loadFestivalPopups() {
+
+    const token =
+        sessionStorage.getItem("guptaAdminToken");
+
+    try {
+
+        const response = await fetch(
+            FESTIVAL_POPUP_API,
+            {
+                headers: {
+                    "Authorization": "Bearer " + token
+                }
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || "Failed to load popups");
+        }
+
+        festivalPopupsList.innerHTML = "";
+
+        if (!data.length) {
+
+            festivalPopupsList.innerHTML =
+                "<p>No festival or alert found.</p>";
+
+            return;
+        }
+
+        data.forEach(function (popup) {
+
+            const item = document.createElement("div");
+
+            item.className = "festival-popup-item";
+
+           item.innerHTML = `
+    <h3>${popup.title}</h3>
+
+    <p>${popup.subtitle || ""}</p>
+
+    <p>Type: ${popup.popup_type}</p>
+
+    <p>
+        Status:
+        ${popup.is_active == 1 ? "Active" : "Inactive"}
+    </p>
+
+    <p>
+        ${popup.start_at}
+        →
+        ${popup.end_at}
+    </p>
+
+    <button
+        type="button"
+        class="edit-btn festival-edit-btn"
+        data-id="${popup.id}">
+        Edit
+    </button>
+
+    <button
+        type="button"
+        class="delete-btn festival-delete-btn"
+        data-id="${popup.id}">
+        Delete
+    </button>
+`;
+
+            festivalPopupsList.appendChild(item);
+
+        });
+
+    } catch (error) {
+
+        console.error(
+            "Festival Popup Error:",
+            error
+        );
+
+        festivalPopupsList.innerHTML =
+            "<p>Unable to load festival alerts.</p>";
+    }
+}
+// =================================
+// LOAD POPUPS ON ADMIN PAGE LOAD
+// =================================
+
+loadFestivalPopups();
+
+// =================================
+// CANCEL FESTIVAL / ALERT POPUP EDIT
+// =================================
+
+document.getElementById("cancelFestivalPopupBtn")
+    .addEventListener("click", function () {
+
+        festivalPopupForm.reset();
+
+        document.getElementById("festival_popup_id").value = "";
+
+        document.getElementById("festival_popup_priority").value = 1;
+
+        document.getElementById("saveFestivalPopupBtn").textContent =
+            "Save Popup";
+
+        document.getElementById("festivalPopupMessage").textContent =
+            "";
+
+    });
+// =================================
+// DELETE FESTIVAL / ALERT POPUP
+// =================================
+
+document.addEventListener("click", async function (event) {
+
+    if (!event.target.classList.contains("festival-delete-btn")) {
+        return;
+    }
+
+    const popupId =
+        event.target.getAttribute("data-id");
+
+    const confirmDelete = confirm(
+        "Are you sure you want to delete this popup?"
+    );
+
+    if (!confirmDelete) {
+        return;
+    }
+
+    const token =
+        sessionStorage.getItem("guptaAdminToken");
+
+    try {
+
+        const response = await fetch(
+            FESTIVAL_POPUP_API + "/" + popupId,
+            {
+                method: "DELETE",
+
+                headers: {
+                    "Authorization": "Bearer " + token
+                }
+            }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                result.message || "Failed to delete popup"
+            );
+        }
+
+        document.getElementById("festivalPopupMessage").textContent =
+            "✅ Popup deleted successfully!";
+
+        loadFestivalPopups();
+
+    }
+    catch (error) {
+
+        console.error(
+            "Delete Festival Popup Error:",
+            error
+        );
+
+        alert(
+            "❌ " + error.message
+        );
+
+    }
+
+});
+// =================================
+// EDIT FESTIVAL / ALERT POPUP
+// =================================
+
+document.addEventListener("click", async function (event) {
+
+    if (!event.target.classList.contains("festival-edit-btn")) {
+        return;
+    }
+
+    const popupId =
+        event.target.getAttribute("data-id");
+
+    const token =
+        sessionStorage.getItem("guptaAdminToken");
+
+    try {
+
+        const response = await fetch(
+            FESTIVAL_POPUP_API,
+            {
+                headers: {
+                    "Authorization": "Bearer " + token
+                }
+            }
+        );
+
+        const popups = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                popups.message || "Failed to load popup"
+            );
+        }
+
+        const popup =
+            popups.find(function (item) {
+                return String(item.id) === String(popupId);
+            });
+
+        if (!popup) {
+            throw new Error("Popup not found");
+        }
+
+        document.getElementById("festival_popup_id").value =
+            popup.id;
+
+        document.getElementById("festival_popup_type").value =
+            popup.popup_type || "festival";
+
+        document.getElementById("festival_popup_title").value =
+            popup.title || "";
+
+        document.getElementById("festival_popup_subtitle").value =
+            popup.subtitle || "";
+
+        document.getElementById("festival_popup_description").value =
+            popup.description || "";
+
+        document.getElementById("festival_popup_image").value =
+            popup.image_url || "";
+
+        document.getElementById("festival_popup_button_text").value =
+            popup.button_text || "";
+
+        document.getElementById("festival_popup_button_link").value =
+            popup.button_link || "";
+
+        document.getElementById("festival_popup_start_at").value =
+            popup.start_at
+                ? popup.start_at.replace(" ", "T").slice(0, 16)
+                : "";
+
+        document.getElementById("festival_popup_end_at").value =
+            popup.end_at
+                ? popup.end_at.replace(" ", "T").slice(0, 16)
+                : "";
+
+        document.getElementById("festival_popup_priority").value =
+            popup.priority || 1;
+
+        document.getElementById("festival_popup_active").value =
+            popup.is_active ? "1" : "0";
+
+        document.getElementById("festivalPopupMessage").textContent =
+            "Editing popup...";
+
+        festivalPopupSection.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+    }
+    catch (error) {
+
+        console.error(
+            "Edit Festival Popup Error:",
+            error
+        );
+
+        alert(
+            "❌ " + error.message
+        );
+
+    }
+
+});
+
+// =================================
+// SAVE / UPDATE FESTIVAL / ALERT POPUP
+// =================================
+
+festivalPopupForm.addEventListener("submit", async function (event) {
+
+    event.preventDefault();
+
+    const token =
+        sessionStorage.getItem("guptaAdminToken");
+
+    const popupId =
+        document.getElementById("festival_popup_id").value.trim();
+
+    try {
+
+        // =================================
+        // UPLOAD FESTIVAL POPUP IMAGE
+        // =================================
+
+        let uploadedImageUrl = "";
+
+        const imageFile =
+            document.getElementById(
+                "festival_popup_image_file"
+            ).files[0];
+
+        if (imageFile) {
+
+            const imageFormData =
+                new FormData();
+
+            imageFormData.append(
+                "image",
+                imageFile
+            );
+
+            const imageResponse =
+                await fetch(
+                    "https://guptagarments.waifly.com/api/festival-popup/upload-image",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Authorization":
+                                "Bearer " + token
+                        },
+
+                        body: imageFormData
+                    }
+                );
+
+            const imageResult =
+                await imageResponse.json();
+
+            if (!imageResponse.ok) {
+
+                throw new Error(
+                    imageResult.message ||
+                    "Failed to upload popup image"
+                );
+
+            }
+
+            uploadedImageUrl =
+                imageResult.image_url;
+
+        }
+        else {
+
+            uploadedImageUrl =
+                document.getElementById(
+                    "festival_popup_image"
+                ).value.trim();
+
+        }
+
+        // =================================
+        // POPUP DATA
+        // =================================
+
+        const popupData = {
+
+            popup_type:
+                document.getElementById(
+                    "festival_popup_type"
+                ).value,
+
+            title:
+                document.getElementById(
+                    "festival_popup_title"
+                ).value.trim(),
+
+            subtitle:
+                document.getElementById(
+                    "festival_popup_subtitle"
+                ).value.trim(),
+
+            description:
+                document.getElementById(
+                    "festival_popup_description"
+                ).value.trim(),
+
+            image_url:
+                uploadedImageUrl,
+
+            button_text:
+                document.getElementById(
+                    "festival_popup_button_text"
+                ).value.trim(),
+
+            button_link:
+                document.getElementById(
+                    "festival_popup_button_link"
+                ).value.trim(),
+
+            start_at:
+                document.getElementById(
+                    "festival_popup_start_at"
+                ).value,
+
+            end_at:
+                document.getElementById(
+                    "festival_popup_end_at"
+                ).value,
+
+            priority:
+                Number(
+                    document.getElementById(
+                        "festival_popup_priority"
+                    ).value
+                ),
+
+            is_active:
+                Number(
+                    document.getElementById(
+                        "festival_popup_active"
+                    ).value
+                )
+
+        };
+
+        // =================================
+        // SAVE OR UPDATE
+        // =================================
+
+        const requestUrl = popupId
+            ? FESTIVAL_POPUP_API + "/" + popupId
+            : FESTIVAL_POPUP_API;
+
+        const requestMethod = popupId
+            ? "PUT"
+            : "POST";
+
+        const response =
+            await fetch(
+                requestUrl,
+                {
+                    method: requestMethod,
+
+                    headers: {
+                        "Content-Type":
+                            "application/json",
+
+                        "Authorization":
+                            "Bearer " + token
+                    },
+
+                    body:
+                        JSON.stringify(popupData)
+                }
+            );
+
+        const result =
+            await response.json();
+
+        if (!response.ok) {
+
+            throw new Error(
+                result.message ||
+                (
+                    popupId
+                        ? "Failed to update popup"
+                        : "Failed to save popup"
+                )
+            );
+
+        }
+
+        // =================================
+        // SUCCESS
+        // =================================
+
+        document.getElementById(
+            "festivalPopupMessage"
+        ).textContent =
+            popupId
+                ? "Popup updated successfully!"
+                : "Popup saved successfully!";
+
+        festivalPopupForm.reset();
+
+        document.getElementById(
+            "festival_popup_id"
+        ).value = "";
+
+        document.getElementById(
+            "festival_popup_priority"
+        ).value = 1;
+
+        document.getElementById(
+            "saveFestivalPopupBtn"
+        ).textContent =
+            "Save Popup";
+
+        loadFestivalPopups();
+
+    }
+    catch (error) {
+
+        console.error(
+            "Save/Update Festival Popup Error:",
+            error
+        );
+
+        document.getElementById(
+            "festivalPopupMessage"
+        ).textContent =
+            "❌ " + error.message;
+
+    }
+
+});
 
 const addProductSection =
     document.getElementById("addProductSection");
