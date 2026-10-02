@@ -4055,30 +4055,30 @@ document.addEventListener("DOMContentLoaded", async function () {
             "https://guptagarments.waifly.com/api/festival-popup/active"
         );
 
-        const data =
-            await response.json();
+        const data = await response.json();
 
-        if (!response.ok || !data) {
-            return;
-        }
+const popupData = data.popup;
 
-        popupTitle.textContent =
-            data.title || "";
+if (!response.ok || !popupData) {
+    return;
+}
 
-        popupSubtitle.textContent =
-            data.subtitle || "";
+popupTitle.textContent =
+    popupData.title || "";
 
-        popupDescription.textContent =
-            data.description || "";
+popupSubtitle.textContent =
+    popupData.subtitle || "";
 
+popupDescription.textContent =
+    popupData.description || "";
         // Image
-        if (data.image_url) {
+        if (popupData.image_url) {
 
             popupImage.src =
-                data.image_url.startsWith("http")
-                    ? data.image_url
+                popupData.image_url.startsWith("http")
+                    ? popupData.image_url
                     : "https://guptagarments.waifly.com" +
-                      data.image_url;
+                     popupData.image_url;
 
             popupImage.style.display =
                 "block";
@@ -4093,15 +4093,16 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         // Button
         if (
-            data.button_text &&
-            data.button_link
-        ) {
+    popupData.button_text &&
+    popupData.button_link
+)
+        {
 
             popupButton.textContent =
-                data.button_text;
+                popupData.button_text
 
             popupButton.href =
-                data.button_link;
+                popupData.button_link
 
             popupButton.style.display =
                 "inline-block";

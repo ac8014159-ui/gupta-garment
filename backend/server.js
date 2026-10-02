@@ -4158,7 +4158,7 @@ app.get("/api/festival-popup/active", (req, res) => {
             start_at,
             end_at,
             priority
-        FROM festival_popups
+        FROM site_popups
         WHERE is_active = 1
           AND start_at <= NOW()
           AND end_at >= NOW()
@@ -4212,7 +4212,7 @@ app.get(
                 priority,
                 created_at,
                 updated_at
-            FROM festival_popups
+            FROM site_popups
             ORDER BY priority DESC, id DESC
         `;
 
@@ -4277,7 +4277,7 @@ app.post(
 
 
         const sql = `
-            INSERT INTO festival_popups
+            INSERT INTO site_popups
             (
                 popup_type,
                 title,
@@ -4384,7 +4384,7 @@ app.put(
 
 
         const sql = `
-            UPDATE festival_popups
+            UPDATE site_popups
             SET
                 popup_type = ?,
                 title = ?,
@@ -4469,7 +4469,7 @@ app.delete(
 
 
         const sql = `
-            DELETE FROM festival_popups
+            DELETE FROM site_popups
             WHERE id = ?
         `;
 

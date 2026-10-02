@@ -7310,30 +7310,49 @@ MOBILE PHONE
 #festivalAlertClose {
     position: absolute;
 
-    top: 10px;
-    right: 10px;
+    top: 14px;
+    right: 14px;
 
-    width: 36px;
-    height: 36px;
+    z-index: 10;
 
-    border: none;
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: 2px solid rgba(255, 255, 255, 0.95);
     border-radius: 50%;
 
-    background: rgba(0, 0, 0, 0.65);
+    background: rgba(35, 35, 35, 0.72);
+
     color: #ffffff;
 
-    font-size: 26px;
-    line-height: 36px;
+    font-size: 23px;
+    font-weight: 500;
+    line-height: 1;
 
     cursor: pointer;
 
-    z-index: 2;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+
+    box-shadow:
+        0 4px 14px rgba(0, 0, 0, 0.3);
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease;
 }
 
 #festivalAlertClose:hover {
-    background: rgba(0, 0, 0, 0.85);
-}
+    transform: rotate(90deg) scale(1.08);
 
+    background: #8b2020;
+}
 #festivalAlertImage {
     display: block;
 
@@ -7447,4 +7466,395 @@ MOBILE PHONE
         font-size: 14px;
     }
 
+}
+/* =========================================
+   PREMIUM FESTIVAL / ALERT POPUP
+   ========================================= */
+
+#festivalAlertOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    background: rgba(15, 15, 15, 0.72);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+
+
+/* MAIN POPUP */
+
+
+#festivalAlertBox {
+    position: relative;
+
+    width: min(600px, 94vw);
+    max-height: 88vh;
+
+    overflow: hidden;
+
+    background: #ffffff;
+    border-radius: 24px;
+
+    box-shadow:
+        0 25px 70px rgba(0, 0, 0, 0.35),
+        0 8px 25px rgba(0, 0, 0, 0.18);
+
+    animation: premiumPopupIn 0.45s ease-out;
+
+    border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+
+/* IMAGE */
+
+#festivalAlertImage {
+    display: block;
+
+    width: 100%;
+    height: auto;
+
+    max-height: 390px;
+
+    object-fit: cover;
+
+    background: #f5f5f5;
+}
+
+
+/* CONTENT */
+
+#festivalAlertContent {
+    padding: 22px 28px 26px;
+
+    text-align: center;
+
+    background: linear-gradient(
+        180deg,
+        #ffffff 0%,
+        #fffaf8 100%
+    );
+}
+
+
+/* TITLE */
+
+#festivalAlertTitle {
+    margin: 0 0 7px;
+
+    font-size: 30px;
+    line-height: 1.15;
+
+    font-weight: 800;
+
+    color: #8b2020;
+
+    letter-spacing: -0.4px;
+}
+
+
+/* SUBTITLE */
+
+#festivalAlertSubtitle {
+    margin: 0 0 10px;
+
+    font-size: 17px;
+    line-height: 1.4;
+
+    font-weight: 600;
+
+    color: #277342;
+}
+
+
+/* DESCRIPTION */
+
+#festivalAlertDescription {
+    margin: 0 auto 18px;
+
+    max-width: 460px;
+
+    font-size: 14px;
+    line-height: 1.6;
+
+    color: #666;
+}
+
+
+/* BUTTON */
+
+#festivalAlertButton {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-width: 190px;
+
+    padding: 12px 24px;
+
+    border-radius: 10px;
+
+    background: linear-gradient(
+        135deg,
+        #8b2020,
+        #a92b2b
+    );
+
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    text-decoration: none;
+
+    box-shadow:
+        0 8px 18px rgba(139, 32, 32, 0.25);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+#festivalAlertButton:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 12px 24px rgba(139, 32, 32, 0.32);
+}
+
+
+/* CLOSE BUTTON */
+
+#festivalAlertClose {
+    position: absolute;
+
+    top: 14px;
+    right: 14px;
+
+    z-index: 10;
+
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: 1px solid rgba(255, 255, 255, 0.7);
+
+    border-radius: 50%;
+
+    background: rgba(25, 25, 25, 0.62);
+
+    color: #ffffff;
+
+    font-size: 24px;
+    line-height: 1;
+
+    cursor: pointer;
+
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+
+    box-shadow:
+        0 5px 15px rgba(0, 0, 0, 0.25);
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease;
+}
+
+
+#festivalAlertClose:hover {
+    transform: rotate(90deg) scale(1.08);
+
+    background: rgba(139, 32, 32, 0.9);
+}
+
+
+/* POPUP ANIMATION */
+
+@keyframes premiumPopupIn {
+
+    from {
+        opacity: 0;
+        transform: translateY(25px) scale(0.94);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+}
+
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+
+    #festivalAlertOverlay {
+        padding: 14px;
+    }
+
+    #festivalAlertBox {
+        width: 100%;
+        border-radius: 20px;
+    }
+
+    #festivalAlertImage {
+        max-height: 260px;
+    }
+
+    #festivalAlertContent {
+        padding: 18px 18px 22px;
+    }
+
+    #festivalAlertTitle {
+        font-size: 24px;
+    }
+
+    #festivalAlertSubtitle {
+        font-size: 15px;
+    }
+
+    #festivalAlertDescription {
+        font-size: 13px;
+        line-height: 1.5;
+        margin-bottom: 16px;
+    }
+
+    #festivalAlertButton {
+        width: 100%;
+        min-width: 0;
+    }
+
+    #festivalAlertClose {
+        width: 34px;
+        height: 34px;
+        top: 10px;
+        right: 10px;
+        font-size: 21px;
+    }
+
+}
+/* ===== FINAL PREMIUM POPUP OVERRIDE ===== */
+
+#festivalAlertBox {
+    width: 620px !important;
+    max-width: 94vw !important;
+    max-height: 86vh !important;
+
+    border-radius: 24px !important;
+}
+
+
+/* Bigger hero image */
+
+#festivalAlertImage {
+    width: 100% !important;
+    height: 370px !important;
+    max-height: 370px !important;
+
+    object-fit: cover !important;
+    display: block !important;
+}
+
+
+/* Compact text area */
+
+#festivalAlertContent {
+    padding: 16px 25px 20px !important;
+}
+
+
+#festivalAlertTitle {
+    margin: 0 0 5px !important;
+    font-size: 28px !important;
+}
+
+
+#festivalAlertSubtitle {
+    margin: 0 0 6px !important;
+    font-size: 16px !important;
+}
+
+
+#festivalAlertDescription {
+    margin: 0 auto 12px !important;
+    font-size: 13px !important;
+    line-height: 1.45 !important;
+}
+
+
+/* Premium bounded X button */
+
+#festivalAlertClose {
+    width: 42px !important;
+    height: 42px !important;
+
+    top: 12px !important;
+    right: 12px !important;
+
+    border: 2px solid #ffffff !important;
+    border-radius: 50% !important;
+
+    background: rgba(30, 30, 30, 0.78) !important;
+
+    color: #ffffff !important;
+
+    font-size: 23px !important;
+    font-weight: 600 !important;
+
+    box-shadow:
+        0 4px 15px rgba(0, 0, 0, 0.35) !important;
+
+    backdrop-filter: blur(8px) !important;
+}
+
+
+/* Hover */
+
+#festivalAlertClose:hover {
+    background: #8b2020 !important;
+    transform: rotate(90deg) scale(1.08) !important;
+}
+
+
+/* Mobile */
+
+@media (max-width: 600px) {
+
+    #festivalAlertBox {
+        width: 94vw !important;
+        max-height: 88vh !important;
+    }
+
+    #festivalAlertImage {
+        height: 260px !important;
+        max-height: 260px !important;
+    }
+
+    #festivalAlertContent {
+        padding: 14px 18px 18px !important;
+    }
+
+    #festivalAlertTitle {
+        font-size: 24px !important;
+    }
+
+    #festivalAlertClose {
+        width: 36px !important;
+        height: 36px !important;
+    }
 }

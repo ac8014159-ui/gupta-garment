@@ -2803,7 +2803,8 @@ const festivalPopupForm =
 
 const FESTIVAL_POPUP_API =
     "https://guptagarments.waifly.com/api/festival-popups/admin";
-async function loadFestivalPopups() {
+
+    async function loadFestivalPopups() {
 
     const token =
         sessionStorage.getItem("guptaAdminToken");
@@ -2819,11 +2820,15 @@ async function loadFestivalPopups() {
             }
         );
 
-        const data = await response.json();
+        const result = await response.json();
 
         if (!response.ok) {
-            throw new Error(data.message || "Failed to load popups");
+            throw new Error(
+                result.message || "Failed to load popups"
+            );
         }
+
+        const data = result.popups || [];
 
         festivalPopupsList.innerHTML = "";
 
@@ -2837,48 +2842,58 @@ async function loadFestivalPopups() {
 
         data.forEach(function (popup) {
 
-            const item = document.createElement("div");
+            const item =
+                document.createElement("div");
 
-            item.className = "festival-popup-item";
+            item.className =
+                "festival-popup-item";
 
-           item.innerHTML = `
-    <h3>${popup.title}</h3>
+            item.innerHTML = `
 
-    <p>${popup.subtitle || ""}</p>
+                <h3>${popup.title}</h3>
 
-    <p>Type: ${popup.popup_type}</p>
+                <p>${popup.subtitle || ""}</p>
 
-    <p>
-        Status:
-        ${popup.is_active == 1 ? "Active" : "Inactive"}
-    </p>
+                <p>
+                    Type: ${popup.popup_type}
+                </p>
 
-    <p>
-        ${popup.start_at}
-        →
-        ${popup.end_at}
-    </p>
+                <p>
+                    Status:
+                    ${
+                        popup.is_active == 1
+                            ? "Active"
+                            : "Inactive"
+                    }
+                </p>
 
-    <button
-        type="button"
-        class="edit-btn festival-edit-btn"
-        data-id="${popup.id}">
-        Edit
-    </button>
+                <p>
+                    ${popup.start_at}
+                    →
+                    ${popup.end_at}
+                </p>
 
-    <button
-        type="button"
-        class="delete-btn festival-delete-btn"
-        data-id="${popup.id}">
-        Delete
-    </button>
-`;
+                <button
+                    type="button"
+                    class="edit-btn festival-edit-btn"
+                    data-id="${popup.id}">
+                    Edit
+                </button>
+
+                <button
+                    type="button"
+                    class="delete-btn festival-delete-btn"
+                    data-id="${popup.id}">
+                    Delete
+                </button>
+
+            `;
 
             festivalPopupsList.appendChild(item);
-
         });
 
-    } catch (error) {
+    }
+    catch (error) {
 
         console.error(
             "Festival Popup Error:",
@@ -2941,8 +2956,8 @@ document.addEventListener("click", async function (event) {
 
     try {
 
-        const response = await fetch(
-            FESTIVAL_POPUP_API + "/" + popupId,
+       const response = await fetch(
+    "https://guptagarments.waifly.com/api/festival-popups/" + popupId,
             {
                 method: "DELETE",
 
@@ -3007,18 +3022,20 @@ document.addEventListener("click", async function (event) {
             }
         );
 
-        const popups = await response.json();
+       const data = await response.json();
 
-        if (!response.ok) {
-            throw new Error(
-                popups.message || "Failed to load popup"
-            );
-        }
+if (!response.ok) {
+    throw new Error(
+        data.message || "Failed to load popup"
+    );
+}
 
-        const popup =
-            popups.find(function (item) {
-                return String(item.id) === String(popupId);
-            });
+const popups = data.popups || [];
+
+const popup =
+    popups.find(function (item) {
+        return String(item.id) === String(popupId);
+    });
 
         if (!popup) {
             throw new Error("Popup not found");
@@ -3099,10 +3116,18 @@ festivalPopupForm.addEventListener("submit", async function (event) {
     const token =
         sessionStorage.getItem("guptaAdminToken");
 
-    const popupId =
-        document.getElementById("festival_popup_id").value.trim();
+const popupId =
+    document.getElementById("festival_popup_id").value.trim();
 
-    try {
+const confirmMessage = popupId
+    ? "Are you sure you want to update this popup?"
+    : "Are you sure you want to save this popup?";
+
+if (!confirm(confirmMessage)) {
+    return;
+}
+
+try {
 
         // =================================
         // UPLOAD FESTIVAL POPUP IMAGE
@@ -3234,9 +3259,9 @@ festivalPopupForm.addEventListener("submit", async function (event) {
         // SAVE OR UPDATE
         // =================================
 
-        const requestUrl = popupId
-            ? FESTIVAL_POPUP_API + "/" + popupId
-            : FESTIVAL_POPUP_API;
+       const requestUrl = popupId
+    ? "https://guptagarments.waifly.com/api/festival-popups/" + popupId
+    : "https://guptagarments.waifly.com/api/festival-popups";
 
         const requestMethod = popupId
             ? "PUT"
