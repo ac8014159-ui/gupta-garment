@@ -2121,8 +2121,29 @@
     </button>
 
 </div>
-        </div>
+<!-- =========================================
+     CATEGORY MANAGEMENT
+========================================= -->
 
+<div class="admin-card">
+
+    <h3>📂 Categories</h3>
+
+    <p>
+        Add, edit and manage product
+        categories for your store.
+    </p>
+
+    <button
+        class="admin-btn"
+        id="categoryManagementCardBtn">
+
+        Manage Categories
+
+    </button>
+
+</div>
+        </div>
 <!-- FESTIVAL / ALERT POPUP MANAGEMENT -->
 <section
     class="add-product-section management-section"
@@ -2551,18 +2572,85 @@
 
             </div>
 
+<div class="form-group">
 
-            <div class="form-group">
+    <label>
+        Product Image
+    </label>
 
-                <label>
-                    Image URL
-                </label>
+    <!-- Current Product Image -->
+    <div
+        id="edit_current_image_preview"
+        style="
+            width: 220px;
+            height: 220px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8f8f8;
+            overflow: hidden;
+            margin-bottom: 12px;
+        ">
 
-                <input
-                    type="text"
-                    id="edit_image_url">
+        <span style="color: #888;">
+            Current Image
+        </span>
 
-            </div>
+    </div>
+
+
+    <!-- Select New Image -->
+    <input
+        type="file"
+        id="edit_image_file"
+        accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+     multiple
+        >
+
+
+    <!-- New Image Preview -->
+    <div
+        id="edit_new_image_preview"
+        style="
+            width: 220px;
+            height: 220px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: #f8f8f8;
+            overflow: hidden;
+            margin-top: 12px;
+        ">
+    </div>
+
+
+    <!-- Upload Button -->
+    <button
+        type="button"
+        id="edit_upload_image_btn"
+        class="edit-btn"
+        style="margin-top: 12px;"
+        disabled>
+
+        📤 Upload Image
+
+    </button>
+
+
+    <!-- Upload Status -->
+    <div
+        id="edit_image_upload_status"
+        style="
+            margin-top: 8px;
+            font-size: 14px;
+        ">
+    </div>
+
+</div>
 
 
             <button
@@ -2592,6 +2680,177 @@
     </div>
 
 </section>
+
+<!-- =========================================
+     CATEGORY MANAGEMENT SECTION
+========================================= -->
+
+<section
+    class="add-product-section management-section"
+    id="categoryManagementSection">
+
+    <h2>📂 Category Management</h2>
+
+    <p>
+        Add and manage categories for your store.
+    </p>
+
+    <div class="category-management-actions">
+
+        <button
+            type="button"
+            class="admin-btn"
+            id="addCategoryBtn">
+
+            ➕ Add Category
+
+        </button>
+
+    </div>
+
+    <!-- ADD CATEGORY FORM -->
+
+    <div
+        id="categoryFormContainer"
+        style="display:none; margin-top:25px;">
+
+        <h3>Add New Category</h3>
+
+        <form id="categoryForm">
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label>
+                        Category Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="category_name"
+                        placeholder="Example: Thermal Wear"
+                        required>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Category Slug
+                    </label>
+
+                    <input
+                        type="text"
+                        id="category_slug"
+                        placeholder="Example: thermal-wear"
+                        required>
+
+                </div>
+
+<div class="form-group">
+
+    <label>Category Image</label>
+
+    <input
+        type="file"
+        id="category_image_file"
+        accept="image/jpeg,image/png,image/webp">
+
+    <div
+        id="category_image_preview"
+        style="
+            width:180px;
+            height:180px;
+            margin-top:12px;
+            border:1px solid #ddd;
+            border-radius:10px;
+            display:none;
+            align-items:center;
+            justify-content:center;
+            background:#f8f8f8;
+            overflow:hidden;
+        "
+    >
+    </div>
+
+    <div
+        id="category_image_upload_status"
+        style="
+            margin-top:8px;
+            font-size:14px;
+        "
+    >
+    </div>
+
+</div>
+
+                <div class="form-group">
+
+                    <label>
+                        Display Order
+                    </label>
+
+                    <input
+                        type="number"
+                        id="category_order"
+                        value="1"
+                        min="1">
+
+                </div>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="save-product-btn">
+
+                💾 Save Category
+
+            </button>
+
+
+            <button
+                type="button"
+                class="edit-btn"
+                id="cancelCategoryBtn"
+                style="margin-left:10px;">
+
+                Cancel
+
+            </button>
+
+
+            <div
+                id="categoryMessage"
+                style="margin-top:15px;">
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- EXISTING CATEGORIES -->
+
+    <hr style="margin:30px 0;">
+
+    <h3>Existing Categories</h3>
+
+    <div
+        id="categoriesList">
+
+        <p>
+            Categories will appear here.
+        </p>
+
+    </div>
+
+</section>
+
 <!-- STOCK MANAGEMENT SECTION -->
 <section
     class="add-product-section management-section"
@@ -2771,6 +3030,1034 @@ const addProductForm =
 
 const addProductCardBtn =
     document.getElementById("addProductCardBtn");
+
+// =========================================
+// CATEGORY MANAGEMENT → OPEN FORM
+// =========================================
+
+const addCategoryBtn =
+    document.getElementById("addCategoryBtn");
+
+const categoryFormContainer =
+    document.getElementById("categoryFormContainer");
+
+const cancelCategoryBtn =
+    document.getElementById("cancelCategoryBtn");
+
+const categoryForm =
+    document.getElementById("categoryForm");
+
+/* OPEN CATEGORY FORM */
+
+addCategoryBtn.addEventListener("click", function () {
+
+    editingCategoryId = null;
+    categoryUploadedImageUrl = null;
+
+    if (categoryForm) {
+        categoryForm.reset();
+    }
+
+    if (categoryImageFile) {
+        categoryImageFile.value = "";
+    }
+
+    if (categoryImagePreview) {
+        categoryImagePreview.style.display = "none";
+        categoryImagePreview.innerHTML = "";
+    }
+
+    if (categoryImageUploadStatus) {
+        categoryImageUploadStatus.textContent = "";
+    }
+
+    addCategoryBtn.textContent = "➕ Add Category";
+
+    categoryFormContainer.style.display = "block";
+
+    categoryFormContainer.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+
+});
+
+/* CLOSE CATEGORY FORM */
+
+cancelCategoryBtn.addEventListener("click", function () {
+
+    editingCategoryId = null;
+    categoryUploadedImageUrl = null;
+
+    categoryForm.reset();
+
+    if (categoryImageFile) {
+        categoryImageFile.value = "";
+    }
+
+    if (categoryImagePreview) {
+        categoryImagePreview.style.display = "none";
+        categoryImagePreview.innerHTML = "";
+    }
+
+    if (categoryImageUploadStatus) {
+        categoryImageUploadStatus.textContent = "";
+    }
+
+    if (addCategoryBtn) {
+        addCategoryBtn.textContent = "➕ Add Category";
+    }
+
+    categoryFormContainer.style.display = "none";
+
+});
+// =========================================
+// SAVE / UPDATE CATEGORY
+// =========================================
+
+let editingCategoryId = null;
+// =================================
+// CATEGORY IMAGE UPLOAD
+// =================================
+
+let categoryUploadedImageUrl = null;
+
+const categoryImageFile =
+    document.getElementById(
+        "category_image_file"
+    );
+
+const categoryImagePreview =
+    document.getElementById(
+        "category_image_preview"
+    );
+
+const categoryImageUploadStatus =
+    document.getElementById(
+        "category_image_upload_status"
+    );
+
+
+if (categoryImageFile) {
+
+    categoryImageFile.addEventListener(
+        "change",
+        async function () {
+
+            const file =
+                categoryImageFile.files[0];
+
+            if (!file) {
+                return;
+            }
+
+
+            // Show local preview
+            const reader =
+                new FileReader();
+
+            reader.onload =
+                function (event) {
+
+                    categoryImagePreview.style.display =
+                        "flex";
+
+                    categoryImagePreview.innerHTML = `
+                        <img
+                            src="${event.target.result}"
+                            alt="Category Preview"
+                            style="
+                                width:100%;
+                                height:100%;
+                                object-fit:contain;
+                            "
+                        >
+                    `;
+
+                };
+
+            reader.readAsDataURL(file);
+
+
+            // Upload image
+            categoryImageUploadStatus.textContent =
+                "⏳ Uploading image...";
+
+
+            try {
+
+                const token =
+                    sessionStorage.getItem(
+                        "guptaAdminToken"
+                    );
+
+
+                const formData =
+                    new FormData();
+
+                formData.append(
+                    "image",
+                    file
+                );
+
+
+                const response =
+                    await fetch(
+                        "https://guptagarments.waifly.com/api/categories/upload-image",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Authorization":
+                                    "Bearer " +
+                                    token
+                            },
+
+                            body:
+                                formData
+                        }
+                    );
+
+
+                const result =
+                    await response.json();
+
+
+                if (
+                    !response.ok ||
+                    !result.success
+                ) {
+
+                    throw new Error(
+                        result.message ||
+                        "Image upload failed."
+                    );
+
+                }
+
+
+                categoryUploadedImageUrl =
+                    result.image_url;
+
+
+                categoryImageUploadStatus.textContent =
+                    "✅ Image uploaded successfully!";
+
+
+            }
+            catch (error) {
+
+                console.error(
+                    "Category image upload error:",
+                    error
+                );
+
+
+                categoryUploadedImageUrl =
+                    null;
+
+
+                categoryImageUploadStatus.textContent =
+                    "❌ " +
+                    error.message;
+
+            }
+
+        }
+    );
+
+}
+categoryForm.addEventListener(
+    "submit",
+    async function (event) {
+
+        event.preventDefault();
+
+        const categoryMessage =
+            document.getElementById(
+                "categoryMessage"
+            );
+
+        const categoryData = {
+
+            name:
+                document
+                    .getElementById(
+                        "category_name"
+                    )
+                    .value
+                    .trim(),
+
+            slug:
+                document
+                    .getElementById(
+                        "category_slug"
+                    )
+                    .value
+                    .trim(),
+image_url:
+    categoryUploadedImageUrl || null,
+            sort_order:
+                Number(
+                    document
+                        .getElementById(
+                            "category_order"
+                        )
+                        .value
+                )
+
+        };
+
+        if (
+            !categoryData.name ||
+            !categoryData.slug
+        ) {
+
+            categoryMessage.textContent =
+                "❌ Category name and slug are required.";
+
+            return;
+
+        }
+
+        try {
+
+            const token =
+                sessionStorage.getItem(
+                    "guptaAdminToken"
+                );
+
+            // =====================================
+            // EDIT EXISTING CATEGORY
+            // =====================================
+
+            if (editingCategoryId) {
+
+                const response =
+                    await fetch(
+                        "https://guptagarments.waifly.com/api/categories/" +
+                        editingCategoryId,
+                        {
+                            method: "PUT",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json",
+
+                                "Authorization":
+                                    "Bearer " +
+                                    token
+                            },
+
+                            body:
+                                JSON.stringify(
+                                    categoryData
+                                )
+                        }
+                    );
+
+                const result =
+                    await response.json();
+
+                if (
+                    !response.ok ||
+                    !result.success
+                ) {
+
+                    throw new Error(
+                        result.message ||
+                        "Failed to update category."
+                    );
+
+                }
+
+                categoryMessage.textContent =
+                    "✅ Category updated successfully!";
+
+                alert(
+                    "✅ Category updated successfully!\n\n" +
+                    "Category: " +
+                    categoryData.name
+                );
+
+            }
+
+            // =====================================
+            // ADD NEW CATEGORY
+            // =====================================
+
+            else {
+
+                const response =
+                    await fetch(
+                        "https://guptagarments.waifly.com/api/categories",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json",
+
+                                "Authorization":
+                                    "Bearer " +
+                                    token
+                            },
+
+                            body:
+                                JSON.stringify(
+                                    categoryData
+                                )
+                        }
+                    );
+
+                const result =
+                    await response.json();
+
+                if (
+                    !response.ok ||
+                    !result.success
+                ) {
+
+                    throw new Error(
+                        result.message ||
+                        "Failed to save category."
+                    );
+
+                }
+
+                categoryMessage.textContent =
+                    "✅ Category added successfully!";
+
+                alert(
+                    "✅ Category added successfully!\n\n" +
+                    "Category: " +
+                    categoryData.name +
+                    "\nCategory ID: " +
+                    result.category_id
+                );
+
+            }
+
+            // =====================================
+            // RESET FORM
+            // =====================================
+
+            editingCategoryId = null;
+
+            categoryForm.reset();
+
+            document.getElementById(
+                "categoryFormContainer"
+            ).style.display = "none";
+
+            // Restore Add Category mode
+            const addCategoryBtn =
+                document.getElementById(
+                    "addCategoryBtn"
+                );
+
+            if (addCategoryBtn) {
+
+                addCategoryBtn.textContent =
+                    "➕ Add Category";
+
+            }
+
+            loadCategories();
+
+        }
+        catch (error) {
+
+            console.error(
+                "Category save/update error:",
+                error
+            );
+
+            categoryMessage.textContent =
+                "❌ " +
+                error.message;
+
+            alert(
+                "❌ Category could not be saved!\n\n" +
+                error.message
+            );
+
+        }
+
+    }
+);
+// =========================================
+// CATEGORY MANAGEMENT ACTIONS
+// EDIT / DELETE / ACTIVE-INACTIVE
+// =========================================
+
+document.addEventListener(
+    "click",
+    async function (event) {
+
+        // =====================================
+        // EDIT CATEGORY
+        // =====================================
+
+        const editButton =
+            event.target.closest(
+                ".edit-category-btn"
+            );
+
+        if (editButton) {
+
+            const categoryId =
+                Number(
+                    editButton.getAttribute(
+                        "data-id"
+                    )
+                );
+
+            if (!categoryId) {
+                return;
+            }
+
+            try {
+
+                const token =
+                    sessionStorage.getItem(
+                        "guptaAdminToken"
+                    );
+
+                const response =
+                    await fetch(
+                        "https://guptagarments.waifly.com/api/categories",
+                        {
+                            method: "GET",
+
+                            headers: {
+                                "Authorization":
+                                    "Bearer " +
+                                    token
+                            }
+                        }
+                    );
+
+                const result =
+                    await response.json();
+
+                if (
+                    !response.ok ||
+                    !result.success
+                ) {
+                    throw new Error(
+                        result.message ||
+                        "Failed to load category."
+                    );
+                }
+
+                const category =
+                    result.categories.find(
+                        function (item) {
+                            return Number(item.id) ===
+                                categoryId;
+                        }
+                    );
+
+                if (!category) {
+
+                    alert(
+                        "❌ Category not found."
+                    );
+
+                    return;
+                }
+
+                // =================================
+                // SET EDIT MODE
+                // =================================
+
+                editingCategoryId =
+                    category.id;
+
+                document.getElementById(
+                    "category_name"
+                ).value =
+                    category.name || "";
+
+                document.getElementById(
+                    "category_slug"
+                ).value =
+                    category.slug || "";
+
+                categoryUploadedImageUrl =
+    category.image_url || null;
+
+const categoryImagePreview =
+    document.getElementById(
+        "category_image_preview"
+    );
+
+const categoryImageUploadStatus =
+    document.getElementById(
+        "category_image_upload_status"
+    );
+
+if (
+    categoryImagePreview &&
+    category.image_url
+) {
+
+    categoryImagePreview.style.display =
+        "flex";
+
+    categoryImagePreview.innerHTML = `
+        <img
+            src="${category.image_url}"
+            alt="Current Category Image"
+            style="
+                width:100%;
+                height:100%;
+                object-fit:contain;
+            "
+        >
+    `;
+
+}
+
+if (categoryImageUploadStatus) {
+
+    categoryImageUploadStatus.textContent =
+        "Current category image";
+
+}
+
+                document.getElementById(
+                    "category_order"
+                ).value =
+                    category.sort_order || 1;
+
+                document.getElementById(
+                    "categoryFormContainer"
+                ).style.display = "block";
+
+                const addCategoryBtn =
+                    document.getElementById(
+                        "addCategoryBtn"
+                    );
+
+                if (addCategoryBtn) {
+
+                    addCategoryBtn.textContent =
+                        "✏️ Editing Category";
+
+                }
+
+                document.getElementById(
+                    "categoryFormContainer"
+                ).scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
+
+            }
+            catch (error) {
+
+                console.error(
+                    "Category edit error:",
+                    error
+                );
+
+                alert(
+                    "❌ Could not load category.\n\n" +
+                    error.message
+                );
+
+            }
+
+            return;
+        }
+
+
+        // =====================================
+        // DELETE CATEGORY
+        // =====================================
+
+        const deleteButton =
+            event.target.closest(
+                ".delete-category-btn"
+            );
+
+        if (deleteButton) {
+
+            const categoryId =
+                Number(
+                    deleteButton.getAttribute(
+                        "data-id"
+                    )
+                );
+
+            if (!categoryId) {
+                return;
+            }
+
+            const confirmed =
+                confirm(
+                    "⚠️ Are you sure you want to delete this category?\n\n" +
+                    "This action cannot be undone."
+                );
+
+            if (!confirmed) {
+                return;
+            }
+
+            try {
+
+                const token =
+                    sessionStorage.getItem(
+                        "guptaAdminToken"
+                    );
+
+                const response =
+                    await fetch(
+                        "https://guptagarments.waifly.com/api/categories/" +
+                        categoryId,
+                        {
+                            method: "DELETE",
+
+                            headers: {
+                                "Authorization":
+                                    "Bearer " +
+                                    token
+                            }
+                        }
+                    );
+
+                const result =
+                    await response.json();
+
+                if (
+                    !response.ok ||
+                    !result.success
+                ) {
+                    throw new Error(
+                        result.message ||
+                        "Failed to delete category."
+                    );
+                }
+
+                alert(
+                    "🗑️ Category deleted successfully!"
+                );
+
+                loadCategories();
+
+            }
+            catch (error) {
+
+                console.error(
+                    "Category delete error:",
+                    error
+                );
+
+                alert(
+                    "❌ Category could not be deleted.\n\n" +
+                    error.message
+                );
+
+            }
+
+            return;
+        }
+
+
+        // =====================================
+        // ACTIVE / INACTIVE
+        // =====================================
+
+        const toggleButton =
+            event.target.closest(
+                ".toggle-category-btn"
+            );
+
+        if (toggleButton) {
+
+            const categoryId =
+                Number(
+                    toggleButton.getAttribute(
+                        "data-id"
+                    )
+                );
+
+            const currentStatus =
+                Number(
+                    toggleButton.getAttribute(
+                        "data-active"
+                    )
+                );
+
+            if (!categoryId) {
+                return;
+            }
+
+            const newStatus =
+                currentStatus === 1
+                    ? 0
+                    : 1;
+
+            try {
+
+                const token =
+                    sessionStorage.getItem(
+                        "guptaAdminToken"
+                    );
+
+                const response =
+                    await fetch(
+                        "https://guptagarments.waifly.com/api/categories/" +
+                        categoryId +
+                        "/status",
+                        {
+                            method: "PATCH",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json",
+
+                                "Authorization":
+                                    "Bearer " +
+                                    token
+                            },
+
+                            body:
+                                JSON.stringify({
+                                    is_active:
+                                        newStatus
+                                })
+                        }
+                    );
+
+                const result =
+                    await response.json();
+
+                if (
+                    !response.ok ||
+                    !result.success
+                ) {
+                    throw new Error(
+                        result.message ||
+                        "Failed to update category status."
+                    );
+                }
+
+                alert(
+                    newStatus === 1
+                        ? "🟢 Category activated successfully!"
+                        : "🔴 Category deactivated successfully!"
+                );
+
+                loadCategories();
+
+            }
+            catch (error) {
+
+                console.error(
+                    "Category status error:",
+                    error
+                );
+
+                alert(
+                    "❌ Could not update category status.\n\n" +
+                    error.message
+                );
+
+            }
+
+            return;
+        }
+
+    }
+);
+// =========================================
+// LOAD CATEGORIES
+// =========================================
+
+async function loadCategories() {
+
+    const categoriesList =
+        document.getElementById("categoriesList");
+
+    if (!categoriesList) {
+        return;
+    }
+
+    categoriesList.innerHTML =
+        "<p>Loading categories...</p>";
+
+    try {
+
+        const token =
+            sessionStorage.getItem(
+                "guptaAdminToken"
+            );
+
+        const response =
+            await fetch(
+                "https://guptagarments.waifly.com/api/categories",
+                {
+                    method: "GET",
+                    headers: {
+                        "Authorization":
+                            "Bearer " + token
+                    }
+                }
+            );
+
+        const result =
+            await response.json();
+
+        if (
+            !response.ok ||
+            !result.success
+        ) {
+            throw new Error(
+                result.message ||
+                "Failed to load categories."
+            );
+        }
+
+        categoriesList.innerHTML = "";
+
+        if (
+            !result.categories ||
+            result.categories.length === 0
+        ) {
+            categoriesList.innerHTML =
+                "<p>No categories found.</p>";
+
+            return;
+        }
+
+        // =====================================
+        // SHOW CATEGORIES
+        // =====================================
+
+        result.categories.forEach(
+            function (category) {
+
+                const categoryItem =
+                    document.createElement("div");
+
+                categoryItem.className =
+                    "edit-product-item";
+
+                const isActive =
+                    Number(category.is_active) === 1;
+
+                categoryItem.innerHTML = `
+
+                    <div class="edit-product-info">
+
+                        <h3>
+                            ${category.name}
+                        </h3>
+
+                        <p>
+                            Slug:
+                            ${category.slug}
+                        </p>
+
+                        <p>
+                            Display Order:
+                            ${category.sort_order}
+                        </p>
+
+                        <p>
+                            Status:
+                            <strong>
+                                ${
+                                    isActive
+                                        ? "🟢 Active"
+                                        : "🔴 Inactive"
+                                }
+                            </strong>
+                        </p>
+
+                        ${
+                            category.image_url
+                            ? `
+                                <p>
+                                    Image:
+                                    ${category.image_url}
+                                </p>
+                            `
+                            : `
+                                <p>
+                                    Image: Not set
+                                </p>
+                            `
+                        }
+
+                    </div>
+
+                    <div
+                        class="category-management-buttons"
+                        style="
+                            display:flex;
+                            gap:10px;
+                            flex-wrap:wrap;
+                            margin-top:15px;
+                        "
+                    >
+
+                        <button
+                            type="button"
+                            class="edit-btn edit-category-btn"
+                            data-id="${category.id}"
+                        >
+                            ✏️ Edit
+                        </button>
+
+                        <button
+                            type="button"
+                            class="delete-btn delete-category-btn"
+                            data-id="${category.id}"
+                        >
+                            🗑️ Delete
+                        </button>
+
+                        <button
+                            type="button"
+                            class="edit-btn toggle-category-btn"
+                            data-id="${category.id}"
+                            data-active="${isActive ? "1" : "0"}"
+                        >
+                            ${
+                                isActive
+                                    ? "🔴 Make Inactive"
+                                    : "🟢 Make Active"
+                            }
+                        </button>
+
+                    </div>
+                `;
+
+                categoriesList.appendChild(
+                    categoryItem
+                );
+            }
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Category load error:",
+            error
+        );
+
+        categoriesList.innerHTML =
+            "<p>❌ " +
+            error.message +
+            "</p>";
+    }
+}
+  
 // =================================
 // FESTIVAL / ALERT POPUP CARD
 // =================================
@@ -3314,7 +4601,6 @@ try {
                 : "Popup saved successfully!";
 
         festivalPopupForm.reset();
-
         document.getElementById(
             "festival_popup_id"
         ).value = "";
@@ -3503,7 +4789,7 @@ editProductCardBtn.addEventListener(
 
                     editButton.addEventListener(
                         "click",
-                        function () {
+                        async function () {
 
                             // Product ID
                             document.getElementById(
@@ -3575,13 +4861,188 @@ editProductCardBtn.addEventListener(
                             ).value =
                                 product.description || "";
 
+// =============================================
+// CURRENT PRODUCT MULTIPLE IMAGES PREVIEW
+// =============================================
 
-                            // Image URL
-                            document.getElementById(
-                                "edit_image_url"
-                            ).value =
-                                product.image_url || "";
+const currentImagePreview =
+    document.getElementById(
+        "edit_current_image_preview"
+    );
 
+// Remember existing main product image URL
+window.editCurrentProductImageUrl =
+    product.image_url || null;
+
+// Reset previously uploaded images
+window.editUploadedProductImageUrls =
+    [];
+
+window.editUploadedProductImageUrl =
+    null;
+
+// Show loading message
+currentImagePreview.innerHTML = `
+    <span style="color: #888;">
+        Loading product images...
+    </span>
+`;
+
+try {
+
+    const token =
+        sessionStorage.getItem(
+            "guptaAdminToken"
+        );
+
+    const imageResponse =
+        await fetch(
+            "https://guptagarments.waifly.com/api/products/" +
+            product.id +
+            "/images",
+            {
+                method: "GET",
+                headers: {
+                    "Authorization":
+                        "Bearer " + token
+                }
+            }
+        );
+
+    const imageResult =
+        await imageResponse.json();
+
+    if (
+        !imageResponse.ok ||
+        !imageResult.success
+    ) {
+        throw new Error(
+            imageResult.message ||
+            "Failed to load product images."
+        );
+    }
+
+    const productImages =
+        imageResult.images || [];
+
+    // =============================================
+    // SHOW MULTIPLE IMAGES
+    // =============================================
+
+    if (productImages.length > 0) {
+
+        currentImagePreview.innerHTML = `
+            <div
+                style="
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 10px;
+                    width: 100%;
+                    height: 100%;
+                    overflow-y: auto;
+                    align-content: flex-start;
+                    padding: 5px;
+                    box-sizing: border-box;
+                "
+            >
+                ${productImages.map(function (image) {
+
+                    return `
+                        <div
+                            style="
+                                width: 105px;
+                                height: 105px;
+                                border: 1px solid #ddd;
+                                border-radius: 8px;
+                                overflow: hidden;
+                                background: #fff;
+                                flex-shrink: 0;
+                            "
+                        >
+                            <img
+                                src="${image.image_url}"
+                                alt="Product Image"
+                                style="
+                                    width: 100%;
+                                    height: 100%;
+                                    object-fit: contain;
+                                "
+                            >
+                        </div>
+                    `;
+
+                }).join("")}
+            </div>
+        `;
+
+    }
+
+    // =============================================
+    // BACKWARD COMPATIBILITY
+    // =============================================
+
+    else if (product.image_url) {
+
+        currentImagePreview.innerHTML = `
+            <img
+                src="${product.image_url}"
+                alt="Current Product Image"
+                style="
+                    width: 100%;
+                    height: 100%;
+                    object-fit: contain;
+                "
+            >
+        `;
+
+    }
+
+    else {
+
+        currentImagePreview.innerHTML = `
+            <span style="color: #888;">
+                No Image Available
+            </span>
+        `;
+
+    }
+
+}
+catch (error) {
+
+    console.error(
+        "❌ Product Images Load Error:",
+        error
+    );
+
+    // If multiple-image API fails,
+    // still show old main image
+    if (product.image_url) {
+
+        currentImagePreview.innerHTML = `
+            <img
+                src="${product.image_url}"
+                alt="Current Product Image"
+                style="
+                    width: 100%;
+                    height: 100%;
+                    object-fit: contain;
+                "
+            >
+        `;
+
+    }
+    else {
+
+        currentImagePreview.innerHTML = `
+            <span style="color: #888;">
+                No Image Available
+            </span>
+        `;
+
+    }
+
+}
 
                             // Clear old message
                             editProductMessage.textContent =
@@ -3684,10 +5145,10 @@ editProductForm.addEventListener(
                     "edit_description"
                 ).value.trim(),
 
-            image_url:
-                document.getElementById(
-                    "edit_image_url"
-                ).value.trim() || null,
+           image_url:
+    window.editUploadedProductImageUrl ||
+    window.editCurrentProductImageUrl ||
+    null,
 
             stock_status:
                 document.getElementById(
@@ -4417,6 +5878,32 @@ visibilityManagementCardBtn.addEventListener(
 
 const managementSections =
     document.querySelectorAll(".management-section");
+// =========================================
+// CATEGORY MANAGEMENT
+// =========================================
+
+const categoryManagementCardBtn =
+    document.getElementById("categoryManagementCardBtn");
+
+const categoryManagementSection =
+    document.getElementById("categoryManagementSection");
+
+
+categoryManagementCardBtn.addEventListener(
+    "click",
+    function () {
+
+        openManagementSection(
+            categoryManagementSection
+        );
+loadCategories();
+        categoryManagementSection.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+    }
+);
 
 function openManagementSection(sectionToOpen) {
 
@@ -4952,6 +6439,395 @@ sessionStorage.removeItem(
     }
 
 });
+// ======================================================
+// EDIT PRODUCT - NEW IMAGE SELECTION & PREVIEW
+// ======================================================
+
+const editImageFile =
+    document.getElementById("edit_image_file");
+
+const editNewImagePreview =
+    document.getElementById("edit_new_image_preview");
+
+const editUploadImageBtn =
+    document.getElementById("edit_upload_image_btn");
+
+const editImageUploadStatus =
+    document.getElementById("edit_image_upload_status");
+
+if (editImageFile) {
+
+    editImageFile.addEventListener(
+        "change",
+        function () {
+
+            const files =
+                Array.from(this.files);
+
+            // Reset
+            editNewImagePreview.style.display =
+                "none";
+
+            editNewImagePreview.innerHTML =
+                "";
+
+            editUploadImageBtn.disabled =
+                true;
+
+            editImageUploadStatus.textContent =
+                "";
+
+            if (files.length === 0) {
+                return;
+            }
+
+
+            // Maximum 10 images
+            if (files.length > 10) {
+
+                editImageUploadStatus.textContent =
+                    "❌ You can select maximum 10 images.";
+
+                this.value = "";
+
+                return;
+            }
+
+
+            // Allowed image types
+            const allowedTypes = [
+                "image/jpeg",
+                "image/png",
+                "image/webp"
+            ];
+
+
+            // Validate every image
+            for (
+                let i = 0;
+                i < files.length;
+                i++
+            ) {
+
+                const file = files[i];
+
+
+                if (
+                    !allowedTypes.includes(
+                        file.type
+                    )
+                ) {
+
+                    editImageUploadStatus.textContent =
+                        "❌ Only JPG, PNG or WEBP images are allowed.";
+
+                    this.value = "";
+
+                    return;
+                }
+
+
+                // Maximum 5 MB per image
+                const maxSize =
+                    5 * 1024 * 1024;
+
+                if (file.size > maxSize) {
+
+                    editImageUploadStatus.textContent =
+                        "❌ Each image must be less than 5 MB.";
+
+                    this.value = "";
+
+                    return;
+                }
+
+            }
+
+
+            // Create multiple previews
+            files.forEach(
+                function (file) {
+
+                    const imageURL =
+                        URL.createObjectURL(
+                            file
+                        );
+
+                    const imageBox =
+                        document.createElement(
+                            "div"
+                        );
+
+                    imageBox.style.width =
+                        "110px";
+
+                    imageBox.style.height =
+                        "110px";
+
+                    imageBox.style.border =
+                        "1px solid #ddd";
+
+                    imageBox.style.borderRadius =
+                        "8px";
+
+                    imageBox.style.overflow =
+                        "hidden";
+
+                    imageBox.style.display =
+                        "flex";
+
+                    imageBox.style.alignItems =
+                        "center";
+
+                    imageBox.style.justifyContent =
+                        "center";
+
+                    imageBox.style.background =
+                        "#f8f8f8";
+
+
+                    const image =
+                        document.createElement(
+                            "img"
+                        );
+
+                    image.src =
+                        imageURL;
+
+                    image.alt =
+                        "Product Image";
+
+                    image.style.width =
+                        "100%";
+
+                    image.style.height =
+                        "100%";
+
+                    image.style.objectFit =
+                        "contain";
+
+
+                    imageBox.appendChild(
+                        image
+                    );
+
+                    editNewImagePreview.appendChild(
+                        imageBox
+                    );
+
+                }
+            );
+
+
+            editNewImagePreview.style.display =
+                "flex";
+
+            editNewImagePreview.style.flexWrap =
+                "wrap";
+
+            editNewImagePreview.style.gap =
+                "10px";
+
+
+            editUploadImageBtn.disabled =
+                false;
+
+            editImageUploadStatus.textContent =
+                files.length +
+                " image" +
+                (
+                    files.length > 1
+                        ? "s"
+                        : ""
+                ) +
+                " selected. Click Upload Image.";
+
+        }
+    );
+
+}
+
+// ======================================================
+// EDIT PRODUCT - UPLOAD MULTIPLE IMAGES TO SERVER
+// ======================================================
+
+if (editUploadImageBtn) {
+
+    editUploadImageBtn.addEventListener(
+        "click",
+        async function () {
+
+            const files =
+                Array.from(editImageFile.files);
+
+            if (files.length === 0) {
+
+                editImageUploadStatus.textContent =
+                    "❌ Please select at least one image first.";
+
+                return;
+            }
+
+
+            // Get selected product ID
+            const productId =
+                document.getElementById(
+                    "edit_product_id"
+                ).value;
+
+
+            if (!productId) {
+
+                editImageUploadStatus.textContent =
+                    "❌ Please select a product first.";
+
+                return;
+            }
+
+
+            // Disable button while uploading
+            editUploadImageBtn.disabled = true;
+
+            editImageUploadStatus.textContent =
+                "⏳ Uploading " +
+                files.length +
+                " image" +
+                (
+                    files.length > 1
+                        ? "s"
+                        : ""
+                ) +
+                "...";
+
+
+            try {
+
+                const formData =
+                    new FormData();
+
+
+                // Send Product ID
+                formData.append(
+                    "product_id",
+                    productId
+                );
+
+
+                // Send all selected images
+                files.forEach(
+                    function (file) {
+
+                        formData.append(
+                            "images",
+                            file
+                        );
+
+                    }
+                );
+
+
+                const token =
+                    sessionStorage.getItem(
+                        "guptaAdminToken"
+                    );
+
+
+                const response =
+                    await fetch(
+                        "https://guptagarments.waifly.com/api/products/upload-image",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Authorization":
+                                    "Bearer " + token
+                            },
+
+                            body: formData
+                        }
+                    );
+
+
+                const result =
+                    await response.json();
+
+
+                if (
+                    !response.ok ||
+                    !result.success
+                ) {
+
+                    throw new Error(
+                        result.message ||
+                        "Image upload failed."
+                    );
+
+                }
+
+
+                // Save all uploaded image URLs
+                window.editUploadedProductImageUrls =
+                    result.image_urls || [];
+
+
+                // Keep first image for existing
+                // single-image compatibility
+                window.editUploadedProductImageUrl =
+                    (
+                        window.editUploadedProductImageUrls.length > 0
+                    )
+                        ? window.editUploadedProductImageUrls[0]
+                        : null;
+
+
+                editImageUploadStatus.textContent =
+                    "✅ " +
+                    files.length +
+                    " image" +
+                    (
+                        files.length > 1
+                            ? "s"
+                            : ""
+                    ) +
+                    " uploaded successfully.";
+
+
+                // Disable upload button after success
+                editUploadImageBtn.disabled =
+                    true;
+
+
+                console.log(
+                    "✅ Uploaded Product Images:",
+                    window.editUploadedProductImageUrls
+                );
+
+            }
+            catch (error) {
+
+                console.error(
+                    "❌ Product Images Upload Error:",
+                    error
+                );
+
+
+                editImageUploadStatus.textContent =
+                    "❌ " +
+                    (
+                        error.message ||
+                        "Failed to upload images."
+                    );
+
+
+                editUploadImageBtn.disabled =
+                    false;
+
+            }
+
+        }
+    );
+
+}
 </script>
 </body>
 </html>

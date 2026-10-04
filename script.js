@@ -64,7 +64,128 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const categoryCards =
         document.querySelectorAll(".category-card");
+// =====================================================
+// LOAD PRODUCT IMAGES FROM DATABASE
+// =====================================================
 
+function loadProductImagesFromDatabase() {
+
+    fetch(
+        "https://guptagarments.waifly.com/api/products"
+    )
+        .then(function (response) {
+
+            if (!response.ok) {
+                throw new Error(
+                    "Failed to load products"
+                );
+            }
+
+            return response.json();
+        })
+        .then(function (products) {
+
+            if (!Array.isArray(products)) {
+                return;
+            }
+
+            productCards.forEach(
+                function (card) {
+
+                    const productNameElement =
+                        card.querySelector("h3");
+
+                    const productVisual =
+                        card.querySelector(
+                            ".dummy-product"
+                        );
+
+                    if (
+                        !productNameElement ||
+                        !productVisual
+                    ) {
+                        return;
+                    }
+
+                    const productName =
+                        productNameElement.textContent
+                            .trim()
+                            .toLowerCase();
+
+                    const databaseProduct =
+                        products.find(
+                            function (product) {
+
+                                return (
+                                    product.product_name &&
+                                    product.product_name
+                                        .trim()
+                                        .toLowerCase() ===
+                                    productName
+                                );
+
+                            }
+                        );
+
+                    if (
+                        !databaseProduct ||
+                        !databaseProduct.image_url
+                    ) {
+                        return;
+                    }
+
+                    let imageUrl =
+                        databaseProduct.image_url;
+
+                    if (
+                        imageUrl.startsWith("/")
+                    ) {
+
+                        imageUrl =
+                            "https://guptagarments.waifly.com" +
+                            imageUrl;
+                    }
+
+                    // =============================================
+                    // SHOW MAIN PRODUCT IMAGE
+                    // =============================================
+
+                    productVisual.innerHTML = `
+                        <img
+                            src="${imageUrl}"
+                            alt="${databaseProduct.product_name}"
+                            style="
+                                width: 100%;
+                                height: 100%;
+                                object-fit: contain;
+                                display: block;
+                            "
+                        >
+                    `;
+
+                    // Save main image URL
+                    productVisual.dataset.dbImageUrl =
+                        imageUrl;
+
+                    // Save database product ID
+                    productVisual.dataset.dbProductId =
+                        databaseProduct.id;
+
+                }
+            );
+
+        })
+        .catch(function (error) {
+
+            console.error(
+                "❌ Product Image Loading Error:",
+                error
+            );
+
+        });
+}
+
+loadProductImagesFromDatabase();
 /* =====================================================
    STEP 4A — LOAD PRODUCTS FROM waifly API
    ===================================================== */
@@ -756,427 +877,632 @@ if (databaseProducts.length > 0) {
     });
 
 }
-   /* =====================================================
-   STEP 4C — SYNC DATABASE PRODUCTS WITH EXISTING CARDS
-   ===================================================== */
-function syncDatabaseProductsWithCards() {
+ function syncDatabaseProductsWithCards() {
 
-    console.log("🧩 Total HTML product cards:", productCards.length);
+    console.log(
+        "🧩 Total HTML product cards:",
+        document.querySelectorAll(".product-card").length
+    );
 
     if (!databaseProducts.length) {
-        console.warn("⚠️ No database products available for sync.");
+
+        console.warn(
+            "⚠️ No database products available for sync."
+        );
+
         return;
     }
 
-        /* =====================================================
-       STEP 4D — CREATE NEW DATABASE PRODUCT CARDS
-       ===================================================== */
 
     const productsGrid =
         document.querySelector("#productsGrid");
 
-    if (productsGrid) {
+    if (!productsGrid) {
+        return;
+    }
 
-        databaseProducts.forEach(function (dbProduct) {
 
-            const existingCard =
-    Array.from(productCards).find(function (card) {
+    /* =====================================================
+       GET CURRENT HTML PRODUCT CARDS
+       ===================================================== */
 
-        const title = card.querySelector("h3");
+    const initialCards =
+        Array.from(
+            productsGrid.querySelectorAll(
+                ".product-card"
+            )
+        );
 
-        if (!title) {
-            return false;
-        }
 
-        const htmlProductName =
-            title.textContent.trim();
+    /*
+       Normalize product names so small differences
+       like extra spaces / hyphens do not create
+       duplicate cards.
+    */
 
-        /* Exact product name match */
+    function normalizeProductName(name) {
+
+        return (name || "")
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, " ")
+            .replace(/\s+/g, " ")
+            .trim();
+
+    }
+
+
+    /*
+       Special product name matching.
+    */
+
+    function productNamesMatch(
+        htmlName,
+        dbName
+    ) {
+
+        const htmlNormalized =
+            normalizeProductName(
+                htmlName
+            );
+
+        const dbNormalized =
+            normalizeProductName(
+                dbName
+            );
+
+
         if (
-            htmlProductName ===
-            dbProduct.product_name
+            htmlNormalized ===
+            dbNormalized
         ) {
+
             return true;
+
         }
 
-        /* Girls Nighty / Gown and
-           Women Nighty / Gown are same product */
+
+        /*
+           Girls Nighty / Gown
+           and
+           Women Nighty / Gown
+           are same product.
+        */
+
         if (
-            htmlProductName ===
-                "Girls Nighty / Gown" &&
-            dbProduct.product_name ===
-                "Women Nighty / Gown"
+            (
+                htmlNormalized ===
+                normalizeProductName(
+                    "Girls Nighty / Gown"
+                )
+            ) &&
+            (
+                dbNormalized ===
+                normalizeProductName(
+                    "Women Nighty / Gown"
+                )
+            )
         ) {
+
             return true;
+
         }
+
 
         return false;
-    });
 
-            /* Product already exists in HTML */
-            if (existingCard) {
-                return;
+    }
+
+
+    /*
+       Cards which are already connected
+       with a database product.
+    */
+
+    const matchedCards =
+        new Set();
+
+
+    /* =====================================================
+       PROCESS DATABASE PRODUCTS
+       ===================================================== */
+
+    databaseProducts.forEach(
+        function (dbProduct) {
+
+            const dbProductId =
+                String(
+                    dbProduct.id
+                );
+
+
+            /*
+               First try database ID.
+
+               This is important because if a product
+               was already synced earlier, its same card
+               should be reused.
+            */
+
+            let matchingCards =
+                initialCards.filter(
+                    function (card) {
+
+                        return (
+                            String(
+                                card.dataset.dbProductId ||
+                                ""
+                            ) ===
+                            dbProductId
+                        );
+
+                    }
+                );
+
+
+            /*
+               If ID match is not available,
+               match using product name.
+            */
+
+            if (
+                matchingCards.length === 0
+            ) {
+
+                matchingCards =
+                    initialCards.filter(
+                        function (card) {
+
+                            const title =
+                                card.querySelector(
+                                    "h3"
+                                );
+
+                            if (!title) {
+                                return false;
+                            }
+
+
+                            return productNamesMatch(
+                                title.textContent,
+                                dbProduct.product_name
+                            );
+
+                        }
+                    );
+
             }
 
-            /* Use first existing card as template */
-            const templateCard =
-                productCards[0];
 
-            if (!templateCard) {
-                return;
+            let productCard =
+                matchingCards[0];
+
+
+            /* =================================================
+               IF CARD DOES NOT EXIST
+               CREATE ONE
+               ================================================= */
+
+            if (!productCard) {
+
+                const templateCard =
+                    initialCards[0];
+
+                if (!templateCard) {
+                    return;
+                }
+
+
+                productCard =
+                    templateCard.cloneNode(
+                        true
+                    );
+
+
+                productCard.classList.add(
+                    "database-product-card"
+                );
+
+
+                productCard.style.display =
+                    "";
+
+
+                productCard.classList.remove(
+                    "out-of-stock"
+                );
+
+
+                productCard.classList.add(
+                    "product-visible"
+                );
+
+
+                productsGrid.appendChild(
+                    productCard
+                );
+
+
+                console.log(
+                    "🆕 New product card created:",
+                    dbProduct.product_name
+                );
+
             }
 
-            const newCard =
-                templateCard.cloneNode(true);
-newCard.classList.add("database-product-card");
-            /* Remove old hidden/visibility state */
-            newCard.style.display = "";
-            newCard.classList.remove(
-                "out-of-stock"
+
+            /* =================================================
+               REMOVE DUPLICATE CARDS
+               ================================================= */
+
+            matchingCards
+                .slice(1)
+                .forEach(
+                    function (duplicateCard) {
+
+                        duplicateCard.remove();
+
+                        console.log(
+                            "🗑️ Duplicate product card removed:",
+                            dbProduct.product_name
+                        );
+
+                    }
+                );
+
+
+            /*
+               Mark this card as connected
+               with database product.
+            */
+
+            matchedCards.add(
+                productCard
             );
 
-            newCard.classList.add(
-                "product-visible"
+
+            productCard.dataset.dbProductId =
+                dbProductId;
+
+
+            /* =================================================
+               PRODUCT DATA ATTRIBUTES
+               ================================================= */
+
+            productCard.setAttribute(
+                "data-product",
+                dbProduct.product_name || ""
             );
 
-            /* Product name */
-            const titleElement =
-                newCard.querySelector("h3");
-
-            if (titleElement) {
-                titleElement.textContent =
-                    dbProduct.product_name;
-            }
-
-            /* Product price */
-            const priceElement =
-                newCard.querySelector(".price");
-
-            if (priceElement) {
-                priceElement.textContent =
-                    "₹" +
-                    Number(dbProduct.price || 0)
-                        .toLocaleString("en-IN");
-            }
-
-            /* Product sizes */
-            const sizesElement =
-                newCard.querySelector(".product-info p");
-
-            if (sizesElement) {
-                sizesElement.textContent =
-                    dbProduct.sizes
-                        ? "Sizes: " + dbProduct.sizes
-                        : "Sizes: Please confirm";
-            }
-
-            /* Database data */
-            newCard.setAttribute(
+            productCard.setAttribute(
                 "data-category",
                 dbProduct.category || ""
             );
 
-            newCard.setAttribute(
+            productCard.setAttribute(
                 "data-gender",
                 dbProduct.gender || ""
             );
 
-            newCard.setAttribute(
+            productCard.setAttribute(
                 "data-season",
                 dbProduct.season || ""
             );
 
-            newCard.setAttribute(
+            productCard.setAttribute(
                 "data-price",
                 dbProduct.price || ""
             );
 
-            newCard.setAttribute(
+            productCard.setAttribute(
                 "data-description",
                 dbProduct.description || ""
             );
 
-            newCard.setAttribute(
+            productCard.setAttribute(
                 "data-stock-status",
                 dbProduct.stock_status || "in-stock"
             );
 
-            newCard.setAttribute(
-                "data-is-visible",
-                Number(dbProduct.is_visible)
-            );
 
-            newCard.setAttribute(
-                "data-product",
-                dbProduct.product_name
-            );
+            /* =================================================
+               PRODUCT TITLE
+               ================================================= */
 
-            /* Hide if product is not visible */
-            if (
-                Number(dbProduct.is_visible) === 0
-            ) {
-                newCard.style.display = "none";
-                return;
+            const titleElement =
+                productCard.querySelector(
+                    "h3"
+                );
+
+            if (titleElement) {
+
+                titleElement.textContent =
+                    dbProduct.product_name;
+
             }
 
-            /* Add new card to products grid */
-            productsGrid.appendChild(newCard);
+
+            /* =================================================
+               PRODUCT PRICE
+               ================================================= */
+
+            const priceElement =
+                productCard.querySelector(
+                    ".price"
+                );
+
+            if (priceElement) {
+
+                priceElement.textContent =
+                    "₹" +
+                    Number(
+                        dbProduct.price || 0
+                    ).toLocaleString(
+                        "en-IN"
+                    );
+
+            }
+
+
+            /* =================================================
+               PRODUCT SIZES
+               ================================================= */
+
+            const sizesElement =
+                productCard.querySelector(
+                    ".product-info p"
+                );
+
+            if (sizesElement) {
+
+                sizesElement.textContent =
+                    dbProduct.sizes
+                        ? "Sizes: " +
+                          dbProduct.sizes
+                        : "Sizes: Please confirm";
+
+            }
+
+
+            /* =================================================
+               PRODUCT IMAGE
+               ================================================= */
+
+            const productImageContainer =
+                productCard.querySelector(
+                    ".product-image"
+                );
+
+
+            if (productImageContainer) {
+
+                /*
+                   Remove any old dynamically created
+                   database images.
+                */
+
+                productImageContainer
+                    .querySelectorAll(
+                        ".database-product-image"
+                    )
+                    .forEach(
+                        function (oldImage) {
+
+                            oldImage.remove();
+
+                        }
+                    );
+
+
+                /*
+                   Hide dummy product visual.
+                */
+
+                const dummyProduct =
+                    productImageContainer.querySelector(
+                        ".dummy-product"
+                    );
+
+                if (dummyProduct) {
+
+                    dummyProduct.style.display =
+                        "none";
+
+                }
+
+
+                /*
+                   Use the existing .product-photo
+                   from the HTML card.
+                */
+
+                const productImage =
+                    productImageContainer.querySelector(
+                        ".product-photo"
+                    );
+
+
+                if (
+                    productImage &&
+                    dbProduct.image_url &&
+                    dbProduct.image_url
+                        .trim() !== ""
+                ) {
+
+                    let imageUrl =
+                        dbProduct.image_url.trim();
+
+
+                    /*
+                       Convert relative URL
+                       into live API URL.
+                    */
+
+                    if (
+                        imageUrl.startsWith("/")
+                    ) {
+
+                        imageUrl =
+                            "https://guptagarments.waifly.com" +
+                            imageUrl;
+
+                    }
+
+
+                    productImage.src =
+                        imageUrl +
+                        (
+                            imageUrl.includes("?")
+                                ? "&"
+                                : "?"
+                        ) +
+                        "v=" +
+                        Date.now();
+
+
+                    productImage.alt =
+                        dbProduct.product_name ||
+                        "Product";
+
+
+                    productImage.loading =
+                        "lazy";
+
+
+                    productImage.style.display =
+                        "block";
+
+
+                    productImage.style.width =
+                        "100%";
+
+
+                    productImage.style.height =
+                        "100%";
+
+
+                    productImage.style.objectFit =
+                        "contain";
+
+
+                    productImage.dataset.dbImageUrl =
+                        imageUrl;
+
+
+                    productImage.dataset.dbProductId =
+                        dbProductId;
+
+                }
+
+                else if (productImage) {
+
+                    /*
+                       No image in database =
+                       do not show old hard-coded image.
+                    */
+
+                    productImage.style.display =
+                        "none";
+
+
+                    productImage.removeAttribute(
+                        "src"
+                    );
+
+
+                    productImage.removeAttribute(
+                        "alt"
+                    );
+
+                }
+
+            }
+
+
+            /* =================================================
+               PRODUCT VISIBILITY
+               ================================================= */
+
+            if (
+                Number(
+                    dbProduct.is_visible
+                ) === 0
+            ) {
+
+                productCard.style.display =
+                    "none";
+
+            }
+            else {
+
+                productCard.style.display =
+                    "";
+
+            }
+
 
             console.log(
-                "🆕 New product card created:",
+                "✅ Product synced:",
                 dbProduct.product_name
             );
 
-        });
-
-        /* Refresh product card list */
-        productCards =
-            document.querySelectorAll(".product-card");
-
-    }
-
-    productCards.forEach(function (card) {
-
-        /* =====================================================
-           FIND PRODUCT NAME FROM HTML <h3>
-           ===================================================== */
-
-        const titleElement = card.querySelector("h3");
-
-        const htmlProductName = titleElement
-            ? titleElement.textContent.trim()
-            : "";
-
-        if (!htmlProductName) {
-
-            console.warn(
-                "⚠️ Product card has no h3 product name."
-            );
-
-            return;
         }
+    );
 
 
-        /* =====================================================
-           FIND MATCHING PRODUCT FROM DATABASE
-           ===================================================== */
+    /* =====================================================
+       REMOVE HTML CARDS WHICH DO NOT EXIST IN DATABASE
+       ===================================================== */
 
-        const dbProduct = databaseProducts.find(function (product) {
-
-            /* Normal product name match */
-
-            if (product.product_name === htmlProductName) {
-                return true;
-            }
-
-
-            /* Old HTML name → New database name */
+    initialCards.forEach(
+        function (card) {
 
             if (
-                htmlProductName === "Girls Nighty / Gown" &&
-                product.product_name === "Women Nighty / Gown"
+                !matchedCards.has(card) &&
+                card.isConnected
             ) {
-                return true;
+
+                const title =
+                    card.querySelector("h3");
+
+                const oldProductName =
+                    title
+                        ? title.textContent.trim()
+                        : "Unknown Product";
+
+
+                card.remove();
+
+
+                console.log(
+                    "🗑️ Old HTML product removed:",
+                    oldProductName
+                );
+
             }
 
-
-            return false;
-
-        });
-
-
-        /* =====================================================
-           PRODUCT NOT FOUND
-           ===================================================== */
-if (!dbProduct) {
-
-    console.warn(
-        "🚫 Product hidden or not available for customers:",
-        htmlProductName
+        }
     );
+
 
     /*
-     * Product public API mein nahi mila.
-     *
-     * Public API sirf is_visible = 1
-     * wale products return karti hai.
-     *
-     * Isliye HTML ka old/static card
-     * customer website par hide kar do.
-     */
+       Refresh productCards variable so filters,
+       search and other product functions also see
+       the final database product cards.
+    */
 
-    card.style.display = "none";
-
-    card.classList.remove(
-        "product-visible"
-    );
-
-    return;
-}
-
-
-        /* =====================================================
-           UPDATE HTML DATA ATTRIBUTES FROM DATABASE
-           ===================================================== */
-
-        card.setAttribute(
-            "data-category",
-            dbProduct.category || ""
+    productCards =
+        document.querySelectorAll(
+            ".product-card"
         );
-
-        card.setAttribute(
-            "data-gender",
-            dbProduct.gender || ""
-        );
-
-        card.setAttribute(
-            "data-season",
-            dbProduct.season || ""
-        );
-
-        card.setAttribute(
-            "data-price",
-            dbProduct.price || ""
-        );
-
-        card.setAttribute(
-            "data-description",
-            dbProduct.description || ""
-        );
-
-        card.setAttribute(
-            "data-stock-status",
-            dbProduct.stock_status || "in-stock"
-        );
-        card.setAttribute(
-    "data-is-visible",
-    Number(dbProduct.is_visible)
-);
-        /* =====================================================
-           STEP 3B — STOCK STATUS DISPLAY
-           OUT OF STOCK BADGE + GREY PRODUCT CARD
-           ===================================================== */
-
-        const stockStatus =
-            (dbProduct.stock_status || "in-stock")
-                .toLowerCase()
-                .trim();
-
-        /* Remove old stock badge if already present */
-
-        const oldStockBadge =
-            card.querySelector(".product-stock-badge");
-
-        if (oldStockBadge) {
-            oldStockBadge.remove();
-        }
-
-        /* Remove old out-of-stock class */
-
-        card.classList.remove("out-of-stock");
-
-        /* Check stock */
-
-        if (stockStatus === "out-of-stock") {
-
-            /* Add grey/faded card */
-
-            card.classList.add("out-of-stock");
-
-            /* Create OUT OF STOCK badge */
-
-            const stockBadge =
-                document.createElement("span");
-
-            stockBadge.className =
-                "product-stock-badge";
-
-            stockBadge.textContent =
-                "OUT OF STOCK";
-
-            /* Add badge to product card */
-
-            card.appendChild(stockBadge);
-
-        }
-
-        /* =====================================================
-           UPDATE PRODUCT NAME
-           ===================================================== */
-
-        if (titleElement) {
-
-            titleElement.textContent =
-                dbProduct.product_name;
-
-        }
-
-
-        /* =====================================================
-           UPDATE PRICE
-           ===================================================== */
-
-        const priceElement =
-            card.querySelector(".price");
-
-        if (priceElement) {
-
-            priceElement.textContent =
-                "₹" +
-                Number(dbProduct.price)
-                    .toLocaleString("en-IN");
-
-        }
-
-
-        /* =====================================================
-           UPDATE SIZES
-           ===================================================== */
-
-        const sizesElement =
-            card.querySelector(".product-info p");
-
-        if (
-            sizesElement &&
-            dbProduct.sizes
-        ) {
-
-            sizesElement.textContent =
-                "Sizes: " +
-                dbProduct.sizes;
-
-        }
-
-
-        /* =====================================================
-           UPDATE VISIBILITY
-           ===================================================== */
-
-        if (
-            Number(dbProduct.is_visible) === 0
-        ) {
-
-            card.style.display = "none";
-
-        }
-
-
-        /* =====================================================
-           SUCCESS LOG
-           ===================================================== */
-
-        console.log(
-            "✅ Product synced:",
-            dbProduct.product_name
-        );
-
-    });
 
 
     console.log(
         "🎯 Database product sync completed."
     );
-addWishlistButtonsToProducts();
+
+
+    addWishlistButtonsToProducts();
+
 }
 
 /* =====================================================
@@ -1404,7 +1730,6 @@ else if (currentCategory === "men") {
 
 }
 
-
 /* INDIVIDUAL CATEGORY */
 
 else {
@@ -1413,6 +1738,58 @@ else {
         categories.includes(
             currentCategory
         );
+
+
+    /* =====================================================
+       WOMEN CATEGORY SPECIAL MATCH
+       ===================================================== */
+
+    if (currentCategory === "women-cardigan") {
+
+        categoryMatch =
+            categories.includes("cardigan") &&
+            categories.includes("women");
+
+    }
+
+
+    if (currentCategory === "women-nighty-gown") {
+
+        categoryMatch =
+            (
+                categories.includes("gown") ||
+                categories.includes("women-nighty-gown")
+            ) &&
+            categories.includes("women");
+
+    }
+
+
+    if (currentCategory === "women-bra") {
+
+        categoryMatch =
+            categories.includes("women-bra") &&
+            categories.includes("women");
+
+    }
+
+
+    if (currentCategory === "women-panty") {
+
+        categoryMatch =
+            categories.includes("women-panty") &&
+            categories.includes("women");
+
+    }
+
+
+    if (currentCategory === "women-socks") {
+
+        categoryMatch =
+            categories.includes("women-socks") &&
+            categories.includes("women");
+
+    }
 
 }
 
@@ -1424,8 +1801,11 @@ else {
 
 
         /* ================= FINAL MATCH ================= */
+const visibilityStatus =
+    product.getAttribute("data-is-visible");
+
 const isVisible =
-    product.getAttribute("data-is-visible") === "1";
+    visibilityStatus !== "0";
 
 const shouldShow =
     isVisible &&
@@ -1654,36 +2034,184 @@ function setActiveSeasonButton(season) {
     });
 
 }
-    /* =====================================================
-       CATEGORY CARD CLICK
-       ===================================================== */
+   
+// =====================================================
+// LOAD CATEGORIES FROM DATABASE
+// =====================================================
 
-    categoryCards.forEach(function (categoryCard) {
+async function loadPublicCategories() {
 
-        categoryCard.addEventListener(
-            "click",
-            function (event) {
+    const categoryContainer =
+        document.querySelector(
+            ".category-container"
+        );
 
-                event.preventDefault();
+    const extraCategories =
+        document.querySelector(
+            "#extraCategories"
+        );
 
-                const filter =
-                    categoryCard.getAttribute(
-                        "data-filter"
+    if (!categoryContainer) {
+        return;
+    }
+
+    try {
+
+        const response =
+            await fetch(
+                "https://guptagarments.waifly.com/api/public/categories"
+            );
+
+        const result =
+            await response.json();
+
+        if (
+            !response.ok ||
+            !result.success
+        ) {
+
+            throw new Error(
+                result.message ||
+                "Failed to load categories."
+            );
+
+        }
+
+        // Remove existing hard-coded categories
+        categoryContainer.innerHTML = "";
+
+        if (extraCategories) {
+            extraCategories.innerHTML = "";
+        }
+
+        result.categories.forEach(
+            function (category, index) {
+
+                const categoryCard =
+                    document.createElement("a");
+
+                categoryCard.href =
+                    "#new-arrivals";
+
+                categoryCard.className =
+                    "category-card";
+
+                categoryCard.setAttribute(
+                    "data-filter",
+                    category.slug
+                );
+
+                const imageUrl =
+                    category.image_url ||
+                    "images/categories/default.png";
+
+                categoryCard.innerHTML = `
+                    <div class="category-image">
+                        <img
+                            src="${imageUrl}"
+                            alt="${category.name}"
+                            loading="lazy">
+                    </div>
+
+                    <span>
+                        ${category.name}
+                    </span>
+                `;
+
+                /*
+                 * First 10 categories stay
+                 * in the main category area.
+                 * Remaining categories go
+                 * inside View All section.
+                 */
+
+                if (index < 10) {
+
+                    categoryContainer.appendChild(
+                        categoryCard
                     );
 
-                if (!filter) {
-                    return;
+                } else {
+
+                    categoryCard.classList.add(
+                        "extra-category"
+                    );
+
+                    if (extraCategories) {
+
+                        extraCategories.appendChild(
+                            categoryCard
+                        );
+
+                    }
+
                 }
-
-                filterProducts(filter);
-
-                setActiveCategory(categoryCard);
 
             }
         );
 
-    });
+        // Rebind category click events
+        bindCategoryCardEvents();
 
+    }
+    catch (error) {
+
+        console.error(
+            "❌ Public category load error:",
+            error
+        );
+
+    }
+
+}
+
+
+// =====================================================
+// CATEGORY CARD CLICK
+// =====================================================
+
+function bindCategoryCardEvents() {
+
+    const categoryCards =
+        document.querySelectorAll(
+            ".category-card"
+        );
+
+    categoryCards.forEach(
+        function (categoryCard) {
+
+            categoryCard.addEventListener(
+                "click",
+                function (event) {
+
+                    event.preventDefault();
+
+                    const filter =
+                        categoryCard.getAttribute(
+                            "data-filter"
+                        );
+
+                    if (!filter) {
+                        return;
+                    }
+
+                    filterProducts(filter);
+
+                    setActiveCategory(
+                        categoryCard
+                    );
+
+                }
+            );
+
+        }
+    );
+
+}
+
+
+// Load database categories
+loadPublicCategories();
 
     /* =====================================================
        ACTIVE CATEGORY
@@ -1734,7 +2262,61 @@ function setActiveSeasonButton(season) {
         );
 
     }
+/* =====================================================
+   VIEW ALL CATEGORIES
+   ===================================================== */
 
+const viewAllCategoriesBtn =
+    document.querySelector(
+        "#viewAllCategoriesBtn"
+    );
+
+const categoriesSection =
+    document.querySelector(
+        "#categories"
+    );
+
+
+if (
+    viewAllCategoriesBtn &&
+    categoriesSection
+) {
+
+    viewAllCategoriesBtn.addEventListener(
+        "click",
+        function () {
+
+            categoriesSection.classList.toggle(
+                "show-all-categories"
+            );
+
+
+            const isOpen =
+                categoriesSection.classList.contains(
+                    "show-all-categories"
+                );
+
+
+            if (isOpen) {
+
+                viewAllCategoriesBtn.querySelector(
+                    "span"
+                ).textContent =
+                    "SHOW LESS CATEGORIES";
+
+            } else {
+
+                viewAllCategoriesBtn.querySelector(
+                    "span"
+                ).textContent =
+                    "VIEW ALL CATEGORIES";
+
+            }
+
+        }
+    );
+
+}
 
     /* =====================================================
        EXPLORE COLLECTION
@@ -2607,22 +3189,21 @@ if (
                         productDescriptions[productName] ||
                         "Stylish and comfortable kids wear from Gupta Garments.";
                 }
+/* Copy Product Visual */
 
+if (modalImage && productImage) {
 
-                /* Copy Product Visual */
+    modalImage.textContent =
+        productImage.textContent.trim();
 
-                if (modalImage && productImage) {
+    modalImage.className =
+        "modal-dummy-product " +
+        productImage.className
+            .replace("dummy-product", "")
+            .trim();
 
-                    modalImage.textContent =
-                        productImage.textContent.trim();
+}
 
-                    modalImage.className =
-                        "modal-dummy-product " +
-                        productImage.className
-                            .replace("dummy-product", "")
-                            .trim();
-
-                }
 
 
                 /* WhatsApp Message */
@@ -3692,10 +4273,10 @@ categorySubmenus.forEach(function (submenu) {
     );
 
 });
-/* =========================================================
+/* =====================================================
    STEP 4J — DYNAMIC DATABASE PRODUCT BUTTONS
    VIEW DETAILS + WHATSAPP
-   ========================================================= */
+   ===================================================== */
 
 const productsGridForDynamicButtons =
     document.querySelector("#productsGrid");
@@ -3706,10 +4287,12 @@ if (productsGridForDynamicButtons) {
         "click",
         function (event) {
 
+            /* =================================================
+               FIND PRODUCT CARD
+               ================================================= */
+
             const dynamicCard =
-                event.target.closest(
-                    ".database-product-card"
-                );
+                event.target.closest(".product-card");
 
             if (!dynamicCard) {
                 return;
@@ -3717,13 +4300,11 @@ if (productsGridForDynamicButtons) {
 
 
             /* =================================================
-               VIEW DETAILS
+               VIEW DETAILS BUTTON
                ================================================= */
 
             const viewButton =
-                event.target.closest(
-                    ".view-details-btn"
-                );
+                event.target.closest(".view-details-btn");
 
             if (viewButton) {
 
@@ -3734,6 +4315,11 @@ if (productsGridForDynamicButtons) {
                         .querySelector("h3")
                         ?.textContent
                         .trim();
+
+                console.log(
+                    "🟢 VIEW DETAILS CLICKED:",
+                    productName
+                );
 
                 const productPrice =
                     dynamicCard
@@ -3752,10 +4338,12 @@ if (productsGridForDynamicButtons) {
                 }
 
 
+                /* =================================================
+                   PRODUCT MODAL
+                   ================================================= */
+
                 const productModal =
-                    document.querySelector(
-                        "#productModal"
-                    );
+                    document.querySelector("#productModal");
 
                 if (!productModal) {
                     return;
@@ -3793,7 +4381,9 @@ if (productsGridForDynamicButtons) {
                     );
 
 
-                /* Product name */
+                /* =================================================
+                   PRODUCT NAME
+                   ================================================= */
 
                 if (modalName) {
                     modalName.textContent =
@@ -3801,7 +4391,9 @@ if (productsGridForDynamicButtons) {
                 }
 
 
-                /* Price */
+                /* =================================================
+                   PRICE
+                   ================================================= */
 
                 if (modalPrice) {
                     modalPrice.textContent =
@@ -3810,7 +4402,9 @@ if (productsGridForDynamicButtons) {
                 }
 
 
-                /* Sizes */
+                /* =================================================
+                   SIZES
+                   ================================================= */
 
                 if (modalSizes) {
                     modalSizes.textContent =
@@ -3819,7 +4413,9 @@ if (productsGridForDynamicButtons) {
                 }
 
 
-                /* Description */
+                /* =================================================
+                   DESCRIPTION
+                   ================================================= */
 
                 if (modalDescription) {
 
@@ -3832,34 +4428,536 @@ if (productsGridForDynamicButtons) {
                 }
 
 
-                /* Product visual */
+                /* =================================================
+                   PRODUCT IMAGE / DATABASE ID
+                   ================================================= */
 
                 const productImage =
                     dynamicCard.querySelector(
-                        ".dummy-product"
+                        ".product-photo"
                     );
 
-                if (
-                    modalImage &&
-                    productImage
-                ) {
+                let productId =
+                    dynamicCard.dataset.dbProductId ||
+                    null;
 
-                    modalImage.textContent =
-                        productImage.textContent.trim();
 
-                    modalImage.className =
-                        "modal-dummy-product " +
-                        productImage.className
-                            .replace(
-                                "dummy-product",
-                                ""
-                            )
-                            .trim();
+                /* =================================================
+                   SECOND TRY — IMAGE DATASET
+                   ================================================= */
+
+                if (!productId && productImage) {
+
+                    productId =
+                        productImage.dataset.dbProductId ||
+                        null;
 
                 }
 
 
-                /* Modal WhatsApp */
+                /* =================================================
+                   THIRD TRY — DATABASE PRODUCTS
+                   ================================================= */
+
+                if (!productId && productName) {
+
+                    if (
+                        Array.isArray(databaseProducts)
+                    ) {
+
+                        const matchedProduct =
+                            databaseProducts.find(
+                                function (item) {
+
+                                    return (
+                                        String(
+                                            item.product_name
+                                        )
+                                            .trim()
+                                            .toLowerCase() ===
+                                        String(
+                                            productName
+                                        )
+                                            .trim()
+                                            .toLowerCase()
+                                    );
+
+                                }
+                            );
+
+
+                        if (matchedProduct) {
+
+                            productId =
+                                matchedProduct.id;
+
+                        }
+
+                    }
+
+                }
+
+
+                console.log(
+                    "🔎 View Details Product ID:",
+                    productId,
+                    "Product:",
+                    productName
+                );
+
+/* =================================================
+   PROFESSIONAL PRODUCT IMAGE GALLERY
+   ================================================= */
+
+const modalThumbnails =
+    document.querySelector(
+        "#modalProductThumbnails"
+    );
+
+
+/* =================================================
+   RESET THUMBNAILS
+   ================================================= */
+
+if (modalThumbnails) {
+
+    modalThumbnails.innerHTML = "";
+
+}
+
+
+/* =================================================
+   GALLERY STATE
+   ================================================= */
+
+let modalGalleryImages = [];
+
+let modalGalleryIndex = 0;
+
+
+/* =================================================
+   MAIN IMAGE
+   ================================================= */
+
+function showModalProductImage(
+    imageUrl,
+    index = 0
+) {
+
+    if (
+        !modalImage ||
+        !imageUrl
+    ) {
+        return;
+    }
+
+
+    modalGalleryIndex =
+        index;
+
+
+    modalImage.innerHTML = `
+        <img
+            src="${imageUrl}"
+            alt="${productName || "Product Image"}"
+        >
+
+        <button
+            type="button"
+            class="modal-gallery-arrow modal-gallery-prev"
+            aria-label="Previous image"
+        >
+            ‹
+        </button>
+
+        <button
+            type="button"
+            class="modal-gallery-arrow modal-gallery-next"
+            aria-label="Next image"
+        >
+            ›
+        </button>
+    `;
+
+
+    modalImage.className =
+        "modal-dummy-product";
+
+
+    /* =================================================
+       PREVIOUS IMAGE
+       ================================================= */
+
+    const previousButton =
+        modalImage.querySelector(
+            ".modal-gallery-prev"
+        );
+
+
+    if (previousButton) {
+
+        previousButton.addEventListener(
+            "click",
+            function (event) {
+
+                event.preventDefault();
+
+                event.stopPropagation();
+
+
+                if (
+                    !modalGalleryImages.length
+                ) {
+                    return;
+                }
+
+
+                let previousIndex =
+                    modalGalleryIndex - 1;
+
+
+                if (
+                    previousIndex < 0
+                ) {
+
+                    previousIndex =
+                        modalGalleryImages.length - 1;
+
+                }
+
+
+                showModalProductImage(
+                    modalGalleryImages[
+                        previousIndex
+                    ],
+                    previousIndex
+                );
+
+            }
+        );
+
+    }
+
+
+    /* =================================================
+       NEXT IMAGE
+       ================================================= */
+
+    const nextButton =
+        modalImage.querySelector(
+            ".modal-gallery-next"
+        );
+
+
+    if (nextButton) {
+
+        nextButton.addEventListener(
+            "click",
+            function (event) {
+
+                event.preventDefault();
+
+                event.stopPropagation();
+
+
+                if (
+                    !modalGalleryImages.length
+                ) {
+                    return;
+                }
+
+
+                let nextIndex =
+                    modalGalleryIndex + 1;
+
+
+                if (
+                    nextIndex >=
+                    modalGalleryImages.length
+                ) {
+
+                    nextIndex = 0;
+
+                }
+
+
+                showModalProductImage(
+                    modalGalleryImages[
+                        nextIndex
+                    ],
+                    nextIndex
+                );
+
+            }
+        );
+
+    }
+
+
+    /* =================================================
+       ACTIVE THUMBNAIL
+       ================================================= */
+
+    if (modalThumbnails) {
+
+        modalThumbnails
+            .querySelectorAll(
+                ".modal-product-thumbnail"
+            )
+            .forEach(
+                function (
+                    thumbnail,
+                    thumbnailIndex
+                ) {
+
+                    thumbnail.classList.toggle(
+                        "active",
+                        thumbnailIndex ===
+                        modalGalleryIndex
+                    );
+
+                }
+            );
+
+    }
+
+}
+
+
+/* =================================================
+   LOAD MULTIPLE PRODUCT IMAGES
+   ================================================= */
+
+if (productId) {
+
+    fetch(
+        "https://guptagarments.waifly.com/api/products/" +
+        productId +
+        "/public-images"
+    )
+        .then(
+            function (response) {
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Failed to load product images."
+                    );
+
+                }
+
+                return response.json();
+
+            }
+        )
+        .then(
+            function (imageResult) {
+
+                console.log(
+                    "🖼️ Product gallery response:",
+                    imageResult
+                );
+
+
+                const images =
+                    imageResult.images ||
+                    [];
+
+
+                /* =====================================
+                   IMAGES FOUND
+                   ===================================== */
+
+                if (
+                    images.length > 0
+                ) {
+
+                    /* Save image URLs */
+
+                    modalGalleryImages =
+                        images.map(
+                            function (image) {
+
+                                return image.image_url;
+
+                            }
+                        );
+
+
+                    /* =================================
+                       CREATE THUMBNAILS
+                       ================================= */
+
+                    if (modalThumbnails) {
+
+                        images.forEach(
+                            function (
+                                image,
+                                index
+                            ) {
+
+                                const thumbnail =
+                                    document.createElement(
+                                        "button"
+                                    );
+
+
+                                thumbnail.type =
+                                    "button";
+
+
+                                thumbnail.className =
+                                    "modal-product-thumbnail";
+
+
+                                thumbnail.innerHTML = `
+                                    <img
+                                        src="${image.image_url}"
+                                        alt="Product Image ${index + 1}"
+                                    >
+                                `;
+
+
+                                thumbnail.addEventListener(
+                                    "click",
+                                    function (event) {
+
+                                        event.preventDefault();
+
+
+                                        showModalProductImage(
+                                            image.image_url,
+                                            index
+                                        );
+
+                                    }
+                                );
+
+
+                                modalThumbnails.appendChild(
+                                    thumbnail
+                                );
+
+                            }
+                        );
+
+                    }
+
+
+                    /* Show first image */
+
+                    showModalProductImage(
+                        modalGalleryImages[0],
+                        0
+                    );
+
+                }
+
+
+                /* =====================================
+                   FALLBACK OLD IMAGE
+                   ===================================== */
+
+                else {
+
+                    if (
+                        productImage &&
+                        modalImage
+                    ) {
+
+                        const fallbackImage =
+                            productImage.dataset
+                                .dbImageUrl;
+
+
+                        if (fallbackImage) {
+
+                            modalGalleryImages = [
+                                fallbackImage
+                            ];
+
+
+                            showModalProductImage(
+                                fallbackImage,
+                                0
+                            );
+
+                        }
+                        else {
+
+                            modalImage.textContent =
+                                productImage
+                                    .textContent
+                                    .trim();
+
+                        }
+
+                    }
+
+                }
+
+            }
+        )
+        .catch(
+            function (error) {
+
+                console.error(
+                    "❌ Product Gallery Error:",
+                    error
+                );
+
+
+                if (
+                    productImage &&
+                    modalImage
+                ) {
+
+                    const fallbackImage =
+                        productImage.dataset
+                            .dbImageUrl;
+
+
+                    if (fallbackImage) {
+
+                        modalGalleryImages = [
+                            fallbackImage
+                        ];
+
+
+                        showModalProductImage(
+                            fallbackImage,
+                            0
+                        );
+
+                    }
+                    else {
+
+                        modalImage.textContent =
+                            productImage
+                                .textContent
+                                .trim();
+
+                    }
+
+                }
+
+            }
+        );
+
+}
+else {
+
+    console.warn(
+        "⚠️ No database product ID found for:",
+        productName
+    );
+
+}
+
+
+                /* =================================================
+                   WHATSAPP FROM MODAL
+                   ================================================= */
 
                 if (
                     modalWhatsapp &&
@@ -3873,12 +4971,16 @@ if (productsGridForDynamicButtons) {
                         productName +
                         "\n" +
                         "💰 Price: " +
-                        (productPrice ||
-                            "Please confirm") +
+                        (
+                            productPrice ||
+                            "Please confirm"
+                        ) +
                         "\n" +
                         "📏 " +
-                        (productSizes ||
-                            "Size details not available") +
+                        (
+                            productSizes ||
+                            "Size details not available"
+                        ) +
                         "\n\n" +
                         "Please confirm:\n" +
                         "✅ Availability\n" +
@@ -3886,14 +4988,19 @@ if (productsGridForDynamicButtons) {
                         "✅ Any other details\n\n" +
                         "Thank you!";
 
+
                     modalWhatsapp.href =
                         "https://wa.me/918218403183?text=" +
-                        encodeURIComponent(message);
+                        encodeURIComponent(
+                            message
+                        );
 
                 }
 
 
-                /* Review system */
+                /* =================================================
+                   REVIEW SYSTEM
+                   ================================================= */
 
                 if (
                     typeof currentReviewProduct !==
@@ -3902,6 +5009,7 @@ if (productsGridForDynamicButtons) {
 
                     currentReviewProduct =
                         productName;
+
 
                     if (
                         typeof renderReviews ===
@@ -3913,6 +5021,7 @@ if (productsGridForDynamicButtons) {
                         );
 
                     }
+
 
                     if (
                         typeof resetReviewRating ===
@@ -3926,22 +5035,27 @@ if (productsGridForDynamicButtons) {
                 }
 
 
-                /* Open modal */
+                /* =================================================
+                   OPEN MODAL
+                   ================================================= */
 
                 productModal.classList.add(
                     "active"
                 );
 
+
                 document.body.classList.add(
                     "modal-open"
                 );
 
+
                 return;
+
             }
 
 
             /* =================================================
-               PRODUCT WHATSAPP
+               PRODUCT WHATSAPP BUTTON
                ================================================= */
 
             const whatsappButton =
@@ -3949,9 +5063,11 @@ if (productsGridForDynamicButtons) {
                     ".product-whatsapp"
                 );
 
+
             if (whatsappButton) {
 
                 event.preventDefault();
+
 
                 const productName =
                     dynamicCard
@@ -3959,11 +5075,13 @@ if (productsGridForDynamicButtons) {
                         ?.textContent
                         .trim();
 
+
                 const productPrice =
                     dynamicCard
                         .querySelector(".price")
                         ?.textContent
                         .trim();
+
 
                 const productSizes =
                     dynamicCard
@@ -3972,6 +5090,7 @@ if (productsGridForDynamicButtons) {
                         )
                         ?.textContent
                         .trim();
+
 
                 if (!productName) {
                     return;
@@ -3985,12 +5104,16 @@ if (productsGridForDynamicButtons) {
                     productName +
                     "\n" +
                     "💰 Price: " +
-                    (productPrice ||
-                        "Please confirm") +
+                    (
+                        productPrice ||
+                        "Please confirm"
+                    ) +
                     "\n" +
                     "📏 " +
-                    (productSizes ||
-                        "Size details not available") +
+                    (
+                        productSizes ||
+                        "Size details not available"
+                    ) +
                     "\n\n" +
                     "Please confirm:\n" +
                     "✅ Availability\n" +
@@ -4001,7 +5124,9 @@ if (productsGridForDynamicButtons) {
 
                 const whatsappURL =
                     "https://wa.me/918218403183?text=" +
-                    encodeURIComponent(message);
+                    encodeURIComponent(
+                        message
+                    );
 
 
                 window.location.href =
@@ -4010,7 +5135,6 @@ if (productsGridForDynamicButtons) {
             }
 
         }
-
     );
 
 }
@@ -4020,7 +5144,7 @@ if (productsGridForDynamicButtons) {
 // =================================
 
 document.addEventListener("DOMContentLoaded", async function () {
-
+console.log("🎉 FESTIVAL POPUP SCRIPT STARTED");
     const popup =
         document.getElementById("festivalAlertPopup");
 
@@ -4156,7 +5280,5 @@ popupDescription.textContent =
             "Festival Popup Error:",
             error
         );
-
     }
-
 });

@@ -117,6 +117,499 @@ app.post(
 
     }
 );
+
+// =================================
+// PRODUCT EDIT IMAGE UPLOAD
+// =================================
+
+const productUploadDir =
+    path.join(
+        __dirname,
+        "uploads",
+        "products"
+    );
+
+
+// Create product image folder
+if (!fs.existsSync(productUploadDir)) {
+
+    fs.mkdirSync(
+        productUploadDir,
+        {
+            recursive: true
+        }
+    );
+
+}
+
+
+// Product image storage
+const productStorage =
+    multer.diskStorage({
+
+        destination: function (
+            req,
+            file,
+            cb
+        ) {
+
+            cb(
+                null,
+                productUploadDir
+            );
+
+        },
+
+        filename: function (
+            req,
+            file,
+            cb
+        ) {
+
+            const extension =
+                path.extname(
+                    file.originalname
+                ).toLowerCase();
+
+            const fileName =
+                "product-" +
+                Date.now() +
+                "-" +
+                Math.round(
+                    Math.random() * 100000
+                ) +
+                extension;
+
+            cb(
+                null,
+                fileName
+            );
+
+        }
+
+    });
+
+
+// Product image upload settings
+const productUpload =
+    multer({
+
+        storage:
+            productStorage,
+
+        limits: {
+
+            fileSize:
+                5 * 1024 * 1024
+
+        },
+
+        fileFilter:
+            function (
+                req,
+                file,
+                cb
+            ) {
+
+                const allowedTypes = [
+
+                    "image/jpeg",
+                    "image/png",
+                    "image/webp"
+
+                ];
+
+
+                if (
+                    !allowedTypes.includes(
+                        file.mimetype
+                    )
+                ) {
+
+                    return cb(
+                        new Error(
+                            "Only JPG, JPEG, PNG and WEBP images are allowed."
+                        )
+                    );
+
+                }
+
+
+                cb(
+                    null,
+                    true
+                );
+
+            }
+
+    });
+
+// =============================================
+// PRODUCT EDIT MULTIPLE IMAGE UPLOAD API
+// =============================================
+
+app.post(
+    "/api/products/upload-image",
+
+    requireAdminAuth,
+
+    productUpload.array("images", 10),
+
+    function (req, res) {
+
+        try {
+const productId =
+    Number(req.body.product_id);
+
+if (!productId) {
+
+    return res.status(400).json({
+
+        success: false,
+
+        message:
+            "Product ID is required."
+
+    });
+
+}
+            if (
+                !req.files ||
+                req.files.length === 0
+            ) {
+
+                return res.status(400).json({
+
+                    success: false,
+
+                    message:
+                        "Please select at least one image."
+
+                });
+
+            }
+
+
+            const imageUrls =
+                req.files.map(function (file) {
+
+                    return (
+                        "https://guptagarments.waifly.com/uploads/products/" +
+                        file.filename
+                    );
+
+                });
+
+const insertImageSql = `
+    INSERT INTO product_images
+    (
+        product_id,
+        image_url,
+        sort_order
+    )
+    VALUES (?, ?, ?)
+`;
+
+for (
+    let i = 0;
+    i < imageUrls.length;
+    i++
+) {
+
+    db.query(
+        insertImageSql,
+        [
+            productId,
+            imageUrls[i],
+            i
+        ],
+        function (err) {
+
+            if (err) {
+
+                console.error(
+                    "❌ Product image database save failed:",
+                    err.message
+                );
+
+            }
+
+        }
+    );
+
+}
+db.query(
+    `
+    UPDATE products
+    SET image_url = ?
+    WHERE id = ?
+    `,
+    [
+        imageUrls[0],
+        productId
+    ],
+    function (err) {
+
+        if (err) {
+
+            console.error(
+                "❌ Main product image update failed:",
+                err.message
+            );
+
+        }
+
+    }
+);
+            console.log(
+                "✅ Product Images Uploaded:",
+                imageUrls
+            );
+
+
+            return res.json({
+
+                success: true,
+
+                message:
+                    "Product images uploaded successfully!",
+
+                image_urls:
+                    imageUrls
+
+            });
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "❌ Product Images Upload Error:",
+                error
+            );
+
+
+            return res.status(500).json({
+
+                success: false,
+
+                message:
+                    "Failed to upload product images."
+
+            });
+
+        }
+
+    }
+
+);
+// =================================
+// CATEGORY IMAGE UPLOAD
+// =================================
+
+const categoryUploadDir =
+    path.join(
+        __dirname,
+        "uploads",
+        "categories"
+    );
+
+
+// Create category image folder
+if (!fs.existsSync(categoryUploadDir)) {
+
+    fs.mkdirSync(
+        categoryUploadDir,
+        {
+            recursive: true
+        }
+    );
+
+}
+
+
+// Category image storage
+const categoryStorage =
+    multer.diskStorage({
+
+        destination: function (
+            req,
+            file,
+            cb
+        ) {
+
+            cb(
+                null,
+                categoryUploadDir
+            );
+
+        },
+
+        filename: function (
+            req,
+            file,
+            cb
+        ) {
+
+            const extension =
+                path.extname(
+                    file.originalname
+                ).toLowerCase();
+
+            const fileName =
+                "category-" +
+                Date.now() +
+                "-" +
+                Math.round(
+                    Math.random() * 100000
+                ) +
+                extension;
+
+            cb(
+                null,
+                fileName
+            );
+
+        }
+
+    });
+
+
+// Category image upload settings
+const categoryUpload =
+    multer({
+
+        storage:
+            categoryStorage,
+
+        limits: {
+
+            fileSize:
+                5 * 1024 * 1024
+
+        },
+
+        fileFilter:
+            function (
+                req,
+                file,
+                cb
+            ) {
+
+                const allowedTypes = [
+
+                    "image/jpeg",
+                    "image/png",
+                    "image/webp"
+
+                ];
+
+
+                if (
+                    !allowedTypes.includes(
+                        file.mimetype
+                    )
+                ) {
+
+                    return cb(
+                        new Error(
+                            "Only JPG, JPEG, PNG and WEBP images are allowed."
+                        )
+                    );
+
+                }
+
+
+                cb(
+                    null,
+                    true
+                );
+
+            }
+
+    });
+
+
+// =================================
+// CATEGORY IMAGE UPLOAD API
+// =================================
+
+app.post(
+
+    "/api/categories/upload-image",
+
+    requireAdminAuth,
+
+    categoryUpload.single("image"),
+
+    function (
+        req,
+        res
+    ) {
+
+        try {
+
+            if (!req.file) {
+
+                return res.status(400).json({
+
+                    success: false,
+
+                    message:
+                        "Please select a category image."
+
+                });
+
+            }
+
+
+            const imageUrl =
+                "https://guptagarments.waifly.com/uploads/categories/" +
+                req.file.filename;
+
+
+            console.log(
+                "✅ Category Image Uploaded:",
+                imageUrl
+            );
+
+
+            return res.json({
+
+                success: true,
+
+                message:
+                    "Category image uploaded successfully!",
+
+                image_url:
+                    imageUrl
+
+            });
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "❌ Category Image Upload Error:",
+                error
+            );
+
+
+            return res.status(500).json({
+
+                success: false,
+
+                message:
+                    "Failed to upload category image."
+
+            });
+
+        }
+
+    }
+
+);
 // ===============================
 // ADMIN AUTHENTICATION
 // ===============================
@@ -385,6 +878,97 @@ db.connect((err) => {
     }
 
     console.log("✅ MySQL connected successfully!");
+});
+
+// =============================================
+// CATEGORY SYSTEM - CREATE TABLE + DEFAULT DATA
+// =============================================
+
+const createCategoriesTable = `
+    CREATE TABLE IF NOT EXISTS categories (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(100) NOT NULL,
+        slug VARCHAR(100) NOT NULL UNIQUE,
+        image_url VARCHAR(500) DEFAULT NULL,
+        sort_order INT DEFAULT 0,
+        is_active TINYINT(1) DEFAULT 1,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            ON UPDATE CURRENT_TIMESTAMP
+    )
+`;
+
+db.query(createCategoriesTable, (err) => {
+
+    if (err) {
+        console.error(
+            "❌ Categories table creation failed:",
+            err.message
+        );
+        return;
+    }
+
+    console.log(
+        "✅ Categories table ready!"
+    );
+
+    // =============================================
+    // DEFAULT CATEGORIES
+    // =============================================
+
+    const defaultCategories = [
+        ["Jeans", "jeans", "images/categories/jeans.png", 1],
+        ["Shirts", "shirts", "images/categories/shirts.png", 2],
+        ["T-Shirts", "tshirts", "images/categories/tshirts.png", 3],
+        ["Lower", "lower", "images/categories/lower.png", 4],
+        ["Western Dress", "western-dress", "images/categories/western-dress.png", 5],
+        ["Nighty / Gown", "gown", "images/categories/nighty-gown.png", 6],
+        ["Jacket", "jacket", "images/categories/jacket.png", 7],
+        ["Cardigan", "cardigan", "images/categories/cardigan.png", 8],
+        ["Divider", "divider", "images/categories/divider.png", 9],
+        ["Jeans Top", "jeans-top", "images/categories/jeans-top.png", 10],
+
+        ["Women Nighty / Gown", "women-nighty-gown", null, 11],
+        ["Women Cardigan", "women-cardigan", null, 12],
+        ["Women Bra", "women-bra", null, 13],
+        ["Women Panty", "women-panty", null, 14],
+        ["Women Socks", "women-socks", null, 15],
+
+        ["Men Underwear", "men-underwear", null, 16],
+        ["Men Inner Wear", "men-inner-wear", null, 17],
+        ["Handkerchief", "men-handkerchief", null, 18],
+        ["Men Socks", "men-socks", null, 19],
+
+        ["Thermal Set", "thermal-set", null, 20],
+        ["Thermal Suit", "thermal-suit", null, 21],
+        ["Top & Bottom Combo", "top-bottom-combo", null, 22]
+    ];
+
+    const insertCategory = `
+        INSERT IGNORE INTO categories
+        (name, slug, image_url, sort_order)
+        VALUES (?, ?, ?, ?)
+    `;
+
+    defaultCategories.forEach(category => {
+
+        db.query(
+            insertCategory,
+            category,
+            (insertErr) => {
+
+                if (insertErr) {
+                    console.error(
+                        "❌ Category insert failed:",
+                        insertErr.message
+                    );
+                }
+
+            }
+        );
+
+    });
+
 });
 
 app.get("/", (req, res) => {
@@ -730,6 +1314,489 @@ app.put(
     });
 
 });
+// =============================================
+// CATEGORY API - GET ALL CATEGORIES
+// =============================================
+
+app.get(
+    "/api/categories",
+    requireAdminAuth,
+    (req, res) => {
+
+        const sql = `
+            SELECT
+                id,
+                name,
+                slug,
+                image_url,
+                sort_order,
+                is_active,
+                created_at,
+                updated_at
+            FROM categories
+            ORDER BY sort_order ASC, id ASC
+        `;
+
+        db.query(
+            sql,
+            (err, results) => {
+
+                if (err) {
+
+                    console.error(
+                        "❌ Failed to load categories:",
+                        err.message
+                    );
+
+                    return res.status(500).json({
+                        success: false,
+                        message:
+                            "Failed to load categories."
+                    });
+
+                }
+
+                res.json({
+                    success: true,
+                    categories: results
+                });
+
+            }
+        );
+
+    }
+);
+// =============================================
+// PUBLIC CATEGORY API - GET ACTIVE CATEGORIES
+// =============================================
+
+app.get(
+    "/api/public/categories",
+    (req, res) => {
+
+        const sql = `
+            SELECT
+                id,
+                name,
+                slug,
+                image_url,
+                sort_order
+            FROM categories
+            WHERE is_active = 1
+            ORDER BY sort_order ASC, id ASC
+        `;
+
+        db.query(
+            sql,
+            (err, results) => {
+
+                if (err) {
+
+                    console.error(
+                        "❌ Failed to load public categories:",
+                        err.message
+                    );
+
+                    return res.status(500).json({
+                        success: false,
+                        message:
+                            "Failed to load categories."
+                    });
+
+                }
+
+                res.json({
+                    success: true,
+                    categories: results
+                });
+
+            }
+        );
+
+    }
+);
+// =============================================
+// CATEGORY API - ADD NEW CATEGORY
+// =============================================
+
+app.post(
+    "/api/categories",
+    requireAdminAuth,
+    (req, res) => {
+
+        const {
+            name,
+            slug,
+            image_url,
+            sort_order
+        } = req.body;
+
+        // Basic validation
+        if (!name || !slug) {
+
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Category name and slug are required."
+            });
+
+        }
+
+        const sql = `
+            INSERT INTO categories
+            (
+                name,
+                slug,
+                image_url,
+                sort_order
+            )
+            VALUES (?, ?, ?, ?)
+        `;
+
+        const values = [
+            name.trim(),
+            slug.trim(),
+            image_url || null,
+            sort_order
+                ? Number(sort_order)
+                : 1
+        ];
+
+        db.query(
+            sql,
+            values,
+            (err, result) => {
+
+                if (err) {
+
+                    console.error(
+                        "❌ Category add failed:",
+                        err.message
+                    );
+
+                    // Duplicate slug
+                    if (
+                        err.code === "ER_DUP_ENTRY"
+                    ) {
+
+                        return res.status(409).json({
+                            success: false,
+                            message:
+                                "This category slug already exists."
+                        });
+
+                    }
+
+                    return res.status(500).json({
+                        success: false,
+                        message:
+                            "Failed to add category."
+                    });
+
+                }
+
+                console.log(
+                    "✅ Category added successfully:",
+                    result.insertId
+                );
+
+                res.status(201).json({
+
+                    success: true,
+
+                    message:
+                        "Category added successfully!",
+
+                    category_id:
+                        result.insertId
+
+                });
+
+            }
+        );
+
+    }
+);
+// =============================================
+// CATEGORY API - EDIT / UPDATE CATEGORY
+// =============================================
+
+app.put(
+    "/api/categories/:id",
+    requireAdminAuth,
+    (req, res) => {
+
+        const categoryId =
+            Number(req.params.id);
+
+        const {
+            name,
+            slug,
+            image_url,
+            sort_order
+        } = req.body;
+
+        if (
+            !categoryId ||
+            !name ||
+            !slug
+        ) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Category ID, name and slug are required."
+            });
+        }
+
+        const sql = `
+            UPDATE categories
+            SET
+                name = ?,
+                slug = ?,
+                image_url = ?,
+                sort_order = ?
+            WHERE id = ?
+        `;
+
+        const values = [
+            name.trim(),
+            slug.trim(),
+            image_url || null,
+            sort_order
+                ? Number(sort_order)
+                : 1,
+            categoryId
+        ];
+
+        db.query(
+            sql,
+            values,
+            (err, result) => {
+
+                if (err) {
+
+                    console.error(
+                        "❌ Category update failed:",
+                        err.message
+                    );
+
+                    if (
+                        err.code === "ER_DUP_ENTRY"
+                    ) {
+                        return res.status(409).json({
+                            success: false,
+                            message:
+                                "This category slug already exists."
+                        });
+                    }
+
+                    return res.status(500).json({
+                        success: false,
+                        message:
+                            "Failed to update category."
+                    });
+                }
+
+                if (
+                    result.affectedRows === 0
+                ) {
+                    return res.status(404).json({
+                        success: false,
+                        message:
+                            "Category not found."
+                    });
+                }
+
+                console.log(
+                    "✅ Category updated successfully:",
+                    categoryId
+                );
+
+                res.json({
+                    success: true,
+                    message:
+                        "Category updated successfully!"
+                });
+
+            }
+        );
+
+    }
+);
+
+
+// =============================================
+// CATEGORY API - DELETE CATEGORY
+// =============================================
+
+app.delete(
+    "/api/categories/:id",
+    requireAdminAuth,
+    (req, res) => {
+
+        const categoryId =
+            Number(req.params.id);
+
+        if (!categoryId) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Valid category ID is required."
+            });
+        }
+
+        const sql = `
+            DELETE FROM categories
+            WHERE id = ?
+        `;
+
+        db.query(
+            sql,
+            [categoryId],
+            (err, result) => {
+
+                if (err) {
+
+                    console.error(
+                        "❌ Category delete failed:",
+                        err.message
+                    );
+
+                    return res.status(500).json({
+                        success: false,
+                        message:
+                            "Failed to delete category."
+                    });
+                }
+
+                if (
+                    result.affectedRows === 0
+                ) {
+                    return res.status(404).json({
+                        success: false,
+                        message:
+                            "Category not found."
+                    });
+                }
+
+                console.log(
+                    "🗑️ Category deleted successfully:",
+                    categoryId
+                );
+
+                res.json({
+                    success: true,
+                    message:
+                        "Category deleted successfully!"
+                });
+
+            }
+        );
+
+    }
+);
+
+
+// =============================================
+// CATEGORY API - ACTIVE / INACTIVE
+// =============================================
+
+app.patch(
+    "/api/categories/:id/status",
+    requireAdminAuth,
+    (req, res) => {
+
+        const categoryId =
+            Number(req.params.id);
+
+        const {
+            is_active
+        } = req.body;
+
+        if (!categoryId) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Valid category ID is required."
+            });
+        }
+
+        if (
+            is_active !== 0 &&
+            is_active !== 1 &&
+            is_active !== true &&
+            is_active !== false
+        ) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "is_active must be 0 or 1."
+            });
+        }
+
+        const activeValue =
+            Number(is_active) === 1 ||
+            is_active === true
+                ? 1
+                : 0;
+
+        const sql = `
+            UPDATE categories
+            SET is_active = ?
+            WHERE id = ?
+        `;
+
+        db.query(
+            sql,
+            [
+                activeValue,
+                categoryId
+            ],
+            (err, result) => {
+
+                if (err) {
+
+                    console.error(
+                        "❌ Category status update failed:",
+                        err.message
+                    );
+
+                    return res.status(500).json({
+                        success: false,
+                        message:
+                            "Failed to update category status."
+                    });
+                }
+
+                if (
+                    result.affectedRows === 0
+                ) {
+                    return res.status(404).json({
+                        success: false,
+                        message:
+                            "Category not found."
+                    });
+                }
+
+                console.log(
+                    "✅ Category status updated:",
+                    categoryId,
+                    activeValue
+                );
+
+                res.json({
+                    success: true,
+                    message:
+                        activeValue === 1
+                            ? "Category activated successfully!"
+                            : "Category deactivated successfully!"
+                });
+
+            }
+        );
+
+    }
+);
 // ===============================
 // PRODUCT API - ADD NEW PRODUCT
 // ===============================
@@ -821,7 +1888,141 @@ app.post(
     });
 
 });
+// ======================================================
+// GET PRODUCT MULTIPLE IMAGES
+// ======================================================
 
+app.get(
+    "/api/products/:productId/images",
+    requireAdminAuth,
+    function (req, res) {
+
+        const productId =
+            Number(req.params.productId);
+
+
+        if (!productId) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message:
+                    "Invalid product ID."
+
+            });
+
+        }
+
+
+        const sql = `
+            SELECT
+                id,
+                product_id,
+                image_url,
+                sort_order
+            FROM product_images
+            WHERE product_id = ?
+            ORDER BY sort_order ASC, id ASC
+        `;
+
+
+        db.query(
+            sql,
+            [productId],
+            function (err, rows) {
+
+                if (err) {
+
+                    console.error(
+                        "❌ Product Images Fetch Error:",
+                        err
+                    );
+
+                    return res.status(500).json({
+
+                        success: false,
+
+                        message:
+                            "Failed to load product images."
+
+                    });
+
+                }
+
+
+                return res.json({
+
+                    success: true,
+
+                    images:
+                        rows || []
+
+                });
+
+            }
+        );
+
+    }
+);
+// ======================================================
+// PUBLIC - GET PRODUCT MULTIPLE IMAGES
+// ======================================================
+
+app.get(
+    "/api/products/:productId/public-images",
+    function (req, res) {
+
+        const productId =
+            Number(req.params.productId);
+
+        if (!productId) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Invalid product ID."
+            });
+        }
+
+        const sql = `
+            SELECT
+                id,
+                product_id,
+                image_url,
+                sort_order
+            FROM product_images
+            WHERE product_id = ?
+            ORDER BY sort_order ASC, id ASC
+        `;
+
+        db.query(
+            sql,
+            [productId],
+            function (err, rows) {
+
+                if (err) {
+
+                    console.error(
+                        "❌ Public Product Images Fetch Error:",
+                        err
+                    );
+
+                    return res.status(500).json({
+                        success: false,
+                        message:
+                            "Failed to load product images."
+                    });
+                }
+
+                return res.json({
+                    success: true,
+                    images:
+                        rows || []
+                });
+            }
+        );
+    }
+);
 // =====================================================
 // CUSTOMER PENDING SIGNUP
 // =====================================================

@@ -7858,3 +7858,2864 @@ MOBILE PHONE
         height: 36px !important;
     }
 }
+/* =====================================================
+   PRODUCT MULTIPLE IMAGE GALLERY
+   ===================================================== */
+
+.modal-product-thumbnails {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    margin-top: 12px;
+}
+
+.modal-product-thumbnail {
+    width: 68px;
+    height: 68px;
+    padding: 3px;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    background: #fff;
+    cursor: pointer;
+    overflow: hidden;
+    transition: 0.2s ease;
+}
+
+.modal-product-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+.modal-product-thumbnail:hover {
+    transform: translateY(-2px);
+}
+
+.modal-product-thumbnail.active {
+    border-color: #7b1e1e;
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+
+    .modal-product-thumbnails {
+        gap: 7px;
+        margin-top: 10px;
+    }
+
+    .modal-product-thumbnail {
+        width: 58px;
+        height: 58px;
+    }
+
+}
+/* =====================================================
+   PROFESSIONAL PRODUCT IMAGE GALLERY
+   ===================================================== */
+
+.modal-product-image {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* =====================================================
+   MAIN PRODUCT IMAGE
+   ===================================================== */
+
+.modal-product-image .modal-dummy-product {
+    position: relative;
+    width: 100%;
+    min-height: 390px;
+    max-height: 480px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #fff;
+    overflow: hidden;
+}
+
+
+/* Actual image */
+
+.modal-product-image
+.modal-dummy-product
+img {
+    width: 100%;
+    height: 100%;
+    max-height: 450px;
+
+    object-fit: contain;
+    display: block;
+}
+
+
+/* =====================================================
+   LEFT / RIGHT ARROWS
+   ===================================================== */
+
+.modal-gallery-arrow {
+    position: absolute;
+
+    top: 50%;
+    transform: translateY(-50%);
+
+    width: 42px;
+    height: 42px;
+
+    border: none;
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.95);
+
+    box-shadow:
+        0 3px 12px rgba(0, 0, 0, 0.18);
+
+    color: #7b1e1e;
+
+    font-size: 30px;
+    line-height: 1;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+
+    z-index: 20;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+/* Previous */
+
+.modal-gallery-prev {
+    left: 12px;
+}
+
+
+/* Next */
+
+.modal-gallery-next {
+    right: 12px;
+}
+
+
+/* Hover */
+
+.modal-gallery-arrow:hover {
+
+    background: #7b1e1e;
+
+    color: #fff;
+
+    transform:
+        translateY(-50%)
+        scale(1.08);
+
+    box-shadow:
+        0 5px 16px rgba(0, 0, 0, 0.25);
+
+}
+
+
+/* =====================================================
+   THUMBNAILS — BELOW MAIN IMAGE
+   ===================================================== */
+
+.modal-product-thumbnails {
+
+    order: 2;
+
+    width: 100%;
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 10px;
+
+    margin-top: 18px;
+
+    padding: 4px 10px 8px;
+
+}
+
+
+/* Thumbnail */
+
+.modal-product-thumbnail {
+
+    flex: 0 0 auto;
+
+    width: 68px;
+    height: 68px;
+
+    padding: 3px;
+
+    border: 2px solid transparent;
+
+    border-radius: 8px;
+
+    background: #fff;
+
+    cursor: pointer;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.10);
+
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+/* Thumbnail image */
+
+.modal-product-thumbnail img {
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
+
+    display: block;
+
+}
+
+
+/* Thumbnail hover */
+
+.modal-product-thumbnail:hover {
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 4px 12px rgba(0, 0, 0, 0.16);
+
+}
+
+
+/* Active thumbnail */
+
+.modal-product-thumbnail.active {
+
+    border-color: #7b1e1e;
+
+    box-shadow:
+        0 0 0 1px #7b1e1e;
+
+}
+
+
+/* =====================================================
+   MOBILE
+   ===================================================== */
+
+@media (max-width: 600px) {
+
+    .modal-product-image
+    .modal-dummy-product {
+
+        min-height: 280px;
+        max-height: 340px;
+
+    }
+
+
+    .modal-product-image
+    .modal-dummy-product
+    img {
+
+        max-height: 320px;
+
+    }
+
+
+    .modal-gallery-arrow {
+
+        width: 36px;
+        height: 36px;
+
+        font-size: 25px;
+
+    }
+
+
+    .modal-gallery-prev {
+
+        left: 7px;
+
+    }
+
+
+    .modal-gallery-next {
+
+        right: 7px;
+
+    }
+
+
+    .modal-product-thumbnails {
+
+        gap: 7px;
+
+        margin-top: 12px;
+
+        padding-left: 5px;
+        padding-right: 5px;
+
+    }
+
+
+    .modal-product-thumbnail {
+
+        width: 56px;
+        height: 56px;
+
+    }
+
+}
+/* =========================================
+   GUPTA GARMENTS - HERO KIDS 3D DISPLAY
+========================================= */
+
+.hero-container {
+    position: relative;
+    overflow: hidden;
+}
+
+/* Right side kids area */
+.hero-kids {
+    position: relative;
+    flex: 0 0 58%;
+    width: 58%;
+    height: 100%;
+    min-height: 420px;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+
+    overflow: hidden;
+
+    perspective: 1200px;
+}
+
+/* Main kids image */
+.hero-kids-image {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    max-width: none;
+    max-height: none;
+
+    object-fit: cover;
+    object-position: center center;
+
+    margin: 0;
+    padding: 0;
+
+    transform-origin: center bottom;
+
+    /* 3D starting position */
+    transform:
+        perspective(1200px)
+        rotateY(-2deg)
+        translateZ(0);
+
+    /* Soft floating animation */
+    animation: heroKids3DFloat 5s ease-in-out infinite;
+
+    will-change: transform;
+
+    /* Keep image inside hero box */
+    overflow: hidden;
+}
+
+/* =========================================
+   3D FLOATING ANIMATION
+========================================= */
+
+@keyframes heroKids3DFloat {
+
+    0% {
+        transform:
+            perspective(1200px)
+            rotateY(-2deg)
+            translateY(0)
+            translateZ(0)
+            scale(1);
+    }
+
+    50% {
+        transform:
+            perspective(1200px)
+            rotateY(1deg)
+            translateY(-6px)
+            translateZ(12px)
+            scale(1.015);
+    }
+
+    100% {
+        transform:
+            perspective(1200px)
+            rotateY(-2deg)
+            translateY(0)
+            translateZ(0)
+            scale(1);
+    }
+
+}
+
+
+/* =========================================
+   SUBTLE 3D HOVER EFFECT
+========================================= */
+
+.hero-kids:hover .hero-kids-image {
+
+    transform:
+        perspective(1200px)
+        rotateY(-4deg)
+        rotateX(1deg)
+        translateZ(18px)
+        scale(1.025);
+
+    transition:
+        transform 0.5s ease;
+}
+
+
+/* =========================================
+   DESKTOP - KEEP IMAGE TO RIGHT EDGE
+========================================= */
+
+@media (min-width: 992px) {
+
+    .hero-kids {
+        margin-right: -45px;
+        padding-right: 0;
+
+        width: calc(58% + 45px);
+        flex-basis: calc(58% + 45px);
+
+        justify-content: flex-end;
+    }
+
+    .hero-kids-image {
+        object-position: center center;
+        transform-origin: right center;
+    }
+
+}
+
+/* =========================================
+   TABLET
+========================================= */
+
+@media (max-width: 991px) {
+
+    .hero-kids {
+        flex: 0 0 52%;
+        width: 52%;
+        min-height: 350px;
+    }
+
+    .hero-kids-image {
+        object-position: center center;
+    }
+
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 768px) {
+
+    .hero-kids {
+        width: 100%;
+        flex: 0 0 100%;
+        min-height: 300px;
+
+        margin-top: 20px;
+    }
+
+    .hero-kids-image {
+        width: 100%;
+        height: 100%;
+
+        object-fit: cover;
+        object-position: center center;
+    }
+
+}
+
+
+/* =========================================
+   SMALL MOBILE
+========================================= */
+
+@media (max-width: 480px) {
+
+    .hero-kids {
+        min-height: 250px;
+    }
+
+}
+/* =========================================
+   HERO FINAL DESKTOP LAYOUT
+========================================= */
+
+@media (min-width: 901px) {
+
+    /* Full width hero layout */
+    .hero-container {
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        padding: 0;
+
+        display: flex;
+        align-items: center;
+    }
+
+    /* LEFT SIDE */
+    .hero-content {
+        width: 42%;
+        flex: 0 0 42%;
+
+        padding-left: 5%;
+        padding-right: 20px;
+
+        box-sizing: border-box;
+        min-width: 0;
+    }
+
+    /* Gupta Garments - single line */
+    .hero-content h1 {
+        white-space: nowrap;
+        font-size: clamp(40px, 4vw, 55px);
+        line-height: 1;
+    }
+
+    /* RIGHT SIDE */
+    .hero-kids {
+        width: 58%;
+        flex: 0 0 58%;
+
+        height: 350px;
+
+        margin: 0;
+        padding: 0;
+
+        display: flex;
+        align-items: flex-end;
+        justify-content: flex-end;
+
+        overflow: hidden;
+    }
+
+    /* Image touches extreme right */
+    .hero-kids-image {
+        width: 100%;
+        height: 100%;
+
+        max-width: none;
+        max-height: none;
+
+        object-fit: cover;
+        object-position: center center;
+
+        margin: 0;
+        padding: 0;
+    }
+}
+/* =========================================================
+   PREMIUM CATEGORY + PRODUCT DESIGN
+   Gupta Garments
+   ========================================================= */
+
+
+/* =========================================================
+   CATEGORY SECTION
+   ========================================================= */
+
+.categories-section {
+    position: relative;
+    padding: 18px 0 28px;
+    overflow: hidden;
+}
+
+.category-container {
+    display: grid;
+    grid-template-columns: repeat(10, minmax(110px, 1fr));
+    gap: 12px;
+    align-items: stretch;
+}
+
+
+/* CATEGORY CARD */
+
+.category-card {
+    position: relative;
+    min-height: 155px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 10px 8px 12px;
+
+    background: linear-gradient(
+        145deg,
+        #ffffff 0%,
+        #f8fbff 100%
+    );
+
+    border: 1px solid rgba(35, 95, 160, 0.12);
+    border-radius: 16px;
+
+    text-decoration: none;
+
+    box-shadow:
+        0 5px 14px rgba(20, 50, 90, 0.07),
+        inset 0 1px 0 rgba(255,255,255,0.9);
+
+    overflow: hidden;
+
+    transform:
+        translateY(0)
+        perspective(900px);
+
+    transform-style: preserve-3d;
+
+    transition:
+        transform 0.35s cubic-bezier(.2,.8,.2,1),
+        box-shadow 0.35s ease,
+        border-color 0.35s ease;
+}
+
+
+/* LIGHT GLOW */
+
+.category-card::before {
+    content: "";
+    position: absolute;
+
+    width: 100px;
+    height: 100px;
+
+    top: -45px;
+    right: -35px;
+
+    background: rgba(255, 210, 225, 0.45);
+
+    border-radius: 50%;
+
+    filter: blur(4px);
+
+    transition:
+        transform 0.4s ease,
+        opacity 0.4s ease;
+}
+
+
+/* HOVER */
+
+.category-card:hover {
+    transform:
+        translateY(-8px)
+        perspective(900px)
+        rotateX(3deg);
+
+    border-color: rgba(20, 91, 160, 0.25);
+
+    box-shadow:
+        0 18px 35px rgba(20, 50, 90, 0.15),
+        0 6px 12px rgba(20, 50, 90, 0.08);
+}
+
+.category-card:hover::before {
+    transform: scale(1.4);
+}
+
+
+/* CATEGORY IMAGE AREA */
+
+.category-image {
+    width: 100%;
+    height: 112px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    position: relative;
+
+    z-index: 1;
+
+    perspective: 800px;
+}
+
+
+/* CATEGORY IMAGE */
+
+.category-image img {
+    width: 100%;
+    height: 105px;
+
+    object-fit: contain;
+
+    display: block;
+
+    transform:
+        translateZ(0)
+        scale(0.92);
+
+    transition:
+        transform 0.45s cubic-bezier(.2,.8,.2,1),
+        filter 0.45s ease;
+}
+
+
+/* IMAGE HOVER 3D */
+
+.category-card:hover .category-image img {
+    transform:
+        translateZ(28px)
+        scale(1.08)
+        rotate(-2deg);
+
+    filter:
+        drop-shadow(0 10px 10px rgba(0,0,0,0.18));
+}
+
+
+/* CATEGORY NAME */
+
+.category-card span {
+    position: relative;
+
+    z-index: 3;
+
+    color: #102f59;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    text-align: center;
+
+    transition:
+        transform 0.3s ease,
+        color 0.3s ease;
+}
+
+.category-card:hover span {
+    transform: translateY(-2px);
+    color: #d4145a;
+}
+
+
+/* =========================================================
+   NEW ARRIVALS
+   ========================================================= */
+
+.products-section {
+    position: relative;
+    padding: 12px 0 40px;
+}
+
+
+/* PRODUCT GRID */
+
+.products-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(5, minmax(0, 1fr));
+
+    gap: 18px;
+
+    align-items: stretch;
+}
+
+
+/* =========================================================
+   PRODUCT CARD
+   ========================================================= */
+
+.product-card {
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+
+    background:
+        linear-gradient(
+            145deg,
+            #ffffff 0%,
+            #f9fbff 100%
+        );
+
+    border: 1px solid rgba(30, 80, 140, 0.12);
+
+    border-radius: 16px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 5px 15px rgba(15, 45, 80, 0.08),
+        inset 0 1px 0 rgba(255,255,255,0.95);
+
+    transform:
+        translateY(0)
+        perspective(1000px);
+
+    transform-style: preserve-3d;
+
+    transition:
+        transform 0.4s cubic-bezier(.2,.8,.2,1),
+        box-shadow 0.4s ease,
+        border-color 0.3s ease;
+}
+
+
+/* CARD HOVER */
+
+.product-card:hover {
+    transform:
+        translateY(-9px)
+        perspective(1000px)
+        rotateX(1.5deg);
+
+    border-color: rgba(25, 90, 160, 0.22);
+
+    box-shadow:
+        0 22px 40px rgba(20, 55, 95, 0.15),
+        0 7px 15px rgba(20, 55, 95, 0.08);
+}
+
+
+/* =========================================================
+   PRODUCT IMAGE AREA
+   ========================================================= */
+
+.product-image {
+    position: relative;
+
+    width: 100%;
+    height: 210px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 12px;
+
+    background:
+        radial-gradient(
+            circle at 50% 35%,
+            #ffffff 0%,
+            #f7faff 55%,
+            #edf4fb 100%
+        );
+
+    overflow: hidden;
+
+    perspective: 900px;
+}
+
+
+/* SOFT LIGHT BEHIND PRODUCT */
+
+.product-image::before {
+    content: "";
+
+    position: absolute;
+
+    width: 135px;
+    height: 135px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(210, 230, 250, 0.55),
+            rgba(255,255,255,0)
+        );
+
+    top: 25px;
+    left: 50%;
+
+    transform:
+        translateX(-50%);
+
+    pointer-events: none;
+}
+
+
+/* PRODUCT IMAGE */
+
+.product-photo {
+    position: relative;
+
+    z-index: 2;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
+
+    display: block;
+
+    transform:
+        translateZ(0)
+        scale(0.92);
+
+    transition:
+        transform 0.45s cubic-bezier(.2,.8,.2,1),
+        filter 0.45s ease;
+}
+
+
+/* PRODUCT 3D HOVER */
+
+.product-card:hover .product-photo {
+    transform:
+        translateZ(35px)
+        scale(1.06)
+        rotate(-1.5deg);
+
+    filter:
+        drop-shadow(0 13px 13px rgba(0,0,0,0.18));
+}
+
+
+/* =========================================================
+   PRODUCT BADGES
+   ========================================================= */
+
+.product-badge {
+    position: absolute;
+
+    top: 10px;
+    left: 10px;
+
+    z-index: 5;
+
+    padding: 5px 8px;
+
+    border-radius: 7px;
+
+    font-size: 9px;
+    font-weight: 800;
+
+    line-height: 1;
+
+    box-shadow:
+        0 3px 7px rgba(0,0,0,0.12);
+}
+
+
+/* NEW */
+
+.product-badge.new {
+    background: #d9145b;
+    color: #ffffff;
+}
+
+
+/* BEST SELLER */
+
+.product-badge.bestseller {
+    background: #f5b400;
+    color: #16233d;
+}
+
+
+/* =========================================================
+   PRODUCT INFORMATION
+   ========================================================= */
+
+.product-info {
+    position: relative;
+
+    z-index: 4;
+
+    padding: 12px 12px 13px;
+
+    background: #ffffff;
+
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+}
+
+
+/* PRODUCT TITLE */
+
+.product-info h3 {
+    margin: 0 0 5px;
+
+    color: #12345d;
+
+    font-size: 14px;
+    font-weight: 750;
+
+    line-height: 1.25;
+
+    min-height: 35px;
+}
+
+
+/* PRICE */
+
+.product-info .price {
+    color: #123f78;
+
+    font-size: 16px;
+    font-weight: 800;
+
+    margin-bottom: 4px;
+}
+
+
+/* SIZES */
+
+.product-info > p {
+    margin: 0 0 10px;
+
+    color: #6b7788;
+
+    font-size: 10px;
+
+    line-height: 1.4;
+}
+
+
+/* =========================================================
+   VIEW DETAILS BUTTON
+   ========================================================= */
+
+.view-details-btn {
+    width: 100%;
+
+    border: none;
+    border-radius: 7px;
+
+    padding: 8px 9px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #1167b1,
+            #0d4d8d
+        );
+
+    color: #ffffff;
+
+    font-size: 10px;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 4px 9px rgba(15, 80, 145, 0.2);
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        filter 0.25s ease;
+}
+
+
+.view-details-btn:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 7px 14px rgba(15, 80, 145, 0.28);
+
+    filter: brightness(1.06);
+}
+
+
+/* =========================================================
+   WHATSAPP BUTTON
+   ========================================================= */
+
+.product-whatsapp {
+    width: 100%;
+
+    margin-top: 7px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+
+    padding: 8px 9px;
+
+    border-radius: 7px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #19c56b,
+            #08a955
+        );
+
+    color: #ffffff !important;
+
+    text-decoration: none;
+
+    font-size: 10px;
+    font-weight: 800;
+
+    box-shadow:
+        0 4px 9px rgba(0, 170, 85, 0.18);
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+
+.product-whatsapp:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 7px 14px rgba(0, 170, 85, 0.28);
+}
+
+
+/* =========================================================
+   PRODUCT IMAGE FLOATING ANIMATION
+   ========================================================= */
+
+@keyframes productFloat {
+    0% {
+        transform:
+            translateY(0)
+            scale(1);
+    }
+
+    50% {
+        transform:
+            translateY(-3px)
+            scale(1.01);
+    }
+
+    100% {
+        transform:
+            translateY(0)
+            scale(1);
+    }
+}
+
+
+/* only when NOT hovering */
+
+.product-card:not(:hover) .product-photo {
+    animation:
+        productFloat 4s ease-in-out infinite;
+}
+
+
+/* =========================================================
+   CATEGORY IMAGE FLOAT
+   ========================================================= */
+
+@keyframes categoryFloat {
+    0% {
+        transform:
+            translateY(0)
+            scale(0.92);
+    }
+
+    50% {
+        transform:
+            translateY(-3px)
+            scale(0.95);
+    }
+
+    100% {
+        transform:
+            translateY(0)
+            scale(0.92);
+    }
+}
+
+
+.category-card:not(:hover) .category-image img {
+    animation:
+        categoryFloat 4.5s ease-in-out infinite;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1200px) {
+
+    .category-container {
+        grid-template-columns:
+            repeat(5, minmax(0, 1fr));
+    }
+
+    .products-grid {
+        grid-template-columns:
+            repeat(4, minmax(0, 1fr));
+    }
+}
+
+
+@media (max-width: 900px) {
+
+    .category-container {
+        grid-template-columns:
+            repeat(4, minmax(0, 1fr));
+    }
+
+    .products-grid {
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+    }
+}
+
+
+@media (max-width: 600px) {
+
+    .category-container {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .products-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .category-card {
+        min-height: 140px;
+    }
+
+    .category-image {
+        height: 95px;
+    }
+
+    .product-image {
+        height: 170px;
+    }
+
+    .product-info h3 {
+        font-size: 12px;
+    }
+
+    .product-info .price {
+        font-size: 14px;
+    }
+}
+/* =========================================================
+   CATEGORY SECTION - MODERN STORE DESIGN
+   ========================================================= */
+
+.categories-section {
+    width: 100%;
+    padding: 22px 3.2% 30px;
+    background: #ffffff;
+}
+
+.category-container {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(10, minmax(0, 1fr));
+    gap: 16px;
+}
+
+/* CATEGORY CARD */
+
+.category-card {
+    position: relative;
+    min-width: 0;
+    height: 150px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 10px 8px 13px;
+
+    background: linear-gradient(
+        145deg,
+        #ffffff,
+        #f7fbff
+    );
+
+    border: 1px solid #e4edf7;
+    border-radius: 16px;
+
+    text-decoration: none;
+    overflow: hidden;
+
+    box-shadow:
+        0 5px 15px rgba(25, 72, 120, 0.07);
+
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease,
+        border-color 0.3s ease;
+}
+
+/* soft decorative glow */
+
+.category-card::before {
+    content: "";
+    position: absolute;
+
+    width: 90px;
+    height: 90px;
+
+    top: -30px;
+    right: -25px;
+
+    background: rgba(255, 182, 210, 0.28);
+
+    border-radius: 50%;
+
+    pointer-events: none;
+}
+
+/* IMAGE AREA */
+
+.category-image {
+    width: 100%;
+    height: 105px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    position: relative;
+    z-index: 1;
+
+    overflow: hidden;
+
+    border-radius: 12px;
+}
+
+/* ACTUAL CATEGORY IMAGE */
+
+.category-image img {
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    object-fit: contain;
+
+    transition:
+        transform 0.35s ease;
+}
+
+/* CATEGORY NAME */
+
+.category-card span {
+    position: relative;
+    z-index: 2;
+
+    width: 100%;
+
+    text-align: center;
+
+    color: #102f5d;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    line-height: 1.2;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* HOVER */
+
+.category-card:hover {
+    transform: translateY(-7px);
+
+    border-color: #d8e7f7;
+
+    box-shadow:
+        0 14px 28px rgba(20, 65, 110, 0.14);
+}
+
+.category-card:hover .category-image img {
+    transform: scale(1.08);
+}
+
+
+/* =========================================================
+   RESPONSIVE CATEGORY
+   ========================================================= */
+
+@media (max-width: 1200px) {
+
+    .category-container {
+        grid-template-columns: repeat(5, 1fr);
+    }
+
+}
+
+@media (max-width: 768px) {
+
+    .categories-section {
+        padding: 18px 16px 25px;
+    }
+
+    .category-container {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+    }
+
+    .category-card {
+        height: 135px;
+    }
+
+    .category-image {
+        height: 90px;
+    }
+
+    .category-card span {
+        font-size: 13px;
+    }
+
+}
+
+@media (max-width: 480px) {
+
+    .category-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+/* =========================================================
+   BOYS & GIRLS COLLECTION SECTIONS
+   ========================================================= */
+
+.collection-section {
+    width: 100%;
+    min-height: 430px;
+    display: flex;
+    align-items: stretch;
+    overflow: hidden;
+}
+
+/* TEXT SIDE */
+
+.collection-content {
+    width: 50%;
+    flex: 0 0 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 55px 6%;
+}
+
+/* IMAGE SIDE */
+
+.collection-visual {
+    width: 50%;
+    flex: 0 0 50%;
+    min-height: 430px;
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    overflow: hidden;
+    padding: 0;
+}
+
+.collection-kid-image {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    object-position: center;
+    margin: 0;
+    padding: 0;
+}
+
+/* BOYS */
+
+#boys .collection-content {
+    background: #fff5f7;
+}
+
+#boys .collection-visual {
+    background: #e8f5ff;
+}
+
+/* GIRLS */
+
+#girls .collection-content {
+    background: #fff5f8;
+}
+
+#girls .collection-visual {
+    background: #ffeaf3;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    .collection-section {
+        min-height: auto;
+        flex-direction: column;
+    }
+
+    .collection-content {
+        width: 100%;
+        flex: 0 0 100%;
+        padding: 40px 8%;
+        order: 1;
+    }
+
+    .collection-visual {
+        width: 100%;
+        flex: 0 0 100%;
+        min-height: 300px;
+        height: 300px;
+        order: 2;
+    }
+
+    /* Girls image should come first on mobile */
+
+    #girls .collection-visual {
+        order: 1;
+    }
+
+    #girls .collection-content {
+        order: 2;
+    }
+
+    .collection-kid-image {
+        object-fit: cover;
+    }
+
+}
+/* =========================================================
+   PREMIUM 3D COLLECTION EFFECTS
+   BOYS + GIRLS DIFFERENT ANIMATIONS
+   ========================================================= */
+
+
+/* =========================================================
+   COMMON SETUP
+   ========================================================= */
+
+.collection-visual {
+    position: relative;
+    overflow: hidden;
+    perspective: 1200px;
+    isolation: isolate;
+}
+
+.collection-kid-image {
+    position: relative;
+    z-index: 3;
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    transform-origin: center center;
+    will-change: transform;
+}
+
+
+/* =========================================================
+   BOYS COLLECTION
+   BLUE 3D ZOOM + LIFT EFFECT
+   ========================================================= */
+
+#boys .collection-visual {
+    perspective: 1200px;
+}
+
+/* Blue premium glow */
+
+#boys .collection-visual::before {
+    content: "";
+    position: absolute;
+    width: 260px;
+    height: 260px;
+    border-radius: 50%;
+    background: rgba(70, 150, 255, 0.22);
+    filter: blur(45px);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.7);
+    opacity: 0.45;
+    z-index: 1;
+    transition:
+        transform 0.8s ease,
+        opacity 0.8s ease;
+}
+
+/* Boys image normal */
+
+#boys .collection-kid-image {
+    transform:
+        perspective(1200px)
+        rotateY(0deg)
+        rotateX(0deg)
+        scale(1)
+        translateZ(0);
+
+    transition:
+        transform 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+        filter 0.7s ease;
+}
+
+/* BOYS HOVER */
+
+#boys .collection-visual:hover .collection-kid-image {
+    transform:
+        perspective(1200px)
+        rotateY(-5deg)
+        rotateX(2deg)
+        scale(1.08)
+        translateY(-8px)
+        translateZ(25px);
+
+    filter:
+        saturate(1.12)
+        contrast(1.04)
+        brightness(1.03);
+}
+
+#boys .collection-visual:hover::before {
+    transform:
+        translate(-50%, -50%)
+        scale(1.35);
+
+    opacity: 0.85;
+}
+
+
+/* =========================================================
+   BOYS FLOATING ANIMATION
+   ========================================================= */
+
+@keyframes boysPremiumFloat {
+
+    0% {
+        transform:
+            perspective(1200px)
+            rotateY(0deg)
+            translateY(0);
+    }
+
+    50% {
+        transform:
+            perspective(1200px)
+            rotateY(-1.5deg)
+            translateY(-7px);
+    }
+
+    100% {
+        transform:
+            perspective(1200px)
+            rotateY(0deg)
+            translateY(0);
+    }
+
+}
+
+#boys .collection-kid-image {
+    animation:
+        boysPremiumFloat 5s ease-in-out infinite;
+}
+
+#boys .collection-visual:hover .collection-kid-image {
+    animation-play-state: paused;
+}
+
+
+/* =========================================================
+   GIRLS COLLECTION
+   PINK 3D ROTATE + FLOAT EFFECT
+   ========================================================= */
+
+#girls .collection-visual {
+    perspective: 1200px;
+}
+
+/* Pink premium glow */
+
+#girls .collection-visual::before {
+    content: "";
+    position: absolute;
+    width: 270px;
+    height: 270px;
+    border-radius: 50%;
+    background: rgba(255, 105, 180, 0.20);
+    filter: blur(48px);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.7);
+    opacity: 0.45;
+    z-index: 1;
+    transition:
+        transform 0.9s ease,
+        opacity 0.9s ease;
+}
+
+/* Girls image normal */
+
+#girls .collection-kid-image {
+    transform:
+        perspective(1200px)
+        rotateY(0deg)
+        rotateX(0deg)
+        scale(1)
+        translateZ(0);
+
+    transition:
+        transform 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+        filter 0.7s ease;
+}
+
+/* GIRLS HOVER */
+
+#girls .collection-visual:hover .collection-kid-image {
+    transform:
+        perspective(1200px)
+        rotateY(5deg)
+        rotateX(-2deg)
+        scale(1.08)
+        translateY(-10px)
+        translateZ(30px);
+
+    filter:
+        saturate(1.12)
+        contrast(1.03)
+        brightness(1.04);
+}
+
+#girls .collection-visual:hover::before {
+    transform:
+        translate(-50%, -50%)
+        scale(1.4);
+
+    opacity: 0.85;
+}
+
+
+/* =========================================================
+   GIRLS FLOATING ANIMATION
+   ========================================================= */
+
+@keyframes girlsPremiumFloat {
+
+    0% {
+        transform:
+            perspective(1200px)
+            rotateY(0deg)
+            translateY(0)
+            rotateZ(0deg);
+    }
+
+    50% {
+        transform:
+            perspective(1200px)
+            rotateY(1.5deg)
+            translateY(-8px)
+            rotateZ(0.3deg);
+    }
+
+    100% {
+        transform:
+            perspective(1200px)
+            rotateY(0deg)
+            translateY(0)
+            rotateZ(0deg);
+    }
+
+}
+
+#girls .collection-kid-image {
+    animation:
+        girlsPremiumFloat 5.5s ease-in-out infinite;
+}
+
+#girls .collection-visual:hover .collection-kid-image {
+    animation-play-state: paused;
+}
+
+
+/* =========================================================
+   SHINE EFFECT ON HOVER
+   ========================================================= */
+
+#boys .collection-visual::after,
+#girls .collection-visual::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 55%;
+    height: 100%;
+    z-index: 4;
+    pointer-events: none;
+
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,0.28),
+        transparent
+    );
+
+    transform: skewX(-18deg);
+}
+
+
+/* Boys shine */
+
+#boys .collection-visual:hover::after {
+    animation: boysImageShine 0.9s ease;
+}
+
+
+/* Girls shine */
+
+#girls .collection-visual:hover::after {
+    animation: girlsImageShine 1s ease;
+}
+
+
+@keyframes boysImageShine {
+
+    from {
+        left: -120%;
+    }
+
+    to {
+        left: 150%;
+    }
+
+}
+
+
+@keyframes girlsImageShine {
+
+    from {
+        left: -120%;
+    }
+
+    to {
+        left: 150%;
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    #boys .collection-kid-image,
+    #girls .collection-kid-image {
+        animation: none;
+        transition: transform 0.6s ease;
+    }
+
+    #boys .collection-visual:hover .collection-kid-image {
+        transform:
+            scale(1.04)
+            translateY(-3px);
+    }
+
+    #girls .collection-visual:hover .collection-kid-image {
+        transform:
+            scale(1.04)
+            translateY(-3px);
+    }
+
+}
+/* =========================================================
+   GUpta GARMENTS - REFERENCE STYLE HEADER
+   STEP 1
+   DESKTOP + TABLET + MOBILE
+   ========================================================= */
+
+
+/* =========================================================
+   DESKTOP HEADER
+   ========================================================= */
+
+@media (min-width: 901px) {
+
+    /* Hide old maroon information bar */
+    .top-bar {
+        display: none;
+    }
+
+    /* Clean white reference-style navbar */
+    .navbar {
+        background: #ffffff;
+        border-bottom: none;
+        box-shadow: 0 3px 18px rgba(16, 42, 78, 0.06);
+        position: relative;
+        top: auto;
+    }
+
+    .nav-container {
+        width: min(94%, 1540px);
+        min-height: 88px;
+        margin: 0 auto;
+        padding: 0 12px;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 28px;
+    }
+
+
+    /* ================= LOGO ================= */
+
+    .logo {
+        width: 220px;
+        flex: 0 0 220px;
+    }
+
+    .logo-main {
+        font-size: 40px;
+        line-height: 36px;
+        letter-spacing: 1px;
+        font-weight: 800;
+    }
+
+    .logo-sub {
+        font-size: 18px;
+        line-height: 21px;
+        letter-spacing: 2.5px;
+    }
+
+    .logo-line {
+        width: 48px;
+        height: 2px;
+        margin-top: 5px;
+    }
+
+    .logo-tagline {
+        font-size: 13px;
+        margin-top: 4px;
+    }
+
+
+    /* ================= NAVIGATION ================= */
+
+    .nav-menu {
+        flex: 1;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        gap: clamp(14px, 1.8vw, 30px);
+    }
+
+    .nav-menu > a,
+    .dropdown > a {
+        font-size: 12px;
+        font-weight: 700;
+
+        padding: 34px 0 31px;
+
+        color: #102a4e;
+    }
+
+    .nav-menu > a:hover,
+    .dropdown > a:hover {
+        color: var(--maroon);
+    }
+
+    .nav-menu > a.active {
+        color: var(--maroon);
+    }
+
+    .nav-menu > a.active::after {
+        bottom: 22px;
+        width: 100%;
+        height: 3px;
+        background: var(--maroon);
+        border-radius: 10px;
+    }
+
+
+    /* ================= WHATSAPP ================= */
+
+    .nav-whatsapp {
+        flex: 0 0 auto;
+
+        min-width: 205px;
+        min-height: 48px;
+
+        padding: 0 20px;
+
+        border-radius: 28px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        gap: 8px;
+
+        font-size: 11px;
+        font-weight: 800;
+
+        box-shadow: 0 7px 20px rgba(24, 168, 76, 0.16);
+
+        transition:
+            transform 0.3s ease,
+            box-shadow 0.3s ease;
+    }
+
+    .nav-whatsapp:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 26px rgba(24, 168, 76, 0.24);
+    }
+
+}
+
+
+/* =========================================================
+   TABLET
+   601px - 900px
+   ========================================================= */
+
+@media (min-width: 601px) and (max-width: 900px) {
+
+    .top-bar {
+        display: none;
+    }
+
+    .navbar {
+        background: #ffffff;
+        border-bottom: 1px solid #eeeeee;
+        box-shadow: 0 3px 15px rgba(16, 42, 78, 0.06);
+    }
+
+    .nav-container {
+        width: 94%;
+        min-height: 78px;
+        gap: 12px;
+    }
+
+    .logo {
+        width: 175px;
+    }
+
+    .logo-main {
+        font-size: 31px;
+        line-height: 29px;
+    }
+
+    .logo-sub {
+        font-size: 14px;
+        line-height: 17px;
+    }
+
+    .logo-tagline {
+        font-size: 10px;
+    }
+
+    .nav-menu {
+        display: none;
+    }
+
+    .nav-whatsapp {
+        margin-left: auto;
+
+        min-width: 0;
+        min-height: 43px;
+
+        padding: 0 16px;
+
+        border-radius: 25px;
+
+        font-size: 10px;
+    }
+
+    .mobile-menu-btn {
+        display: block;
+        font-size: 23px;
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   600px AND BELOW
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .top-bar {
+        display: none;
+    }
+
+    .navbar {
+        background: #ffffff;
+        border-bottom: 1px solid #eeeeee;
+        box-shadow: 0 3px 14px rgba(16, 42, 78, 0.06);
+    }
+
+    .nav-container {
+        width: 94%;
+        min-height: 70px;
+
+        gap: 8px;
+    }
+
+    .logo {
+        width: 145px;
+    }
+
+    .logo-main {
+        font-size: 27px;
+        line-height: 25px;
+    }
+
+    .logo-sub {
+        font-size: 12px;
+        line-height: 15px;
+        letter-spacing: 1.8px;
+    }
+
+    .logo-line {
+        width: 38px;
+        margin-top: 3px;
+    }
+
+    .logo-tagline {
+        font-size: 9px;
+        margin-top: 2px;
+    }
+
+    .nav-menu {
+        display: none;
+    }
+
+    .nav-whatsapp {
+        margin-left: auto;
+
+        min-width: 42px;
+        width: 42px;
+        height: 42px;
+
+        padding: 0;
+
+        border-radius: 50%;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .nav-whatsapp span {
+        display: none;
+    }
+
+    .nav-whatsapp i {
+        font-size: 19px;
+        margin: 0;
+    }
+
+    .mobile-menu-btn {
+        display: block;
+        font-size: 21px;
+    }
+
+}
+
+
+/* =========================================================
+   VERY SMALL MOBILE
+   400px AND BELOW
+   ========================================================= */
+
+@media (max-width: 400px) {
+
+    .nav-container {
+        width: 95%;
+        gap: 5px;
+    }
+
+    .logo {
+        width: 132px;
+    }
+
+    .logo-main {
+        font-size: 25px;
+    }
+
+    .logo-sub {
+        font-size: 11px;
+    }
+
+    .logo-tagline {
+        font-size: 8px;
+    }
+
+    .nav-whatsapp {
+        width: 39px;
+        min-width: 39px;
+        height: 39px;
+    }
+
+    .nav-whatsapp i {
+        font-size: 17px;
+    }
+
+    .mobile-menu-btn {
+        font-size: 20px;
+    }
+
+}
+/* =========================================================
+   HERO TEXT - ONLY COLOR & WEIGHT
+   NO LAYOUT / SIZE CHANGE
+   ========================================================= */
+
+.hero-content h1 {
+    color: #102f5b !important;
+    font-weight: 800 !important;
+}
+
+.hero-content p {
+    color: #243b5a !important;
+    font-weight: 500 !important;
+}
+/* =========================================================
+   HEADER CUSTOMER ACCOUNT — PROPER SPACE FIX
+   ========================================================= */
+
+@media (min-width: 1201px) {
+
+    .nav-container {
+        gap: 12px;
+    }
+
+    .nav-menu {
+        flex: 1;
+        min-width: 0;
+        gap: 14px;
+    }
+
+    .nav-menu > a,
+    .dropdown > a {
+        white-space: nowrap;
+    }
+
+    .customer-account-wrapper {
+        flex: 0 0 auto;
+        width: 190px;
+        margin: 0;
+        position: relative;
+        z-index: 20;
+    }
+
+    .customer-account-btn {
+        width: 190px;
+        min-width: 190px;
+        max-width: 190px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+
+        white-space: nowrap;
+        overflow: hidden;
+    }
+
+    #customerAccountText {
+        display: block;
+        max-width: 145px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .customer-account-arrow {
+        flex-shrink: 0;
+    }
+
+    .nav-whatsapp {
+        flex: 0 0 auto;
+    }
+}
+
+
+/* =========================================================
+   1001px – 1200px
+   ========================================================= */
+
+@media (min-width: 1001px) and (max-width: 1200px) {
+
+    .nav-menu {
+        gap: 11px;
+    }
+
+    .customer-account-wrapper {
+        flex: 0 0 auto;
+        width: 145px;
+        margin: 0;
+    }
+
+    .customer-account-btn {
+        width: 145px;
+        min-width: 145px;
+        max-width: 145px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+
+        font-size: 11px;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+
+    #customerAccountText {
+        max-width: 105px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .nav-whatsapp {
+        flex: 0 0 auto;
+    }
+}
+
+
+/* =========================================================
+   TABLET / MOBILE
+   Existing mobile layout stays intact
+   ========================================================= */
+
+@media (max-width: 1000px) {
+
+    .customer-account-wrapper {
+        width: auto;
+        flex: 0 0 auto;
+        margin: 0;
+    }
+
+    .customer-account-btn {
+        width: auto;
+        min-width: auto;
+        max-width: none;
+    }
+
+}
+/* =========================================================
+   ABOUT BOX — 3D GG LOGO + PREMIUM BRAND EFFECT
+   ========================================================= */
+
+.about-box {
+    position: relative;
+    overflow: visible;
+    perspective: 1000px;
+}
+
+
+/* =========================================================
+   3D GG LOGO
+   ========================================================= */
+
+.about-logo {
+    position: relative;
+    z-index: 2;
+    padding-top: 78px !important;
+}
+
+
+/* GG 3D BADGE */
+
+.about-logo::before {
+    content: "GG";
+
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+
+    width: 68px;
+    height: 68px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #ffffff 0%,
+            #f8dce8 35%,
+            #a90046 100%
+        );
+
+    color: #ffffff;
+
+    font-family: Arial, sans-serif;
+    font-size: 27px;
+    font-weight: 900;
+    letter-spacing: -2px;
+
+    border: 3px solid rgba(255, 255, 255, 0.9);
+
+    box-shadow:
+        0 10px 0 #79002f,
+        0 16px 25px rgba(121, 0, 47, 0.28),
+        inset 4px 4px 8px rgba(255, 255, 255, 0.7),
+        inset -5px -5px 10px rgba(80, 0, 30, 0.25);
+
+    transform-origin: center center;
+
+    animation:
+        ggFloat 4s ease-in-out infinite,
+        ggRotate 7s ease-in-out infinite;
+
+    transition:
+        transform 0.5s ease,
+        box-shadow 0.5s ease;
+}
+
+
+/* =========================================================
+   SOFT GLOW BEHIND GG
+   ========================================================= */
+
+.about-logo::after {
+    content: "";
+
+    position: absolute;
+    top: 5px;
+    left: 50%;
+
+    width: 72px;
+    height: 72px;
+
+    transform: translateX(-50%);
+
+    border-radius: 50%;
+
+    background: rgba(169, 0, 70, 0.18);
+
+    filter: blur(20px);
+
+    z-index: -1;
+
+    animation: ggGlow 3s ease-in-out infinite;
+}
+
+
+/* =========================================================
+   GUPTA TEXT — PREMIUM 3D LOOK
+   ========================================================= */
+
+.about-logo {
+    color: #a90046 !important;
+
+    font-weight: 900 !important;
+
+    text-shadow:
+        0 2px 0 #780033,
+        0 4px 8px rgba(80, 0, 30, 0.18);
+
+    transition:
+        transform 0.5s ease,
+        text-shadow 0.5s ease;
+}
+
+
+.about-logo span {
+    color: #102f5b !important;
+
+    font-weight: 800 !important;
+
+    text-shadow:
+        0 2px 0 rgba(16, 47, 91, 0.25);
+}
+
+
+/* =========================================================
+   HOVER — 3D POP
+   ========================================================= */
+
+.about-box:hover .about-logo::before {
+    animation-play-state: paused;
+
+    transform:
+        translateX(-50%)
+        translateY(-5px)
+        rotateY(18deg)
+        rotateX(8deg)
+        scale(1.08);
+
+    box-shadow:
+        0 12px 0 #79002f,
+        0 20px 35px rgba(121, 0, 47, 0.35),
+        inset 5px 5px 10px rgba(255, 255, 255, 0.75),
+        inset -6px -6px 12px rgba(80, 0, 30, 0.3);
+}
+
+
+.about-box:hover .about-logo {
+    transform: translateY(-3px);
+
+    text-shadow:
+        0 3px 0 #780033,
+        0 7px 14px rgba(80, 0, 30, 0.25);
+}
+
+
+/* =========================================================
+   GG FLOAT
+   ========================================================= */
+
+@keyframes ggFloat {
+
+    0% {
+        margin-top: 0;
+    }
+
+    50% {
+        margin-top: -7px;
+    }
+
+    100% {
+        margin-top: 0;
+    }
+
+}
+
+
+/* =========================================================
+   GG 3D ROTATION
+   ========================================================= */
+
+@keyframes ggRotate {
+
+    0% {
+        rotate: 0deg;
+    }
+
+    25% {
+        rotate: -2deg;
+    }
+
+    50% {
+        rotate: 2deg;
+    }
+
+    75% {
+        rotate: -1deg;
+    }
+
+    100% {
+        rotate: 0deg;
+    }
+
+}
+
+
+/* =========================================================
+   GG GLOW
+   ========================================================= */
+
+@keyframes ggGlow {
+
+    0% {
+        opacity: 0.35;
+        transform: translateX(-50%) scale(0.9);
+    }
+
+    50% {
+        opacity: 0.75;
+        transform: translateX(-50%) scale(1.15);
+    }
+
+    100% {
+        opacity: 0.35;
+        transform: translateX(-50%) scale(0.9);
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .about-logo {
+        padding-top: 70px !important;
+    }
+
+    .about-logo::before {
+        width: 58px;
+        height: 58px;
+
+        font-size: 23px;
+
+        border-radius: 17px;
+    }
+
+    .about-logo::after {
+        width: 62px;
+        height: 62px;
+    }
+
+}
+/* =========================================================
+   VIEW ALL CATEGORIES
+   ========================================================= */
+
+.extra-categories {
+    display: none;
+
+    width: min(92%, var(--container));
+    margin: 14px auto 0;
+
+    grid-template-columns:
+        repeat(10, minmax(0, 1fr));
+
+    gap: 10px;
+}
+
+
+/* SHOW EXTRA CATEGORIES */
+
+.categories-section.show-all-categories
+.extra-categories {
+    display: grid;
+}
+
+
+/* EXTRA CATEGORY CARD */
+
+.extra-category {
+    width: 100%;
+}
+
+
+/* VIEW ALL BUTTON AREA */
+
+.view-all-categories-wrap {
+    width: 100%;
+
+    display: flex;
+    justify-content: center;
+
+    margin-top: 18px;
+}
+
+
+/* BUTTON */
+
+.view-all-categories-btn {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 9px;
+
+    padding: 10px 20px;
+
+    border: 1px solid #9b003f;
+
+    border-radius: 30px;
+
+    background: #fff;
+
+    color: #9b003f;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 0.3s ease,
+        color 0.3s ease,
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+
+.view-all-categories-btn:hover {
+
+    background: #9b003f;
+
+    color: #fff;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 8px 20px rgba(155, 0, 63, 0.20);
+}
+
+
+.view-all-categories-btn i {
+
+    transition:
+        transform 0.3s ease;
+}
+
+
+/* AFTER OPEN */
+
+.categories-section.show-all-categories
+.view-all-categories-btn i {
+
+    transform: rotate(180deg);
+}
+
+
+.categories-section.show-all-categories
+.view-all-categories-btn {
+
+    background: #9b003f;
+
+    color: #fff;
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+    .extra-categories {
+
+        grid-template-columns:
+            repeat(5, minmax(0, 1fr));
+
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE / SMALL TABLET
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    .extra-categories {
+
+        width: 94%;
+
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+
+        gap: 7px;
+
+    }
+
+
+    .view-all-categories-wrap {
+
+        margin-top: 14px;
+
+    }
+
+
+    .view-all-categories-btn {
+
+        padding: 9px 16px;
+
+        font-size: 11px;
+
+    }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+    .extra-categories {
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 7px;
+
+    }
+
+
+    .view-all-categories-btn {
+
+        padding: 8px 14px;
+
+        font-size: 10px;
+
+    }
+
+}
