@@ -1347,30 +1347,17 @@ if (databaseProducts.length > 0) {
 
                     }
 
-
-                    productImage.src =
-                        imageUrl +
-                        (
-                            imageUrl.includes("?")
-                                ? "&"
-                                : "?"
-                        ) +
-                        "v=" +
-                        Date.now();
-
+productImage.src = imageUrl;
 
                     productImage.alt =
                         dbProduct.product_name ||
                         "Product";
 
 
-                    productImage.loading =
-                        "lazy";
-
+                    productImage.loading = "eager";
 
                     productImage.style.display =
                         "block";
-
 
                     productImage.style.width =
                         "100%";
@@ -2110,7 +2097,7 @@ async function loadPublicCategories() {
                         <img
                             src="${imageUrl}"
                             alt="${category.name}"
-                            loading="lazy">
+                           >
                     </div>
 
                     <span>
