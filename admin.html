@@ -1804,6 +1804,69 @@
         font-size: 24px !important;
     }
 }
+/* =========================================
+   MOBILE PORTRAIT DASHBOARD FIX
+   ========================================= */
+
+@media (max-width: 700px) {
+
+    html,
+    body {
+        width: 100%;
+        min-width: 0 !important;
+        overflow-x: hidden !important;
+    }
+
+    .admin-header,
+    .admin-container {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    .admin-header-content {
+        width: 100%;
+        box-sizing: border-box;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .admin-container {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    .admin-actions {
+        width: 100%;
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        gap: 15px;
+    }
+
+    .admin-card {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+}
+/* =========================================
+   FIX: HIDE LOGIN SCREEN AFTER SUCCESS
+   MOBILE PORTRAIT
+   ========================================= */
+
+@media (max-width: 700px) {
+
+    .admin-login-screen[style*="display: none"] {
+        display: none !important;
+    }
+
+}
     </style>
 </head>
 
