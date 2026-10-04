@@ -403,6 +403,249 @@ db.query(
     }
 
 );
+// ==========================================
+// DELETE INDIVIDUAL PRODUCT GALLERY IMAGE
+// ==========================================
+app.delete(
+    "/api/products/images/:imageId",
+    requireAdminAuth,
+    (req, res) => {
+
+        const imageId = Number(req.params.imageId);
+
+        if (!Number.isInteger(imageId) || imageId <= 0) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid image ID."
+            });
+        }
+
+        db.query(
+            `
+            SELECT id, product_id, image_url
+            FROM product_images
+            WHERE id = ?
+            `,
+            [imageId],
+            (imageError, imageRows) => {
+
+                if (imageError) {
+                    console.error("❌ Product image fetch error:", imageError);
+
+                    return res.status(500).json({
+                        success: false,
+                        message: "Failed to find product image."
+                    });
+                }
+
+                if (!imageRows.length) {
+                    return res.status(404).json({
+                        success: false,
+                        message: "Product image not found."
+                    });
+                }
+
+                const image = imageRows[0];
+
+                // Get current main product image
+                db.query(
+                    `
+                    SELECT id, image_url
+                    FROM products
+                    WHERE id = ?
+                    `,
+                    [image.product_id],
+                    (productError, productRows) => {
+
+                        if (productError) {
+                            console.error(
+                                "❌ Product fetch error:",
+                                productError
+                            );
+
+                            return res.status(500).json({
+                                success: false,
+                                message: "Failed to fetch product."
+                            });
+                        }
+
+                        if (!productRows.length) {
+                            return res.status(404).json({
+                                success: false,
+                                message: "Product not found."
+                            });
+                        }
+
+                        const product = productRows[0];
+
+                        // Get remaining gallery images
+                        db.query(
+                            `
+                            SELECT id, image_url, sort_order
+                            FROM product_images
+                            WHERE product_id = ?
+                              AND id != ?
+                            ORDER BY sort_order ASC, id ASC
+                            `,
+                            [image.product_id, imageId],
+                            (remainingError, remainingImages) => {
+
+                                if (remainingError) {
+                                    console.error(
+                                        "❌ Remaining images fetch error:",
+                                        remainingError
+                                    );
+
+                                    return res.status(500).json({
+                                        success: false,
+                                        message: "Failed to process product images."
+                                    });
+                                }
+
+                                // If deleting current main image,
+                                // automatically make next image the main image.
+                                const deletingMainImage =
+                                    product.image_url === image.image_url;
+
+                                const newMainImage =
+                                    deletingMainImage && remainingImages.length
+                                        ? remainingImages[0].image_url
+                                        : (
+                                            deletingMainImage
+                                                ? null
+                                                : product.image_url
+                                        );
+
+                                // Delete image row
+                                db.query(
+                                    `
+                                    DELETE FROM product_images
+                                    WHERE id = ?
+                                    `,
+                                    [imageId],
+                                    (deleteError) => {
+
+                                        if (deleteError) {
+                                            console.error(
+                                                "❌ Product image delete error:",
+                                                deleteError
+                                            );
+
+                                            return res.status(500).json({
+                                                success: false,
+                                                message: "Failed to delete image."
+                                            });
+                                        }
+
+                                        // Update main product image if required
+                                        const updateMainImage = () => {
+
+                                            if (!deletingMainImage) {
+                                                return finishDelete();
+                                            }
+
+                                            db.query(
+                                                `
+                                                UPDATE products
+                                                SET image_url = ?
+                                                WHERE id = ?
+                                                `,
+                                                [
+                                                    newMainImage,
+                                                    image.product_id
+                                                ],
+                                                (updateError) => {
+
+                                                    if (updateError) {
+                                                        console.error(
+                                                            "❌ Main image update error:",
+                                                            updateError
+                                                        );
+
+                                                        return res.status(500).json({
+                                                            success: false,
+                                                            message: "Image deleted but main image update failed."
+                                                        });
+                                                    }
+
+                                                    finishDelete();
+                                                }
+                                            );
+                                        };
+
+                                        const finishDelete = () => {
+
+                                            // Normalize remaining sort order
+                                            if (!remainingImages.length) {
+                                                return sendSuccess();
+                                            }
+
+                                            let completed = 0;
+                                            let failed = false;
+
+                                            remainingImages.forEach(
+                                                (remainingImage, index) => {
+
+                                                    db.query(
+                                                        `
+                                                        UPDATE product_images
+                                                        SET sort_order = ?
+                                                        WHERE id = ?
+                                                        `,
+                                                        [index, remainingImage.id],
+                                                        (sortError) => {
+
+                                                            if (failed) return;
+
+                                                            if (sortError) {
+                                                                failed = true;
+
+                                                                console.error(
+                                                                    "❌ Sort order update error:",
+                                                                    sortError
+                                                                );
+
+                                                                return res.status(500).json({
+                                                                    success: false,
+                                                                    message: "Image deleted but sort order update failed."
+                                                                });
+                                                            }
+
+                                                            completed++;
+
+                                                            if (
+                                                                completed ===
+                                                                remainingImages.length
+                                                            ) {
+                                                                sendSuccess();
+                                                            }
+                                                        }
+                                                    );
+                                                }
+                                            );
+                                        };
+
+                                        const sendSuccess = () => {
+
+                                            return res.json({
+                                                success: true,
+                                                message: "Product image deleted successfully.",
+                                                deleted_image_id: imageId,
+                                                main_image_url: newMainImage
+                                            });
+                                        };
+
+                                        updateMainImage();
+                                    }
+                                );
+                            }
+                        );
+                    }
+                );
+            }
+        );
+    }
+);
 // =================================
 // CATEGORY IMAGE UPLOAD
 // =================================

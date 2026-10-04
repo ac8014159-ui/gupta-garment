@@ -4987,39 +4987,52 @@ try {
 
     const productImages =
         imageResult.images || [];
+// =============================================
+// SHOW MULTIPLE IMAGES WITH REMOVE BUTTON
+// =============================================
 
-    // =============================================
-    // SHOW MULTIPLE IMAGES
-    // =============================================
+if (productImages.length > 0) {
 
-    if (productImages.length > 0) {
+    currentImagePreview.innerHTML = `
+        <div
+            style="
+                display: flex;
+                flex-wrap: wrap;
+                gap: 15px;
+                width: 100%;
+                height: 100%;
+                overflow-y: auto;
+                align-content: flex-start;
+                padding: 5px;
+                box-sizing: border-box;
+            "
+        >
 
-        currentImagePreview.innerHTML = `
-            <div
-                style="
-                    display: flex;
-                    flex-wrap: wrap;
-                    gap: 10px;
-                    width: 100%;
-                    height: 100%;
-                    overflow-y: auto;
-                    align-content: flex-start;
-                    padding: 5px;
-                    box-sizing: border-box;
-                "
-            >
-                ${productImages.map(function (image) {
+            ${productImages.map(function (image) {
 
-                    return `
+                return `
+                    <div
+                        class="existing-product-image-item"
+                        data-image-id="${image.id}"
+                        style="
+                            width: 120px;
+                            border: 1px solid #ddd;
+                            border-radius: 8px;
+                            overflow: hidden;
+                            background: #fff;
+                            flex-shrink: 0;
+                            padding: 5px;
+                            box-sizing: border-box;
+                        "
+                    >
+
                         <div
                             style="
-                                width: 105px;
+                                width: 100%;
                                 height: 105px;
-                                border: 1px solid #ddd;
-                                border-radius: 8px;
                                 overflow: hidden;
-                                background: #fff;
-                                flex-shrink: 0;
+                                border-radius: 6px;
+                                background: #f8f8f8;
                             "
                         >
                             <img
@@ -5032,14 +5045,36 @@ try {
                                 "
                             >
                         </div>
-                    `;
 
-                }).join("")}
-            </div>
-        `;
+                        <button
+                            type="button"
+                            class="remove-existing-product-image-btn"
+                            data-image-id="${image.id}"
+                            style="
+                                width: 100%;
+                                margin-top: 6px;
+                                padding: 6px 4px;
+                                border: none;
+                                border-radius: 5px;
+                                background: #dc3545;
+                                color: #fff;
+                                font-size: 12px;
+                                font-weight: 600;
+                                cursor: pointer;
+                            "
+                        >
+                            🗑 Remove
+                        </button>
 
-    }
+                    </div>
+                `;
 
+            }).join("")}
+
+        </div>
+    `;
+
+}
     // =============================================
     // BACKWARD COMPATIBILITY
     // =============================================
@@ -6891,6 +6926,115 @@ if (editUploadImageBtn) {
     );
 
 }
+// =============================================
+// DELETE EXISTING PRODUCT IMAGE
+// =============================================
+
+document.addEventListener("click", async function (event) {
+
+    const removeButton = event.target.closest(
+        ".remove-existing-product-image-btn"
+    );
+
+    if (!removeButton) {
+        return;
+    }
+
+    const imageId = removeButton.getAttribute(
+        "data-image-id"
+    );
+
+    const productId = document.getElementById(
+        "edit_product_id"
+    ).value;
+
+    if (!imageId || !productId) {
+        alert("❌ Image information not found.");
+        return;
+    }
+
+    const confirmDelete = confirm(
+        "Are you sure you want to remove this image?"
+    );
+
+    if (!confirmDelete) {
+        return;
+    }
+
+    try {
+
+        removeButton.disabled = true;
+        removeButton.textContent = "Deleting...";
+
+        const token = sessionStorage.getItem(
+            "guptaAdminToken"
+        );
+
+        const response = await fetch(
+            "https://guptagarments.waifly.com/api/products/images/" +
+            imageId,
+            {
+                method: "DELETE",
+
+                headers: {
+                    "Authorization":
+                        "Bearer " + token
+                }
+            }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+
+            throw new Error(
+                result.message ||
+                "Failed to delete image."
+            );
+
+        }
+
+        // Remove image card from screen
+        const imageItem = removeButton.closest(
+            ".existing-product-image-item"
+        );
+
+        if (imageItem) {
+            imageItem.remove();
+        }
+
+        // Update main image URL if backend changed it
+        if (result.main_image_url !== undefined) {
+
+            window.editCurrentProductImageUrl =
+                result.main_image_url;
+
+        }
+
+        alert("✅ Image removed successfully.");
+
+    }
+    catch (error) {
+
+        console.error(
+            "❌ Delete Product Image Error:",
+            error
+        );
+
+        removeButton.disabled = false;
+        removeButton.textContent = "🗑 Remove";
+
+        alert(
+            "❌ " +
+            (
+                error.message ||
+                "Failed to delete image."
+            )
+        );
+
+    }
+
+});
 </script>
 </body>
 </html>
