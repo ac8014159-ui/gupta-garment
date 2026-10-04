@@ -928,8 +928,6 @@ db.query(createCategoriesTable, (err) => {
         ["Divider", "divider", "images/categories/divider.png", 9],
         ["Jeans Top", "jeans-top", "images/categories/jeans-top.png", 10],
 
-        ["Women Nighty / Gown", "women-nighty-gown", null, 11],
-        ["Women Cardigan", "women-cardigan", null, 12],
         ["Women Bra", "women-bra", null, 13],
         ["Women Panty", "women-panty", null, 14],
         ["Women Socks", "women-socks", null, 15],
