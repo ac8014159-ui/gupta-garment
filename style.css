@@ -10717,5 +10717,551 @@ img {
         font-size: 10px;
 
     }
+}
+/* =====================================================
+   GUPTA GARMENTS - MODERN FOOTER DESIGN
+   ===================================================== */
+
+footer {
+    background: #1b1b1b;
+    color: #ffffff;
+    padding: 70px 6% 0;
+}
+
+/* MAIN FOOTER CONTAINER */
+
+.footer-container {
+    max-width: 1400px;
+    margin: 0 auto;
+
+    display: grid;
+    grid-template-columns: 1.35fr 1fr 1fr 1.35fr;
+
+    gap: 60px;
+
+    padding-bottom: 55px;
+}
+
+
+/* ================= FOOTER COLUMNS ================= */
+
+.footer-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.footer-column p {
+    color: #bdbdbd;
+    font-size: 15px;
+    line-height: 1.7;
+    margin: 10px 0;
+}
+
+
+/* ================= FOOTER LOGO ================= */
+
+.footer-logo {
+    font-size: 42px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    line-height: 1;
+    color: #ffffff;
+}
+
+.footer-logo span {
+    display: block;
+
+    font-size: 19px;
+    letter-spacing: 5px;
+
+    margin-top: 8px;
+}
+
+
+/* TAGLINE */
+
+.footer-tagline {
+    color: #f05a9d !important;
+
+    font-family: "Playfair Display", serif;
+
+    font-size: 17px !important;
+
+    font-style: italic;
+
+    margin-top: 12px !important;
+}
+
+
+/* ================= HEADINGS ================= */
+
+.footer-column h3 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    color: #ffffff;
+
+    font-size: 20px;
+    font-weight: 800;
+
+    margin: 0 0 22px;
+
+    letter-spacing: .5px;
+}
+
+.footer-column h3 i {
+    color: #f05a9d;
+    font-size: 22px;
+}
+
+
+/* ================= QUICK LINKS / SHOP ================= */
+
+.footer-column > a {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    color: #bdbdbd;
+
+    text-decoration: none;
+
+    font-size: 15px;
+
+    margin-bottom: 13px;
+
+    transition: .25s ease;
+}
+
+.footer-column > a i {
+    color: #f05a9d;
+
+    font-size: 12px;
+
+    transition: .25s ease;
+}
+
+.footer-column > a:hover {
+    color: #ffffff;
+
+    transform: translateX(5px);
+}
+
+.footer-column > a:hover i {
+    transform: translateX(3px);
+}
+
+
+/* ================= SOCIAL ICONS ================= */
+
+.footer-social {
+    display: flex;
+
+    gap: 14px;
+
+    margin-top: 18px;
+}
+
+.footer-social a {
+    width: 42px;
+    height: 42px;
+
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #292929;
+
+    color: #ffffff;
+
+    font-size: 18px;
+
+    text-decoration: none;
+
+    transition: .3s ease;
+}
+
+.footer-social a:hover {
+    background: #f05a9d;
+
+    transform: translateY(-4px);
+}
+
+/* ================= FOOTER HIGHLIGHTS ================= */
+
+.footer-highlights {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+
+    gap: 18px;
+
+    margin-top: 28px;
+
+    width: 100%;
+
+    flex-wrap: nowrap;
+
+    white-space: nowrap;
+}
+
+.footer-highlight {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    padding-right: 18px;
+
+    border-right: 1px solid #555;
+
+    color: #cccccc;
+
+    font-size: 12px;
+
+    line-height: 1.2;
+
+    flex-shrink: 0;
+}
+
+.footer-highlight:last-child {
+    border-right: none;
+    padding-right: 0;
+}
+
+.footer-highlight i {
+    color: #f05a9d;
+
+    font-size: 21px;
+
+    flex-shrink: 0;
+}
+
+.footer-highlight strong {
+    display: inline;
+
+    color: #ffffff;
+
+    font-size: 12px;
+
+    font-weight: 700;
+}
+
+.footer-highlight span {
+    white-space: nowrap;
+}
+
+/* ================= CONTACT ================= */
+
+.footer-column p i {
+    color: #f05a9d;
+
+    width: 25px;
+
+    font-size: 18px;
+}
+
+.footer-column p {
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 8px;
+}
+
+.footer-column p a {
+    color: #bdbdbd;
+
+    text-decoration: none;
+
+    font-size: 15px;
+}
+
+
+/* ================= WHATSAPP BUTTON ================= */
+
+.footer-whatsapp {
+    display: inline-flex !important;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 10px;
+
+    width: fit-content;
+
+    border: 1px solid #20d46b;
+
+    border-radius: 6px;
+
+    padding: 13px 22px !important;
+
+    color: #ffffff !important;
+
+    font-size: 15px !important;
+
+    font-weight: 700;
+
+    margin-top: 12px;
+
+    transition: .3s ease;
+}
+
+.footer-whatsapp i {
+    color: #20d46b;
+
+    font-size: 19px;
+}
+
+.footer-whatsapp:hover {
+    background: #20d46b;
+
+    color: #ffffff !important;
+
+    transform: translateY(-3px);
+}
+
+
+/* ================= COPYRIGHT ================= */
+
+.copyright {
+    max-width: 1400px;
+
+    margin: 0 auto;
+
+    border-top: 1px solid #3c3c3c;
+
+    padding: 20px 0;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 20px;
+}
+
+.copyright p {
+    margin: 0;
+
+    color: #888888;
+
+    font-size: 13px;
+}
+
+.copyright p:last-child {
+    color: #aaaaaa;
+}
+
+
+/* =====================================================
+   TABLET
+   ===================================================== */
+
+@media (max-width: 1000px) {
+
+    .footer-container {
+        grid-template-columns: 1fr 1fr;
+
+        gap: 45px;
+    }
 
 }
+
+/* =====================================================
+   MOBILE
+   ===================================================== */
+
+@media (max-width: 600px) {
+
+    footer {
+        padding: 50px 25px 0;
+    }
+
+    .footer-container {
+        grid-template-columns: 1fr;
+        gap: 40px;
+        padding-bottom: 40px;
+    }
+
+    .footer-logo {
+        font-size: 36px;
+    }
+
+    .footer-column h3 {
+        font-size: 19px;
+    }
+
+    .footer-column > a {
+        font-size: 15px;
+    }
+
+
+    /* ================= FOOTER HIGHLIGHTS ================= */
+
+    .footer-highlights {
+        display: flex;
+
+        flex-wrap: wrap;
+
+        align-items: center;
+
+        gap: 14px;
+
+        width: 100%;
+
+        white-space: normal;
+
+        margin-top: 25px;
+    }
+
+    .footer-highlight {
+        display: flex;
+
+        align-items: center;
+
+        gap: 7px;
+
+        border-right: none;
+
+        padding-right: 0;
+
+        font-size: 12px;
+
+        white-space: nowrap;
+    }
+
+    .footer-highlight i {
+        font-size: 20px;
+    }
+
+    .footer-highlight strong {
+        font-size: 12px;
+    }
+
+
+    /* ================= FOOTER SLOGAN ================= */
+
+    .footer-slogan {
+        grid-column: 1 / -1;
+
+        display: flex;
+
+        align-items: flex-start;
+
+        justify-content: center;
+
+        gap: 9px;
+
+        margin-top: 5px;
+
+        padding-top: 20px;
+
+        font-size: 13px;
+
+        line-height: 1.6;
+
+        text-align: center;
+    }
+
+    .footer-slogan i {
+        font-size: 17px;
+
+        margin-top: 3px;
+
+        flex-shrink: 0;
+    }
+
+    .footer-slogan span {
+        max-width: 100%;
+    }
+
+
+    /* ================= COPYRIGHT ================= */
+
+    .copyright {
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 8px;
+    }
+
+}
+
+
+/* FOOTER SLOGAN - FINAL FIX */
+
+.footer-slogan {
+    grid-column: 1 / -1;
+    width: 100%;
+    box-sizing: border-box;
+    display: grid !important;
+    grid-template-columns: 24px minmax(0, 950px);
+    align-items: center !important;
+    justify-content: center;
+    column-gap: 10px;
+    margin-top: 5px;
+    padding: 24px 10px 0;
+    border-top: 1px solid #333;
+    color: #d2d2d2;
+    font-size: 15px;
+    line-height: 1.7;
+}
+
+.footer-slogan > i {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: center !important;
+    justify-self: center;
+    position: static !important;
+    transform: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    color: #f05a9d !important;
+    font-size: 21px !important;
+    line-height: 1 !important;
+}
+
+.footer-slogan-text {
+    grid-column: 2;
+    grid-row: 1;
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    min-width: 0;
+    text-align: center;
+}
+
+.footer-slogan-text p {
+    margin: 0 !important;
+    padding: 0;
+    color: #d2d2d2;
+    font-size: 15px;
+    line-height: 1.7;
+}
+
+@media (max-width: 600px) {
+    .footer-slogan {
+        grid-template-columns: 20px minmax(0, 1fr);
+        column-gap: 7px;
+        padding: 20px 5px 0;
+    }
+
+    .footer-slogan > i {
+        font-size: 18px !important;
+    }
+
+    .footer-slogan-text p {
+        font-size: 12px;
+        line-height: 1.6;
+    }
+}
+
