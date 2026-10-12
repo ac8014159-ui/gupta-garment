@@ -7,7 +7,33 @@ const fs = require("fs");
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 require("dotenv").config();
+const nodemailer = require("nodemailer");
+const emailOtpTransporter = nodemailer.createTransport
+({ 
+    service: "gmail",
+    auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_APP_PASSWORD
+}
+});
 
+async function sendEmailOtp(email, otpCode) {
+    return emailOtpTransporter.sendMail({
+        from: `"Gupta Garments" <${process.env.GMAIL_USER}>`,
+        to: email,
+        subject: "Gupta Garments - Email Verification OTP",
+        text: `Your email verification OTP is ${otpCode}. It is valid for 5 minutes. Please do not share it with anyone.`,
+        html: `
+            <div style="font-family:Arial,sans-serif;padding:20px;">
+                <h2 style="color:#800000;">Gupta Garments</h2>
+                <p>Your email verification OTP is:</p>
+                <h1 style="letter-spacing:5px;color:#800000;">${otpCode}</h1>
+                <p>This OTP is valid for 5 minutes.</p>
+                <p>Please do not share this OTP with anyone.</p>
+            </div>
+        `
+    });
+}
 const app = express();
 
 app.use(cors());
@@ -141,7 +167,6 @@ if (!fs.existsSync(productUploadDir)) {
     );
 
 }
-
 
 // Product image storage
 const productStorage =
@@ -3404,15 +3429,25 @@ app.post("/api/customers/send-email-otp", (req, res) => {
                             });
                         }
 
-                        return res.status(201).json({
-                            success: true,
-                            message:
-                                "Email OTP generated successfully.",
-                            otp_id: insertResult.insertId,
-                            customer_id: customer.id,
-                            otp: otpCode,
-                            expires_in: 300
-                        });
+                        
+sendEmailOtp(normalizedEmail, otpCode)
+    .then(() => {
+        return res.status(201).json({
+            success: true,
+            message: "Email OTP sent successfully. Please check your inbox.",
+            otp_id: insertResult.insertId,
+            customer_id: customer.id,
+            expires_in: 300
+        });
+    })
+    .catch((emailErr) => {
+        console.error("Email OTP sending failed:", emailErr.message);
+
+        return res.status(500).json({
+            success: false,
+            message: "Unable to send email OTP. Please try again."
+        });
+    });
                     }
                 );
 
@@ -3499,16 +3534,25 @@ app.post("/api/customers/send-email-otp", (req, res) => {
                                 });
                             }
 
-                            return res.status(201).json({
-                                success: true,
-                                message:
-                                    "Email OTP generated successfully.",
-                                otp_id: insertResult.insertId,
-                                pending_registration_id:
-                                    pending.id,
-                                otp: otpCode,
-                                expires_in: 300
-                            });
+                          
+sendEmailOtp(normalizedEmail, otpCode)
+    .then(() => {
+        return res.status(201).json({
+            success: true,
+            message: "Email OTP sent successfully. Please check your inbox.",
+            otp_id: insertResult.insertId,
+            pending_registration_id: pending.id,
+            expires_in: 300
+        });
+    })
+    .catch((emailErr) => {
+        console.error("Pending email OTP sending failed:", emailErr.message);
+
+        return res.status(500).json({
+            success: false,
+            message: "Unable to send email OTP. Please try again."
+        });
+    });
                         }
                     );
                 }
