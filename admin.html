@@ -3068,12 +3068,13 @@
 
         <div class="form-group">
 
-    <label>Product Image</label>
+    <label>Product Images (Select Multiple)</label>
 
     <input
         type="file"
         id="add_product_image_file"
         accept="image/jpeg,image/png,image/webp"
+        multiple
     >
 
     <div
@@ -3266,215 +3267,161 @@ const addProductImageUploadStatus =
 window.addProductUploadedImageUrl = null;
 
 
-// =============================================
-// IMAGE SELECT PREVIEW
-// =============================================
+ // =============================================
+ // IMAGE SELECT PREVIEW - MULTIPLE IMAGES
+ // =============================================
 
 if (addProductImageFile) {
+    addProductImageFile.addEventListener("change", function () {
+        const files = Array.from(addProductImageFile.files);
 
-    addProductImageFile.addEventListener(
-        "change",
-        function () {
+        addProductImagePreview.innerHTML = "";
+        addProductImagePreview.style.display = "none";
+        window.addProductUploadedImageUrl = null;
 
-            const file =
-                addProductImageFile.files[0];
+        if (files.length === 0) {
+            addProductUploadImageBtn.disabled = true;
+            addProductImageUploadStatus.textContent = "";
+            return;
+        }
 
-            if (!file) {
+        // Har image ka maximum size 5 MB
+        const invalidFile = files.find(function (file) {
+            return file.size > 5 * 1024 * 1024;
+        });
 
-                addProductUploadImageBtn.disabled =
-                    true;
+        if (invalidFile) {
+            alert("❌ Har image ka size 5 MB se kam hona chahiye.");
+            addProductImageFile.value = "";
+            addProductUploadImageBtn.disabled = true;
+            addProductImageUploadStatus.textContent = "";
+            return;
+        }
 
-                addProductImagePreview.style.display =
-                    "none";
+        // Saari selected images ka preview
+        addProductImagePreview.style.display = "flex";
+        addProductImagePreview.style.flexWrap = "wrap";
+        addProductImagePreview.style.gap = "10px";
+        addProductImagePreview.style.width = "100%";
+        addProductImagePreview.style.height = "auto";
+        addProductImagePreview.style.border = "none";
+        addProductImagePreview.style.background = "transparent";
 
-                addProductImagePreview.innerHTML =
-                    "";
-
-                return;
-
-            }
-
-
-            // File size check - 5 MB
-            if (file.size > 5 * 1024 * 1024) {
-
-                alert(
-                    "❌ Image size must be less than 5 MB."
-                );
-
-                addProductImageFile.value = "";
-
-                addProductUploadImageBtn.disabled =
-                    true;
-
-                return;
-
-            }
-
-
-            // Preview
-            const reader =
-                new FileReader();
+        files.forEach(function (file) {
+            const reader = new FileReader();
 
             reader.onload = function (event) {
+                const wrapper = document.createElement("div");
+                wrapper.style.width = "110px";
+                wrapper.style.textAlign = "center";
 
-                addProductImagePreview.innerHTML = `
-                    <img
-                        src="${event.target.result}"
-                        alt="Product Image Preview"
-                        style="
-                            width: 100%;
-                            height: 100%;
-                            object-fit: contain;
-                        "
-                    >
-                `;
+                const img = document.createElement("img");
+                img.src = event.target.result;
+                img.alt = file.name;
+                img.style.width = "100px";
+                img.style.height = "100px";
+                img.style.objectFit = "contain";
+                img.style.border = "1px solid #ddd";
+                img.style.borderRadius = "8px";
+                img.style.background = "#fff";
 
-                addProductImagePreview.style.display =
-                    "flex";
+                const name = document.createElement("div");
+                name.textContent = file.name;
+                name.style.fontSize = "11px";
+                name.style.marginTop = "4px";
+                name.style.overflowWrap = "anywhere";
 
+                wrapper.appendChild(img);
+                wrapper.appendChild(name);
+                addProductImagePreview.appendChild(wrapper);
             };
 
             reader.readAsDataURL(file);
+        });
 
-
-            addProductUploadImageBtn.disabled =
-                false;
-
-            addProductImageUploadStatus.textContent =
-                "Image selected. Click Upload Image.";
-
-        }
-    );
-
+        addProductUploadImageBtn.disabled = false;
+        addProductImageUploadStatus.textContent =
+            "✅ " + files.length + " images selected. Preview ready.";
+    });
 }
 
-
-// =============================================
-// UPLOAD ADD PRODUCT IMAGE
-// =============================================
+ // =============================================
+ // UPLOAD ADD PRODUCT IMAGES - MULTIPLE
+ // =============================================
 
 if (addProductUploadImageBtn) {
+    addProductUploadImageBtn.addEventListener("click", async function () {
+        const files = Array.from(addProductImageFile.files || []);
 
-    addProductUploadImageBtn.addEventListener(
-        "click",
-        async function () {
+        if (!files.length) {
+            alert("Please select at least one image.");
+            return;
+        }
 
-            const file =
-                addProductImageFile.files[0];
+        if (files.some(file => file.size > 5 * 1024 * 1024)) {
+            alert("Har image 5 MB se kam honi chahiye.");
+            return;
+        }
 
-            if (!file) {
+        addProductUploadImageBtn.disabled = true;
+        addProductImageUploadStatus.textContent =
+            "⏳ Uploading " + files.length + " images...";
 
-                alert(
-                    "❌ Please select an image first."
-                );
+        try {
+            const formData = new FormData();
+            files.forEach(file => formData.append("images", file));
 
-                return;
+            const token = sessionStorage.getItem("guptaAdminToken");
 
-            }
+            const response = await fetch(
+                "https://guptagarments.waifly.com/api/products/upload-new-images",
+                {
+                    method: "POST",
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    },
+                    body: formData
+                }
+            );
 
-
-            addProductUploadImageBtn.disabled =
-                true;
-
-            addProductImageUploadStatus.textContent =
-                "⏳ Uploading image...";
-
+            const responseText = await response.text();
+            let result;
 
             try {
-
-                const formData =
-                    new FormData();
-
-                formData.append(
-                    "image",
-                    file
+                result = JSON.parse(responseText);
+            } catch {
+                throw new Error(
+                    "Server ne JSON ke bajaye HTML/error page diya. Server logs check karne honge."
                 );
-
-
-                const token =
-                    sessionStorage.getItem(
-                        "guptaAdminToken"
-                    );
-
-
-                const response =
-                    await fetch(
-                        "https://guptagarments.waifly.com/api/products/upload-image",
-                        {
-                            method: "POST",
-
-                            headers: {
-                                "Authorization":
-                                    "Bearer " + token
-                            },
-
-                            body: formData
-                        }
-                    );
-
-
-                const result =
-                    await response.json();
-
-
-                if (
-                    !response.ok ||
-                    !result.success
-                ) {
-
-                    throw new Error(
-                        result.message ||
-                        "Image upload failed."
-                    );
-
-                }
-
-
-                // Save uploaded image URL
-                window.addProductUploadedImageUrl =
-                    result.image_url;
-
-
-                addProductImageUploadStatus.textContent =
-                    "✅ Image uploaded successfully.";
-
-
-                addProductUploadImageBtn.disabled =
-                    true;
-
-
-                console.log(
-                    "✅ Add Product Image Uploaded:",
-                    result.image_url
-                );
-
-            }
-            catch (error) {
-
-                console.error(
-                    "❌ Add Product Image Upload Error:",
-                    error
-                );
-
-
-                addProductImageUploadStatus.textContent =
-                    "❌ " +
-                    (
-                        error.message ||
-                        "Failed to upload image."
-                    );
-
-
-                addProductUploadImageBtn.disabled =
-                    false;
-
             }
 
+            if (!response.ok || !result.success) {
+                throw new Error(result.message || "Image upload failed.");
+            }
+
+            if (!Array.isArray(result.image_urls) ||
+                result.image_urls.length !== files.length) {
+                throw new Error("Server se sabhi image URLs nahi mile.");
+            }
+
+            window.addProductUploadedImageUrls = result.image_urls;
+            window.addProductUploadedImageUrl = result.image_urls[0];
+
+            addProductImageUploadStatus.textContent =
+                "✅ " + result.image_urls.length +
+                " images uploaded. Ab Add Product par click karo.";
+
+            console.log("Uploaded image URLs:", result.image_urls);
+        } catch (error) {
+            console.error("Add Product image upload error:", error);
+            addProductImageUploadStatus.textContent = "❌ " + error.message;
+        } finally {
+            addProductUploadImageBtn.disabled = false;
         }
-    );
-
+    });
 }
+
+
 // =================================
 // ADD PRODUCT CARD → OPEN FORM
 // =================================

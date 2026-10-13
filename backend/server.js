@@ -428,6 +428,37 @@ db.query(
     }
 
 );
+
+ // =============================================
+ // ADD PRODUCT - MULTIPLE IMAGE UPLOAD API
+ // =============================================
+
+app.post(
+    "/api/products/upload-new-images",
+    requireAdminAuth,
+    productUpload.array("images", 10),
+    function (req, res) {
+        if (!req.files || req.files.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: "Please select at least one image."
+            });
+        }
+
+        const imageUrls = req.files.map(function (file) {
+            return "https://guptagarments.waifly.com/uploads/products/" + file.filename;
+        });
+
+        console.log("✅ New product images uploaded:", imageUrls);
+
+        return res.json({
+            success: true,
+            message: "Images uploaded successfully.",
+            image_urls: imageUrls
+        });
+    }
+);
+
 // ==========================================
 // DELETE INDIVIDUAL PRODUCT GALLERY IMAGE
 // ==========================================
@@ -2072,18 +2103,20 @@ app.post(
     requireAdminAuth,
     (req, res) => {
 
-    const {
-        product_name,
-        category,
-        gender,
-        season,
-        price,
-        sizes,
-        description,
-        image_url,
-        stock_status,
-        is_visible
-    } = req.body;
+const {
+    product_name,
+    category,
+    gender,
+    season,
+    price,
+    sizes,
+    description,
+    image_url,
+    image_urls,
+    stock_status,
+    is_visible
+} = req.body;
+
 
     // Basic validation
     if (
