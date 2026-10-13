@@ -3122,6 +3122,123 @@
 
 const PRODUCT_API_URL =
     "https://guptagarments.waifly.com/api/products";
+// =============================================
+// DYNAMIC CATEGORY DROPDOWN LOADER
+// Add Product + Edit Product
+// =============================================
+
+async function loadProductCategoryOptions(
+    selectedCategory = ""
+) {
+    const categoryDropdowns = [
+        document.getElementById("category"),
+        document.getElementById("edit_category")
+    ].filter(Boolean);
+
+    if (categoryDropdowns.length === 0) {
+        return;
+    }
+
+    categoryDropdowns.forEach(function (dropdown) {
+        dropdown.disabled = true;
+    });
+
+    try {
+        const token = sessionStorage.getItem(
+            "guptaAdminToken"
+        );
+
+        const response = await fetch(
+            "https://guptagarments.waifly.com/api/categories",
+            {
+                method: "GET",
+                headers: {
+                    "Authorization": "Bearer " + token
+                }
+            }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+            throw new Error(
+                result.message || "Failed to load categories."
+            );
+        }
+
+        const categories = result.categories || [];
+
+        categoryDropdowns.forEach(function (dropdown) {
+            const previousValue =
+                selectedCategory || dropdown.value;
+
+            dropdown.innerHTML = "";
+
+            const placeholder = document.createElement("option");
+            placeholder.value = "";
+            placeholder.textContent = "Select Category";
+            dropdown.appendChild(placeholder);
+
+            categories.forEach(function (category) {
+                if (!category.name || !category.slug) {
+                    return;
+                }
+
+                const option = document.createElement("option");
+
+                option.value = category.slug;
+                option.textContent =
+                    category.name +
+                    (
+                        Number(category.is_active) === 0
+                            ? " (Inactive)"
+                            : ""
+                    );
+
+                dropdown.appendChild(option);
+            });
+
+            // Preserve an existing product's category
+            // even if it is no longer in the API response.
+            if (
+                previousValue &&
+                !Array.from(dropdown.options).some(
+                    function (option) {
+                        return option.value === previousValue;
+                    }
+                )
+            ) {
+                const existingOption =
+                    document.createElement("option");
+
+                existingOption.value = previousValue;
+                existingOption.textContent =
+                    previousValue + " (Existing Category)";
+
+                dropdown.appendChild(existingOption);
+            }
+
+            dropdown.value = previousValue || "";
+        });
+    }
+    catch (error) {
+        console.error(
+            "Product category dropdown error:",
+            error
+        );
+
+        alert(
+            "Category list load nahi hui. Please try again.\n\n" +
+            error.message
+        );
+    }
+    finally {
+        categoryDropdowns.forEach(function (dropdown) {
+            dropdown.disabled = false;
+        });
+    }
+}
+
 const addProductForm =
     document.getElementById("addProductForm");
     // =============================================
@@ -4968,7 +5085,7 @@ const addProductSection =
     document.getElementById("addProductSection");
 
 addProductCardBtn.addEventListener("click", function () {
-
+loadProductCategoryOptions("");
       openManagementSection(addProductSection);
 
     addProductSection.scrollIntoView({
@@ -5135,7 +5252,9 @@ editProductCardBtn.addEventListener(
                             ).value =
                                 product.product_name || "";
 
-
+await loadProductCategoryOptions(
+    product.category || ""
+);
                             // Category
                             document.getElementById(
                                 "edit_category"
