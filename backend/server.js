@@ -1179,6 +1179,34 @@ db.connect((err) => {
     console.log("✅ MySQL connected successfully!");
 });
 
+ // =============================================
+ // PRODUCT SIZE-WISE PRICING TABLE
+ // =============================================
+
+const createProductSizePricesTable = `
+    CREATE TABLE IF NOT EXISTS product_size_prices (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        product_id INT NOT NULL,
+        size_from INT NOT NULL,
+        size_to INT NOT NULL,
+        price DECIMAL(10,2) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        INDEX idx_product_size_prices_product_id (product_id)
+    )
+`;
+
+db.query(createProductSizePricesTable, (err) => {
+    if (err) {
+        console.error(
+            "❌ Product size prices table creation failed:",
+            err.message
+        );
+        return;
+    }
+
+    console.log("✅ Product size prices table ready!");
+});
+
 // =============================================
 // CATEGORY SYSTEM - CREATE TABLE + DEFAULT DATA
 // =============================================
@@ -1414,203 +1442,396 @@ app.get("/api/reviews/:productName", (req, res) => {
     });
 });
 
-// ===============================
-// PRODUCT API - GET ALL PRODUCTS
-// ===============================
+ // =============================================
+ // SIZE-WISE PRICE VALIDATION
+ // =============================================
 
-app.get("/api/products", (req, res) => {
+function validateSizePrices(input) {
+    if (input === undefined) {
+        return { error: null, prices: undefined };
+    }
+
+    if (!Array.isArray(input)) {
+        return {
+            error: "Size-wise prices must be an array.",
+            prices: []
+        };
+    }
+
+    const prices = [];
+
+    for (const item of input) {
+        const sizeFrom = Number(item.size_from);
+        const sizeTo = Number(item.size_to);
+        const price = Number(item.price);
+
+        if (
+            !Number.isInteger(sizeFrom) ||
+            !Number.isInteger(sizeTo) ||
+            sizeFrom < 0 ||
+            sizeTo < sizeFrom ||
+            !Number.isFinite(price) ||
+            price <= 0
+        ) {
+            return {
+                error: "Please enter valid size ranges and prices.",
+                prices: []
+            };
+        }
+
+        prices.push({
+            size_from: sizeFrom,
+            size_to: sizeTo,
+            price
+        });
+    }
+
+    prices.sort((a, b) => a.size_from - b.size_from);
+
+    for (let i = 1; i < prices.length; i++) {
+        if (prices[i].size_from <= prices[i - 1].size_to) {
+            return {
+                error: "Size price ranges must not overlap.",
+                prices: []
+            };
+        }
+    }
+
+    return { error: null, prices };
+}
+
+
+// =============================================
+// ATTACH SIZE-WISE PRICES TO PRODUCTS
+// =============================================
+
+function attachSizePrices(products, callback) {
+    if (!products || products.length === 0) {
+        return callback(null, products || []);
+    }
+
+    const productIds = products.map(product => product.id);
 
     const sql = `
+        SELECT product_id, size_from, size_to, price
+        FROM product_size_prices
+        WHERE product_id IN (?)
+        ORDER BY size_from ASC
+    `;
+
+    db.query(sql, [productIds], (err, rows) => {
+        if (err) {
+            return callback(err);
+        }
+
+        const pricesByProduct = {};
+
+        for (const row of rows) {
+            if (!pricesByProduct[row.product_id]) {
+                pricesByProduct[row.product_id] = [];
+            }
+
+            pricesByProduct[row.product_id].push({
+                size_from: Number(row.size_from),
+                size_to: Number(row.size_to),
+                price: Number(row.price)
+            });
+        }
+
+        const updatedProducts = products.map(product => ({
+            ...product,
+            size_prices: pricesByProduct[product.id] || []
+        }));
+
+        callback(null, updatedProducts);
+    });
+}
+
+
+ // ===============================
+ // PRODUCT API - GET ALL PRODUCTS
+ // ===============================
+
+app.get("/api/products", (req, res) => {
+    const sql = `
         SELECT
-            id,
-            product_name,
-            category,
-            gender,
-            season,
-            price,
-            sizes,
-            description,
-            image_url,
-            stock_status,
-            is_visible,
-            created_at,
-            updated_at
+            id, product_name, category, gender, season,
+            price, sizes, description, image_url,
+            stock_status, is_visible, created_at, updated_at
         FROM products
         WHERE is_visible = 1
         ORDER BY id DESC
     `;
 
     db.query(sql, (err, results) => {
-
         if (err) {
-
             console.error("❌ Products fetch failed:", err.message);
-
             return res.status(500).json({
                 success: false,
                 message: "Failed to fetch products."
             });
-
         }
 
-        res.json({
-            success: true,
-            products: results
+        attachSizePrices(results, (priceErr, products) => {
+            if (priceErr) {
+                console.error(
+                    "❌ Product size prices fetch failed:",
+                    priceErr.message
+                );
+                return res.status(500).json({
+                    success: false,
+                    message: "Failed to fetch product prices."
+                });
+            }
+
+            return res.json({
+                success: true,
+                products
+            });
         });
-
     });
-
 });
+
+
 // =============================================
-// ADMIN - GET ALL PRODUCTS
-// INCLUDING HIDDEN PRODUCTS
+// ADMIN - GET ALL PRODUCTS INCLUDING HIDDEN
 // =============================================
 
 app.get(
     "/api/products/admin",
     requireAdminAuth,
     (req, res) => {
+        const sql = `
+            SELECT
+                id, product_name, category, gender, season,
+                price, sizes, description, image_url,
+                stock_status, is_visible, created_at, updated_at
+            FROM products
+            ORDER BY id DESC
+        `;
 
-    const sql = `
-        SELECT
-            id,
-            product_name,
-            category,
-            gender,
-            season,
-            price,
-            sizes,
-            description,
-            image_url,
-            stock_status,
-            is_visible,
-            created_at,
-            updated_at
-        FROM products
-        ORDER BY id DESC
-    `;
+        db.query(sql, (err, results) => {
+            if (err) {
+                console.error("Admin products fetch error:", err.message);
+                return res.status(500).json({
+                    success: false,
+                    message: "Failed to load admin products."
+                });
+            }
 
-    db.query(sql, (err, results) => {
+            attachSizePrices(results, (priceErr, products) => {
+                if (priceErr) {
+                    console.error(
+                        "Admin size prices fetch error:",
+                        priceErr.message
+                    );
+                    return res.status(500).json({
+                        success: false,
+                        message: "Failed to load product prices."
+                    });
+                }
 
-        if (err) {
-
-            console.error(
-                "Admin products fetch error:",
-                err
-            );
-
-            return res.status(500).json({
-                success: false,
-                message:
-                    "Failed to load admin products."
+                return res.json({
+                    success: true,
+                    products
+                });
             });
-
-        }
-
-        res.json({
-            success: true,
-            products: results
         });
+    }
+);
 
-    });
-
-});
-// ===============================
-// PRODUCT API - UPDATE PRODUCT
-// ===============================
+ // =============================================
+ // PRODUCT API - UPDATE PRODUCT
+ // =============================================
 
 app.put(
     "/api/products/:id",
     requireAdminAuth,
     (req, res) => {
 
-    const productId = req.params.id;
+        const productId = Number(req.params.id);
 
-    const {
-        product_name,
-        category,
-        gender,
-        season,
-        price,
-        sizes,
-        description,
-        image_url,
-        stock_status,
-        is_visible
-    } = req.body;
+        const {
+            product_name,
+            category,
+            gender,
+            season,
+            price,
+            sizes,
+            size_prices,
+            description,
+            image_url,
+            stock_status,
+            is_visible
+        } = req.body;
 
-    // Basic validation
-    if (
-        !product_name ||
-        !category ||
-        !gender ||
-        !season ||
-        price === undefined
-    ) {
-        return res.status(400).json({
-            success: false,
-            message: "Product name, category, gender, season and price are required."
+        // Validate product ID
+        if (!Number.isInteger(productId) || productId <= 0) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid product ID."
+            });
+        }
+
+        // Validate required fields
+        if (
+            !product_name ||
+            !category ||
+            !gender ||
+            !season ||
+            price === undefined ||
+            !Number.isFinite(Number(price)) ||
+            Number(price) <= 0
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: "Product details and a valid positive price are required."
+            });
+        }
+
+        // Validate ranges before updating the product
+        const checked = validateSizePrices(size_prices);
+
+        if (checked.error) {
+            return res.status(400).json({
+                success: false,
+                message: checked.error
+            });
+        }
+
+        const sql = `
+            UPDATE products
+            SET
+                product_name = ?,
+                category = ?,
+                gender = ?,
+                season = ?,
+                price = ?,
+                sizes = ?,
+                description = ?,
+                image_url = ?,
+                stock_status = ?,
+                is_visible = ?
+            WHERE id = ?
+        `;
+
+        const values = [
+            product_name,
+            category,
+            gender,
+            season,
+            Number(price),
+            sizes || null,
+            description || null,
+            image_url || null,
+            stock_status || "in-stock",
+            is_visible === undefined ? 1 : Number(is_visible),
+            productId
+        ];
+
+        db.query(sql, values, (err, result) => {
+
+            if (err) {
+                console.error(
+                    "❌ Product update failed:",
+                    err.message
+                );
+
+                return res.status(500).json({
+                    success: false,
+                    message: "Failed to update product."
+                });
+            }
+
+            if (result.affectedRows === 0) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Product not found."
+                });
+            }
+
+            // Older admin forms may not send size_prices.
+            // In that case, keep the existing size ranges.
+            if (checked.prices === undefined) {
+                return res.json({
+                    success: true,
+                    message: "Product updated successfully!",
+                    product_id: productId
+                });
+            }
+
+            // Replace existing ranges with the submitted ranges
+            db.query(
+                "DELETE FROM product_size_prices WHERE product_id = ?",
+                [productId],
+                (deleteErr) => {
+
+                    if (deleteErr) {
+                        console.error(
+                            "❌ Old size prices could not be replaced:",
+                            deleteErr.message
+                        );
+
+                        return res.status(500).json({
+                            success: false,
+                            message: "Product updated, but size prices could not be updated."
+                        });
+                    }
+
+                    const prices = checked.prices;
+
+                    // An empty array means remove all size-wise ranges
+                    if (prices.length === 0) {
+                        return res.json({
+                            success: true,
+                            message: "Product updated successfully!",
+                            product_id: productId
+                        });
+                    }
+
+                    const priceValues = prices.map(item => [
+                        productId,
+                        item.size_from,
+                        item.size_to,
+                        item.price
+                    ]);
+
+                    const priceSql = `
+                        INSERT INTO product_size_prices
+                        (product_id, size_from, size_to, price)
+                        VALUES ?
+                    `;
+
+                    db.query(
+                        priceSql,
+                        [priceValues],
+                        (priceErr) => {
+
+                            if (priceErr) {
+                                console.error(
+                                    "❌ Size-wise price update failed:",
+                                    priceErr.message
+                                );
+
+                                return res.status(500).json({
+                                    success: false,
+                                    message: "Product updated, but size-wise prices could not be saved."
+                                });
+                            }
+
+                            return res.json({
+                                success: true,
+                                message: "Product and size-wise prices updated successfully!",
+                                product_id: productId
+                            });
+                        }
+                    );
+                }
+            );
         });
     }
+);
 
-    const sql = `
-        UPDATE products
-        SET
-            product_name = ?,
-            category = ?,
-            gender = ?,
-            season = ?,
-            price = ?,
-            sizes = ?,
-            description = ?,
-            image_url = ?,
-            stock_status = ?,
-            is_visible = ?
-        WHERE id = ?
-    `;
-
-    const values = [
-        product_name,
-        category,
-        gender,
-        season,
-        price,
-        sizes || null,
-        description || null,
-        image_url || null,
-        stock_status || "in-stock",
-        is_visible === undefined ? 1 : Number(is_visible),
-        productId
-    ];
-
-    db.query(sql, values, (err, result) => {
-
-        if (err) {
-            console.error("❌ Product update failed:", err.message);
-
-            return res.status(500).json({
-                success: false,
-                message: "Failed to update product."
-            });
-        }
-
-        if (result.affectedRows === 0) {
-            return res.status(404).json({
-                success: false,
-                message: "Product not found."
-            });
-        }
-
-        console.log("✅ Product updated successfully:", productId);
-
-        res.json({
-            success: true,
-            message: "Product updated successfully!"
-        });
-
-    });
-
-});
 // =============================================
 // CATEGORY API - GET ALL CATEGORIES
 // =============================================
@@ -2094,99 +2315,161 @@ app.patch(
 
     }
 );
-// ===============================
-// PRODUCT API - ADD NEW PRODUCT
-// ===============================
+
+ // =============================================
+ // PRODUCT API - ADD NEW PRODUCT
+ // =============================================
 
 app.post(
     "/api/products",
     requireAdminAuth,
     (req, res) => {
 
-const {
-    product_name,
-    category,
-    gender,
-    season,
-    price,
-    sizes,
-    description,
-    image_url,
-    image_urls,
-    stock_status,
-    is_visible
-} = req.body;
-
-
-    // Basic validation
-    if (
-        !product_name ||
-        !category ||
-        !gender ||
-        !season ||
-        price === undefined
-    ) {
-        return res.status(400).json({
-            success: false,
-            message: "Product name, category, gender, season and price are required."
-        });
-    }
-
-    const sql = `
-        INSERT INTO products
-        (
+        const {
             product_name,
             category,
             gender,
             season,
             price,
             sizes,
+            size_prices,
             description,
             image_url,
             stock_status,
             is_visible
-        )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `;
+        } = req.body;
 
-    const values = [
-        product_name,
-        category,
-        gender,
-        season,
-        price,
-        sizes || null,
-        description || null,
-        image_url || null,
-        stock_status || "in-stock",
-        is_visible === undefined ? 1 : Number(is_visible)
-    ];
-
-    db.query(sql, values, (err, result) => {
-
-        if (err) {
-            console.error("❌ Product add failed:", err.message);
-
-            return res.status(500).json({
+        // Basic validation
+        if (
+            !product_name ||
+            !category ||
+            !gender ||
+            !season ||
+            price === undefined ||
+            !Number.isFinite(Number(price)) ||
+            Number(price) <= 0
+        ) {
+            return res.status(400).json({
                 success: false,
-                message: "Failed to add product."
+                message: "Product details and a valid positive price are required."
             });
         }
 
-        console.log(
-            "✅ Product added successfully:",
-            result.insertId
+        // Validate size-wise prices before inserting product
+        const checked = validateSizePrices(
+            size_prices === undefined ? [] : size_prices
         );
 
-        res.status(201).json({
-            success: true,
-            message: "Product added successfully!",
-            product_id: result.insertId
+        if (checked.error) {
+            return res.status(400).json({
+                success: false,
+                message: checked.error
+            });
+        }
+
+        const sql = `
+            INSERT INTO products
+            (
+                product_name,
+                category,
+                gender,
+                season,
+                price,
+                sizes,
+                description,
+                image_url,
+                stock_status,
+                is_visible
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `;
+
+        const values = [
+            product_name,
+            category,
+            gender,
+            season,
+            Number(price),
+            sizes || null,
+            description || null,
+            image_url || null,
+            stock_status || "in-stock",
+            is_visible === undefined ? 1 : Number(is_visible)
+        ];
+
+        db.query(sql, values, (err, result) => {
+
+            if (err) {
+                console.error("❌ Product add failed:", err.message);
+
+                return res.status(500).json({
+                    success: false,
+                    message: "Failed to add product."
+                });
+            }
+
+            const productId = result.insertId;
+            const prices = checked.prices || [];
+
+            // No size-wise prices supplied
+            if (prices.length === 0) {
+                return res.status(201).json({
+                    success: true,
+                    message: "Product added successfully!",
+                    product_id: productId
+                });
+            }
+
+            // Save all size-price ranges
+            const priceValues = prices.map(item => [
+                productId,
+                item.size_from,
+                item.size_to,
+                item.price
+            ]);
+
+            const priceSql = `
+                INSERT INTO product_size_prices
+                (product_id, size_from, size_to, price)
+                VALUES ?
+            `;
+
+            db.query(priceSql, [priceValues], (priceErr) => {
+
+                if (priceErr) {
+                    console.error(
+                        "❌ Size-wise prices save failed:",
+                        priceErr.message
+                    );
+
+                    // Remove product if its prices could not be saved
+                    return db.query(
+                        "DELETE FROM products WHERE id = ?",
+                        [productId],
+                        () => {
+                            return res.status(500).json({
+                                success: false,
+                                message: "Product prices could not be saved. Please try again."
+                            });
+                        }
+                    );
+                }
+
+                console.log(
+                    "✅ Product and size-wise prices saved:",
+                    productId
+                );
+
+                return res.status(201).json({
+                    success: true,
+                    message: "Product and size-wise prices added successfully!",
+                    product_id: productId
+                });
+            });
         });
+    }
+);
 
-    });
-
-});
 // ======================================================
 // GET PRODUCT MULTIPLE IMAGES
 // ======================================================

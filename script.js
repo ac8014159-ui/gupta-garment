@@ -1220,28 +1220,47 @@ if (databaseProducts.length > 0) {
 
             }
 
+/* =================================================
+   PRODUCT PRICE — MINIMUM TO MAXIMUM RANGE
+   ================================================= */
 
-            /* =================================================
-               PRODUCT PRICE
-               ================================================= */
+const priceElement =
+    productCard.querySelector(".price");
 
-            const priceElement =
-                productCard.querySelector(
-                    ".price"
-                );
+if (priceElement) {
 
-            if (priceElement) {
+    const sizePrices =
+        Array.isArray(dbProduct.size_prices)
+            ? dbProduct.size_prices
+            : [];
 
-                priceElement.textContent =
-                    "₹" +
-                    Number(
-                        dbProduct.price || 0
-                    ).toLocaleString(
-                        "en-IN"
-                    );
+    const validPrices = sizePrices
+        .map(function (item) {
+            return Number(item.price);
+        })
+        .filter(function (price) {
+            return Number.isFinite(price) && price > 0;
+        });
 
-            }
+    if (validPrices.length > 0) {
 
+        const minPrice = Math.min(...validPrices);
+        const maxPrice = Math.max(...validPrices);
+
+        priceElement.textContent =
+            minPrice === maxPrice
+                ? "₹" + minPrice.toLocaleString("en-IN")
+                : "₹" + minPrice.toLocaleString("en-IN") +
+                  " – ₹" + maxPrice.toLocaleString("en-IN");
+
+    } else {
+
+        priceElement.textContent =
+            "₹" +
+            Number(dbProduct.price || 0).toLocaleString("en-IN");
+
+    }
+}
 
             /* =================================================
                PRODUCT SIZES
@@ -3191,9 +3210,7 @@ if (modalImage && productImage) {
 
 }
 
-
-
-                /* WhatsApp Message */
+ /* WhatsApp Message */
 /* =====================================================
    STEP 3C — MODAL WHATSAPP STOCK CONTROL
    ===================================================== */
@@ -4367,6 +4384,133 @@ if (productsGridForDynamicButtons) {
                         "#modalWhatsapp"
                     );
 
+/* =========================================
+   SIZE-WISE PRICING — MODAL SETUP
+   ========================================= */
+
+const modalSelectedSize =
+    document.querySelector("#modalSelectedSize");
+
+const modalSelectedSizePrice =
+    document.querySelector("#modalSelectedSizePrice");
+
+const matchedSizeProduct =
+    Array.isArray(databaseProducts)
+        ? databaseProducts.find(function (item) {
+              return (
+                  String(item.product_name || "").trim().toLowerCase() ===
+                  String(productName || "").trim().toLowerCase()
+              );
+          })
+        : null;
+
+if (modalSelectedSize) {
+    modalSelectedSize.innerHTML =
+        '<option value="">Select a size</option>';
+
+    const rawSizes = matchedSizeProduct
+        ? matchedSizeProduct.sizes
+        : productSizes;
+
+    const availableSizes = String(rawSizes || "")
+        .replace(/^Sizes:\s*/i, "")
+        .split(",")
+        .map(function (size) {
+            return size.trim();
+        })
+        .filter(Boolean);
+
+    availableSizes.forEach(function (size) {
+        const option = document.createElement("option");
+        option.value = size;
+        option.textContent = size;
+        modalSelectedSize.appendChild(option);
+    });
+}
+
+if (modalSelectedSizePrice) {
+    modalSelectedSizePrice.textContent =
+        "Select a size to see its price.";
+}
+
+/* =========================================
+   SIZE-WISE PRICING — PRICE UPDATE
+   ========================================= */
+
+if (modalSelectedSize) {
+    modalSelectedSize.addEventListener("change", function () {
+        const selectedSizeValue = this.value.trim();
+
+        if (!selectedSizeValue) {
+            if (modalSelectedSizePrice) {
+                modalSelectedSizePrice.textContent =
+                    "Select a size to see its price.";
+            }
+            return;
+        }
+
+        const sizePrices =
+            matchedSizeProduct &&
+            Array.isArray(matchedSizeProduct.size_prices)
+                ? matchedSizeProduct.size_prices
+                : [];
+
+        // Supports numeric sizes and baby sizes like "0-3 Months"
+        const numericMatch = selectedSizeValue.match(/^\s*(\d+)\s*-\s*(\d+)/);
+        let matchingRange = null;
+
+        if (numericMatch) {
+            const selectedFrom = Number(numericMatch[1]);
+            const selectedTo = Number(numericMatch[2]);
+
+            matchingRange = sizePrices.find(function (item) {
+                return (
+                    selectedFrom >= Number(item.size_from) &&
+                    selectedTo <= Number(item.size_to)
+                );
+            });
+        }
+
+        const selectedPrice = matchingRange
+            ? Number(matchingRange.price)
+            : Number(
+                matchedSizeProduct && matchedSizeProduct.price
+                    ? matchedSizeProduct.price
+                    : parseFloat(
+                        String(productPrice || "").replace(/[^\d.]/g, "")
+                    )
+            );
+
+        if (modalSelectedSizePrice) {
+            modalSelectedSizePrice.textContent =
+                "Selected Size: " + selectedSizeValue +
+                " | Price: ₹" + selectedPrice;
+        }
+
+        if (modalPrice) {
+            modalPrice.textContent = "₹" + selectedPrice;
+        }
+
+        // Update WhatsApp order with selected size and price
+        if (
+            modalWhatsapp &&
+            !modalWhatsapp.hasAttribute("aria-disabled")
+        ) {
+            const message =
+                "Hello Gupta Garments 👋\n\n" +
+                "I am interested in the following product:\n\n" +
+                "🛍️ Product: " + productName + "\n" +
+                "📏 Selected Size: " + selectedSizeValue + "\n" +
+                "💰 Price: ₹" + selectedPrice + "\n\n" +
+                "Please confirm product availability.\n\n" +
+                "Thank you!";
+
+            modalWhatsapp.href =
+                "https://wa.me/918218403183?text=" +
+                encodeURIComponent(message);
+        }
+    });
+}
 
                 /* =================================================
                    PRODUCT NAME

@@ -2583,6 +2583,18 @@
                 </div>
 
 
+<div class="form-group">
+    <label for="edit_size_prices">Size-wise Pricing (₹)</label>
+    <textarea
+        id="edit_size_prices"
+        rows="3"
+        placeholder="Example: 14-20=500, 22-26=650"
+    ></textarea>
+    <small>
+        Format: Size range = Price. Example: 14-20=500, 22-26=650
+    </small>
+</div>
+
                 <div class="form-group">
                     <label>
                         Stock
@@ -3038,6 +3050,18 @@
                     placeholder="22, 24, 26, 28, 30"
                 >
             </div>
+
+<div class="form-group">
+    <label>Size-wise Pricing (₹)</label>
+    <textarea
+        id="size_prices"
+        rows="3"
+        placeholder="Example: 14-20=500, 22-26=650"
+    ></textarea>
+    <small>
+        Format: Size range = Price. Example: 14-20=500, 22-26=650
+    </small>
+</div>
 
             <div class="form-group">
                 <label>Stock</label>
@@ -5239,6 +5263,11 @@ await loadProductCategoryOptions(
                             ).value =
                                 product.sizes || "";
 
+document.getElementById("edit_size_prices").value =
+    (product.size_prices || []).map(function(item) {
+        return item.size_from + "-" + item.size_to + "=" + item.price;
+    }).join(", ");
+
 
                             // Stock
                             document.getElementById(
@@ -5574,6 +5603,10 @@ editProductForm.addEventListener(
                 document.getElementById(
                     "edit_sizes"
                 ).value.trim(),
+
+size_prices: parseSizePricesInput(
+    document.getElementById("edit_size_prices").value
+),
 
             description:
                 document.getElementById(
@@ -6367,8 +6400,32 @@ function openManagementSection(sectionToOpen) {
 
     // Open selected section
     sectionToOpen.classList.add("active");
-
 }
+
+function parseSizePricesInput(value) {
+    if (!value || !value.trim()) {
+        return [];
+    }
+
+    return value.split(",").map(function (entry) {
+        const match = entry.trim().match(
+            /^(\d+)\s*-\s*(\d+)\s*=\s*(\d+(?:\.\d{1,2})?)$/
+        );
+
+        if (!match) {
+            throw new Error(
+                "Invalid size pricing format. Example: 14-20=500, 22-26=650"
+            );
+        }
+
+        return {
+            size_from: Number(match[1]),
+            size_to: Number(match[2]),
+            price: Number(match[3])
+        };
+    });
+}
+
 const productMessage =
     document.getElementById("productMessage");
 
@@ -6399,6 +6456,11 @@ addProductForm.addEventListener("submit", async function(event) {
 
         sizes:
             document.getElementById("sizes").value.trim(),
+
+size_prices:
+    parseSizePricesInput(
+        document.getElementById("size_prices").value
+    ),
 
         description:
             document.getElementById("description").value.trim(),
