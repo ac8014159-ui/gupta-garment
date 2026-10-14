@@ -2168,13 +2168,18 @@ if (
                     }
 
 
-                    status.textContent =
-                        "📱 Mobile OTP sent successfully. OTP: " +
-                        result.otp;
+alert(
+    "Gupta Garments Signup OTP: " +
+    result.otp +
+    "\n\nThis demo OTP is valid for 5 minutes."
+);
 
+status.textContent =
+    "✅ Demo OTP generated. Please enter the OTP shown in the notification.";
 
-                    status.style.color =
-                        "#7b1e2b";
+status.style.color =
+    "#7b1e2b";
+
 
 
                     verifyBtn.style.display =
@@ -2188,10 +2193,10 @@ if (
                         .focus();
 
 
-                    console.log(
-                        "Mobile OTP:",
-                        result.otp
-                    );
+                    // console.log(
+                    //     "Mobile OTP:",
+                    //     result.otp
+                    // );
 
 
                 }
